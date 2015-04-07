@@ -1,6 +1,7 @@
-#version 310 es
-precision highp float;
-precision highp sampler3D;
+// #version 310 es
+// precision highp float;
+// precision highp sampler3D;
+#version 330
 
 in vec3 fsPosition;
 
@@ -13,6 +14,9 @@ uniform float rayStepSize;
 uniform float gradientStepSize;
 
 uniform vec3 lightPosition;
+
+uniform float clipPlaneDistance;
+uniform vec3 clipPlaneNormal;
 
 out vec4 fragColor;
 
@@ -64,7 +68,30 @@ void main()
 	float absorption = 0.0f;
 	float opacity;
 
-	
+	if (clipPlaneDistance != 0.0f)
+	{
+		int steps = 0;
+		vec3 point = vec3(0.0f, 0.0f, 0.0f);
+		float dist;
+
+		if (camPos.z > 0.0f)
+		{
+			point.z = 1.0f;
+			dist = clipPlaneDistance;
+		}
+		else
+		{
+			point.z = -1.0f;
+			dist = 2.0f - clipPlaneDistance;
+		}
+
+		while ((abs(dot((point - position), clipPlaneNormal)) < dist) && (steps < maxRaySteps))
+		{
+			position += (direction * rayStepSize);
+			steps++;
+		}
+	}
+
 	for(int i=0; i<maxRaySteps; i++)
 	{
 		color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -76,8 +103,8 @@ void main()
 		color = vec4(texture(transferFunc, vec2(index, 0.0)));
 		opacity = color.w;
 
-		normal = CalculateNormal(texCoord);
-		color = CalculateLighting(color, normal);
+		//normal = CalculateNormal(texCoord);
+		//color = CalculateLighting(color, normal);
 
 		if ((absorption + opacity) > 1.0f)
 			finalColor += color*(1.0f - absorption);

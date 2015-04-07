@@ -1,21 +1,21 @@
 #include "Renderer.h"
 
 Renderer::Renderer()
-	:clearColor(glm::vec4(0.46f, 0.53f, 0.6f, 1.0f)), clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+	:m_clearColor(glm::vec4(0,0,0, 1.0f)), m_clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 {
 
 }
 
 Renderer::Renderer(const glm::vec4 &clearColor, const GLbitfield &clearMask)
-	:clearColor(clearColor), clearMask(clearMask)
+	:m_clearColor(clearColor), m_clearMask(clearMask)
 {
 
 }
 
 void Renderer::preRenderUpdate()
 {
-	glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
+	glClear(m_clearMask);
 }
 
 void Renderer::postRenderUpdate(GLFWwindow* window)

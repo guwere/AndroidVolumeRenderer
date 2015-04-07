@@ -24,7 +24,7 @@ public:
 	Volume();
 	void parseMHD(const std::string &folderPath, const std::string &filePath);
 	void parseMHD(File &file);
-	void ReverseEndianness();
+	void reverseEndianness();
 	void printProperties();
 	void generate();
 	void advance();

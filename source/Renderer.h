@@ -14,8 +14,8 @@
 class Renderer
 {
 public:
-	glm::vec4 clearColor;
-	GLbitfield clearMask;
+	glm::vec4 m_clearColor;
+	GLbitfield m_clearMask;
 
 	Renderer();
 	Renderer(const glm::vec4 &clearColor, const GLbitfield &clearMask);

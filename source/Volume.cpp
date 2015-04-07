@@ -167,7 +167,7 @@ void Volume::copyFileToBuffer(const std::string &fileName, int &numBytesInBuffer
 }
 
 // Only needed if you want to analyse the volume on the CPU and the endianness is in the wrong order
-void Volume::ReverseEndianness()
+void Volume::reverseEndianness()
 {
 	std::vector<GLubyte> bytes;
 	bytes.resize(m_xRes * m_yRes * m_zRes * m_bytesPerElement);

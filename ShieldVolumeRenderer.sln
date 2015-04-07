@@ -5,8 +5,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsVolumeRenderer", "Wi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AndroidVolumeRenderer", "AndroidVolumeRenderer\AndroidVolumeRenderer.vcxproj", "{F565E1A6-3AA8-44B7-9BAF-02A4A9D858F5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Android1", "Android1\Android1.vcxproj", "{CE49AB48-AAAA-40EA-860B-17D1C68E9342}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -37,16 +35,6 @@ Global
 		{F565E1A6-3AA8-44B7-9BAF-02A4A9D858F5}.Release|Tegra-Android.ActiveCfg = Release|Tegra-Android
 		{F565E1A6-3AA8-44B7-9BAF-02A4A9D858F5}.Release|Tegra-Android.Build.0 = Release|Tegra-Android
 		{F565E1A6-3AA8-44B7-9BAF-02A4A9D858F5}.Release|Win32.ActiveCfg = Release|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Debug|Mixed Platforms.ActiveCfg = Debug|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Debug|Mixed Platforms.Build.0 = Debug|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Debug|Tegra-Android.ActiveCfg = Debug|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Debug|Tegra-Android.Build.0 = Debug|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Debug|Win32.ActiveCfg = Debug|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Release|Mixed Platforms.ActiveCfg = Release|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Release|Mixed Platforms.Build.0 = Release|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Release|Tegra-Android.ActiveCfg = Release|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Release|Tegra-Android.Build.0 = Release|Tegra-Android
-		{CE49AB48-AAAA-40EA-860B-17D1C68E9342}.Release|Win32.ActiveCfg = Release|Tegra-Android
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

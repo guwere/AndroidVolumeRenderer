@@ -17,7 +17,7 @@ public:
 
 	TransferFunction();
 	void parseVoreenXML(File &file);
-	void generate1DTexture();
+	void generate();
 	GLuint getTextureId() const;
 private:
 	void loadLookup();

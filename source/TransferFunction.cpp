@@ -38,7 +38,7 @@ void TransferFunction::parseVoreenXML(File &file)
 
 }
 
-void TransferFunction::generate1DTexture()
+void TransferFunction::generate()
 {
 	m_colors.resize(m_numIntensities);
 	//Generate the 1D texture

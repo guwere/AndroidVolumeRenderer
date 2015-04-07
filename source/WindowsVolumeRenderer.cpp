@@ -30,7 +30,7 @@ Camera camera;
 #pragma endregion
 
 #pragma region VolumeProperties
-const glm::vec3 initialCameraPos = glm::vec3(0.0f, 0.0f, 2.0f);
+const glm::vec3 initialCameraPos = glm::vec3(0.0f, 1.0f, 3.0f);
 const int maxRaySteps = 1000;
 const float rayStepSize = 0.005f;
 const float gradientStepSize = 0.005f;
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 		handleInput();
 		volume.advance();
 		glm::mat4 MVP = camera.GetProjectionMatrix() * camera.GetViewMatrix() * mesh.transform.getMatrix();
-		glm::vec3 cameraPos = camera.getPosition();
+		glm::vec3 cameraPos = glm::vec3(camera.GetViewMatrix()[3]);
 
 
 		renderer.preRenderUpdate();
@@ -88,7 +88,6 @@ void handleInput()
 	Timer::get().updateInterval();
 	float deltaTime = Timer::get().getLastInterval();
 	float time = Timer::get().getTime();
-	glm::vec4 cameraPosition = (camera.GetViewMatrix())[3];
 	//camera
 	if (keys[GLFW_KEY_ESCAPE])
 		glfwSetWindowShouldClose(window, GL_TRUE);
@@ -145,7 +144,7 @@ void setup()
 	volume.parseMHD(File("","CTknee.mhd"));
 	volume.generate();
 	transferFn.parseVoreenXML(File("","CT-Knee_spectrum_16_balance.tfi"));
-	transferFn.generate1DTexture();
+	transferFn.generate();
 	int x = 0;
 }
 

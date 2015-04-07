@@ -1,8 +1,9 @@
-#version 310 es
-precision highp float;
-uniform mat4 MVP;
+// #version 310 es
+// precision highp float;
+#version 330
 
 layout (location = 0) in vec3 position;
+uniform mat4 MVP;
 
 out vec3 fsPosition;
 
