@@ -1,9 +1,10 @@
-// #version 310 es
-// precision highp float;
-// precision highp sampler3D;
-#version 330
+#version 310 es
+precision highp float;
+precision highp sampler3D;
+//#version 330
 
 in vec3 fsPosition;
+//in vec4 fsTexCoord;
 
 uniform sampler3D volume;
 uniform sampler2D transferFunc;
@@ -15,8 +16,10 @@ uniform float gradientStepSize;
 
 uniform vec3 lightPosition;
 
-uniform float clipPlaneDistance;
-uniform vec3 clipPlaneNormal;
+uniform mat4 modelMatrix;
+
+// uniform float clipPlaneDistance;
+// uniform vec3 clipPlaneNormal;
 
 out vec4 fragColor;
 
@@ -68,42 +71,42 @@ void main()
 	float absorption = 0.0f;
 	float opacity;
 
-	if (clipPlaneDistance != 0.0f)
-	{
-		int steps = 0;
-		vec3 point = vec3(0.0f, 0.0f, 0.0f);
-		float dist;
+	// if (clipPlaneDistance != 0.0f)
+	// {
+	// 	int steps = 0;
+	// 	vec3 point = vec3(0.0f, 0.0f, 0.0f);
+	// 	float dist;
 
-		if (camPos.z > 0.0f)
-		{
-			point.z = 1.0f;
-			dist = clipPlaneDistance;
-		}
-		else
-		{
-			point.z = -1.0f;
-			dist = 2.0f - clipPlaneDistance;
-		}
+	// 	if (camPos.z > 0.0f)
+	// 	{
+	// 		point.z = 1.0f;
+	// 		dist = clipPlaneDistance;
+	// 	}
+	// 	else
+	// 	{
+	// 		point.z = -1.0f;
+	// 		dist = 2.0f - clipPlaneDistance;
+	// 	}
 
-		while ((abs(dot((point - position), clipPlaneNormal)) < dist) && (steps < maxRaySteps))
-		{
-			position += (direction * rayStepSize);
-			steps++;
-		}
-	}
+	// 	while ((abs(dot((point - position), clipPlaneNormal)) < dist) && (steps < maxRaySteps))
+	// 	{
+	// 		position += (direction * rayStepSize);
+	// 		steps++;
+	// 	}
+	// }
 
 	for(int i=0; i<maxRaySteps; i++)
 	{
 		color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		
-		texCoord = (position + 1.0f) / 2.0f; 
-
+		texCoord = (position + 1.0f) * 0.5f; 
 		float index = texture(volume, texCoord).x;
+		//float index = texture(volume, position).x;
 		
 		color = vec4(texture(transferFunc, vec2(index, 0.0)));
 		opacity = color.w;
 
-		//normal = CalculateNormal(texCoord);
+		//normal = CalculateNormal(position);
 		//color = CalculateLighting(color, normal);
 
 		if ((absorption + opacity) > 1.0f)
@@ -117,8 +120,8 @@ void main()
 
 		if (abs(position.x) > 1.0f || abs(position.y) > 1.0f || abs(position.z) > 1.0f || absorption >= 1.0f)
 		{
-//			if (absorption < 1.0f)
-//				finalColor += vec4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0f - absorption);
+			if (absorption < 1.0f)
+				finalColor += vec4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0f - absorption);
 
 			break;
 		}

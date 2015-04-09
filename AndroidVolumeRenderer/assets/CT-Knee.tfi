@@ -1,0 +1,100 @@
+<?xml version="1.0" ?>
+<VoreenData version="1">
+    <TransFuncIntensity type="TransFuncIntensity">
+        <Keys>
+            <key type="TransFuncMappingKey">
+                <intensity value="0" />
+                <split value="false" />
+                <colorL r="0" g="0" b="0" a="0" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.04334365" />
+                <split value="false" />
+                <colorL r="255" g="0" b="0" a="8" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.12229102" />
+                <split value="false" />
+                <colorL r="255" g="95" b="0" a="0" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.18730651" />
+                <split value="false" />
+                <colorL r="255" g="191" b="0" a="0" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.24458204" />
+                <split value="false" />
+                <colorL r="223" g="255" b="0" a="1" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.31733745" />
+                <split value="false" />
+                <colorL r="127" g="255" b="0" a="12" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.3993808" />
+                <split value="false" />
+                <colorL r="31" g="255" b="0" a="2" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.47058824" />
+                <split value="false" />
+                <colorL r="0" g="255" b="63" a="5" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.54024768" />
+                <split value="false" />
+                <colorL r="0" g="255" b="159" a="24" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.61609906" />
+                <split value="false" />
+                <colorL r="0" g="255" b="255" a="18" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.67492259" />
+                <split value="false" />
+                <colorL r="0" g="159" b="255" a="24" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.71517026" />
+                <split value="false" />
+                <colorL r="0" g="63" b="255" a="30" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.7631579" />
+                <split value="false" />
+                <colorL r="31" g="0" b="255" a="34" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.82043344" />
+                <split value="false" />
+                <colorL r="127" g="0" b="255" a="24" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.871517" />
+                <split value="false" />
+                <colorL r="223" g="0" b="255" a="21" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.90402478" />
+                <split value="false" />
+                <colorL r="255" g="0" b="191" a="53" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.95820433" />
+                <split value="false" />
+                <colorL r="255" g="0" b="95" a="61" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="1" />
+                <split value="false" />
+                <colorL r="255" g="255" b="255" a="0" />
+            </key>
+        </Keys>
+        <lower value="0" />
+        <upper value="1" />
+        <domain x="0" y="1" />
+    </TransFuncIntensity>
+</VoreenData>

@@ -63,6 +63,7 @@ bool File::isOpen()
 
 void File::print()
 {
+	m_file.seekg(0, ios::beg);
 	string line;
 	if (m_file.is_open())
 	{

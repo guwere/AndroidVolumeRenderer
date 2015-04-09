@@ -38,6 +38,39 @@
     <ClCompile Include="..\source\Volume.cpp">
       <Filter>jni</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\HelperFunctions.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Mesh.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Model.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Renderer.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Shader.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\ShaderManager.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\SQTTransform.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Timer.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\tinyxml2.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\TransferFunction.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Camera.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\android_native_app_glue.h">
@@ -53,6 +86,39 @@
       <Filter>jni</Filter>
     </ClInclude>
     <ClInclude Include="..\source\Volume.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Camera.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\HelperFunctions.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Mesh.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Model.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Renderer.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Shader.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\ShaderManager.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\SQTTransform.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Timer.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\tinyxml2.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\TransferFunction.h">
       <Filter>jni</Filter>
     </ClInclude>
   </ItemGroup>

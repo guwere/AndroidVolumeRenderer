@@ -1,0 +1,100 @@
+<?xml version="1.0" ?>
+<VoreenData version="1">
+    <TransFuncIntensity type="TransFuncIntensity">
+        <Keys>
+            <key type="TransFuncMappingKey">
+                <intensity value="0" />
+                <split value="false" />
+                <colorL r="0" g="0" b="0" a="0" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.04024768" />
+                <split value="false" />
+                <colorL r="255" g="0" b="0" a="50" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.12229102" />
+                <split value="false" />
+                <colorL r="255" g="95" b="0" a="0" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.18575852" />
+                <split value="false" />
+                <colorL r="255" g="191" b="0" a="8" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.23993808" />
+                <split value="false" />
+                <colorL r="223" g="255" b="0" a="38" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.29566562" />
+                <split value="false" />
+                <colorL r="127" g="255" b="0" a="48" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.36068112" />
+                <split value="false" />
+                <colorL r="31" g="255" b="0" a="69" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.3993808" />
+                <split value="false" />
+                <colorL r="0" g="255" b="63" a="100" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.49535602" />
+                <split value="false" />
+                <colorL r="0" g="255" b="159" a="98" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.54953563" />
+                <split value="false" />
+                <colorL r="0" g="255" b="255" a="97" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.59442723" />
+                <split value="false" />
+                <colorL r="0" g="159" b="255" a="88" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.64551085" />
+                <split value="false" />
+                <colorL r="0" g="63" b="255" a="99" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.70588237" />
+                <split value="false" />
+                <colorL r="31" g="0" b="255" a="72" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.76780188" />
+                <split value="false" />
+                <colorL r="127" g="0" b="255" a="95" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.82352942" />
+                <split value="false" />
+                <colorL r="223" g="0" b="255" a="84" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.88235295" />
+                <split value="false" />
+                <colorL r="255" g="0" b="191" a="79" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="0.94117647" />
+                <split value="false" />
+                <colorL r="255" g="0" b="95" a="132" />
+            </key>
+            <key type="TransFuncMappingKey">
+                <intensity value="1" />
+                <split value="false" />
+                <colorL r="255" g="255" b="255" a="0" />
+            </key>
+        </Keys>
+        <lower value="0" />
+        <upper value="1" />
+        <domain x="0" y="1" />
+    </TransFuncIntensity>
+</VoreenData>

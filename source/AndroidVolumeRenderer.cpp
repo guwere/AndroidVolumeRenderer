@@ -20,6 +20,7 @@
 #include "android\asset_manager.h"
 
 #include "File.h"
+#include "Volume.h"
 
 //extern struct engine engine;
 /**
@@ -42,7 +43,8 @@ void android_main(struct android_app* state) {
 
 	//AAssetDir *asset = AAssetManager_openDir(mgr, "");;
 
-	File::open("helloworld.txt");
+	Volume volume;
+	volume.parseMHD(File("","CT-knee.mhd"));
 	
     while (1) {
         // Read all pending events.

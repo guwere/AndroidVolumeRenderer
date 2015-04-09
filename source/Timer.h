@@ -18,10 +18,14 @@ public:
 	double getLastInterval() const;
 	/**@brief delta difference curr - last */
 	void updateInterval();
+	float getFrameRate();
 	/**Sets m_LastTime to current time and m_LastInterval to 0*/
 	void reset();
 private:
-	double m_LastTime; //<! the last time (absolute) updateInterval was called
-	double m_LastInterval; //<! delta difference curr - last
+	double m_lastTime; //<! the last time (absolute) updateInterval was called
+	double m_lastInterval; //<! delta difference curr - last
+	double m_frameElapsed;
+	int m_FrameUpdates;
+	double m_FrameRate;
 };
 #endif // !TIMER_H

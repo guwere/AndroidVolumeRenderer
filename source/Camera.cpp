@@ -25,7 +25,8 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat up
 
 glm::mat4 Camera::GetViewMatrix() const
 {
-	return glm::lookAt(this->Position, this->Position + this->Front, this->WorldUp);
+	glm::mat4 view = glm::lookAt(this->Position, this->Position + this->Front, this->WorldUp);
+	return view;
 }
 
 void Camera::ProcessKeyboard(Direction direction, GLfloat deltaTime)

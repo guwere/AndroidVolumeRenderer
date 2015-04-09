@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClCompile Include="..\source\Camera.cpp" />
     <ClCompile Include="..\source\File.cpp" />
+    <ClCompile Include="..\source\GLFWRenderer.cpp" />
     <ClCompile Include="..\source\HelperFunctions.cpp" />
     <ClCompile Include="..\source\Mesh.cpp" />
     <ClCompile Include="..\source\Renderer.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="..\source\Camera.h" />
     <ClInclude Include="..\source\File.h" />
     <ClInclude Include="..\source\Common.h" />
+    <ClInclude Include="..\source\GLFWRenderer.h" />
     <ClInclude Include="..\source\HelperFunctions.h" />
     <ClInclude Include="..\source\Mesh.h" />
     <ClInclude Include="..\source\Renderer.h" />

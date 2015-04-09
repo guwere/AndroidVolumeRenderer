@@ -76,6 +76,25 @@ void Volume::parseMHD(File &file)
 
 }
 
+void Volume::parsePVM(File &file)
+{
+	string line;
+	getline(file.m_file, line);
+	LOGI("first line: %s\n", line);
+	getline(file.m_file, line);
+	LOGI("second line: %s\n", line);
+	getline(file.m_file, line);
+	LOGI("third line: %s\n", line);
+	getline(file.m_file, line);
+	LOGI("third line: %s\n", line);
+	getline(file.m_file, line);
+	LOGI("third line: %s\n", line);
+	getline(file.m_file, line);
+	LOGI("third line: %s\n", line);
+	getline(file.m_file, line);
+	LOGI("third line: %s\n", line);
+}
+
 // Reads in the raw binary data using properties copied in from header
 void Volume::readRaw()
 {

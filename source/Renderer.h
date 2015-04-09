@@ -7,24 +7,28 @@
 #include "Mesh.h"
 #include "Volume.h"
 #include "Shader.h"
+#include "Camera.h"
 #include "TransferFunction.h"
 
-#include <GLFW/glfw3.h>
 
 class Renderer
 {
 public:
 	glm::vec4 m_clearColor;
 	GLbitfield m_clearMask;
-
-	Renderer();
-	Renderer(const glm::vec4 &clearColor, const GLbitfield &clearMask);
-	void preRenderUpdate();
-	void postRenderUpdate(GLFWwindow* window);
+	int m_screenWidth, m_screenHeight;
+	static Camera m_camera;
+	virtual void mainLoop(void(*updateCallback)(void)) = 0;
+	virtual void handleInput() = 0;
 	void renderBasic(const Shader *shader, const Mesh &mesh, const glm::mat4 &MVP) const;
-	void renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const glm::mat4 MVP, const Volume &volume, const glm::vec3 &eyePos, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPos, const TransferFunction &transferFn) const;
-private:
+	void renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn) const;
+	//void renderRaycastVRmobile1(const Shader *shader, const Mesh &cubeMesh, const Camera &camera, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn) const
+
+protected:
+	Renderer(float screenWidth, float screenHeight);
+
 };
+
 #endif
 
 

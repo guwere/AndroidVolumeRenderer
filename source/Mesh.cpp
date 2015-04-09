@@ -14,6 +14,12 @@ Vertex::Vertex(const glm::vec3 position)
 {
 }
 
+Vertex::Vertex(float vx, float vy, float vz, float ts, float tt)
+	:m_Position(vx, vy, vz), m_TexCoord(ts, tt)
+{
+	
+}
+
 void Vertex::operator=(const glm::vec3 &other)
 {
 	m_Position = other;
@@ -102,6 +108,37 @@ void Mesh::render() const
 
 void Mesh::generateCube(Shader *shader)
 {
+	// Front face
+	//m_Vertices.push_back(Vertex(-1,-1,1, 0,0 ));
+	//m_Vertices.push_back(Vertex( 1,-1,1, 1,0 ));
+ //   m_Vertices.push_back(Vertex(-1,1,1, 0,1  ));
+ //   m_Vertices.push_back(Vertex( 1,1,1, 1,1  ));
+	////m_Vertices.push_back(Vertex(// Right face ));
+	//m_Vertices.push_back(Vertex(1,-1,1, 0,0  ));
+	//m_Vertices.push_back(Vertex(1,-1,-1, 1,0 ));
+	//m_Vertices.push_back(Vertex(1,1,1,  0,1  ));
+	//m_Vertices.push_back(Vertex(1,1,-1, 1,1  ));
+	////m_Vertices.push_back(Vertex(// Back face  ));
+	//m_Vertices.push_back(Vertex(1,-1,-1, 0,0 ));
+	//m_Vertices.push_back(Vertex(-1,-1,-1, 1,0)); 
+	//m_Vertices.push_back(Vertex(1,1,-1,  0,1 ));
+	//m_Vertices.push_back(Vertex(-1,1,-1, 1,1 ));
+	////m_Vertices.push_back(Vertex(// Left face  ));
+	//m_Vertices.push_back(Vertex(-1,-1,-1, 0,0));
+	//m_Vertices.push_back(Vertex(-1,-1,1, 1,0 ));
+	//m_Vertices.push_back(Vertex(-1,1,-1, 0,1 ));
+	//m_Vertices.push_back(Vertex(-1,1,1,1,1  ));
+	////m_Vertices.push_back(Vertex(// Bottom face));
+	//m_Vertices.push_back(Vertex(-1,-1,-1, 0,0));
+	//m_Vertices.push_back(Vertex(1,-1,-1, 1,0));
+	//m_Vertices.push_back(Vertex(-1,-1,1, 0,1));
+	//m_Vertices.push_back(Vertex(1,-1,1,1,1));
+	////m_Vertices.push_back(Vertex(// Top face	  ));
+	//m_Vertices.push_back(Vertex(-1,1,1, 0,0  ));
+	//m_Vertices.push_back(Vertex(1,1,1, 1,0	  ));
+	//m_Vertices.push_back(Vertex(-1,1,-1, 0,1 ));
+	//m_Vertices.push_back(Vertex(1,1,-1,1,1  ));
+
 
 	m_Vertices.push_back(Vertex(glm::vec3(-1.0, -1.0,  1.0)));
 	m_Vertices.push_back(Vertex(glm::vec3(1.0, -1.0,  1.0)));
@@ -135,21 +172,39 @@ void Mesh::generateCube(Shader *shader)
 	};
 
 	m_Indices = vector<GLuint>(cube_elements, &cube_elements[0] + sizeof(cube_elements) / sizeof(GLushort) );
+
+	//the size of the dimensions of the pushed cube is 2; normalized between [0,1] range to match tex coords
+	//for(int i = 0; i < m_Vertices.size(); ++i)
+	//{
+	//	const Vertex &v = m_Vertices[i];;
+	//	m_Vertices[i] = Vertex(
+	//		(v.m_Position.x + 1.0f) * 0.5f,
+	//		(v.m_Position.y + 1.0f) * 0.5f,
+	//		(v.m_Position.z + 1.0f) * 0.5f,
+	//		v.m_TexCoord.x, v.m_TexCoord.y);
+	//}
+
+
+	
 	createVAO(shader);
 }
 
 void Mesh::generatePlane(Shader *shader)
 {
-	m_Vertices.push_back(Vertex(glm::vec3(-1.0, -1.0,  1.0)));
-	m_Vertices.push_back(Vertex(glm::vec3(1.0, -1.0,  1.0)));
-	m_Vertices.push_back(Vertex(glm::vec3(1.0,  1.0,  1.0)));
-	m_Vertices.push_back(Vertex(glm::vec3(-1.0,  1.0,  1.0)));
+	GLfloat cube_vertices[] = {
+		// front
+		-1.0, -1.0,  1.0,
+		1.0, -1.0,  1.0,
+		1.0,  1.0,  1.0,
+		-1.0,  1.0,  1.0,
+	};
 	GLushort cube_elements[] = {
 		// front
 		0, 1, 2,
 		2, 3, 0
 
 	};
-	m_Indices = vector<GLuint>(cube_elements, cube_elements + sizeof(cube_elements) / sizeof(GLuint) );
+	m_Indices = vector<GLuint>(cube_elements, cube_elements + sizeof(cube_elements) / sizeof(GLushort) );
 	createVAO(shader);
 }
+

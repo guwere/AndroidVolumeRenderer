@@ -209,6 +209,7 @@ void Engine::setAssetManager()
 	env->ReleaseStringUTFChars(jpath, app_dir);
 	// Pre-extract assets, to avoid Android-specific file opening
 	AAssetManager* mgr = mApp->activity->assetManager;
+	//mApp->activity->externalDataPath;
 	AAssetDir* assetDir = AAssetManager_openDir(mgr, "");
 	const char* filename = (const char*)NULL;
 	LOGI("Printing filenames of the available assets");

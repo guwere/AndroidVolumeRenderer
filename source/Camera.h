@@ -2,7 +2,6 @@
 
 #include "Common.h"
 // GL Includes
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 
 

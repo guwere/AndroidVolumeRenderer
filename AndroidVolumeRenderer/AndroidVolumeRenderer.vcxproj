@@ -26,15 +26,37 @@
   <ItemGroup>
     <ClCompile Include="..\source\AndroidVolumeRenderer.cpp" />
     <ClCompile Include="..\source\android_native_app_glue.c" />
+    <ClCompile Include="..\source\Camera.cpp" />
     <ClCompile Include="..\source\File.cpp" />
     <ClCompile Include="..\source\Engine.cpp" />
+    <ClCompile Include="..\source\HelperFunctions.cpp" />
+    <ClCompile Include="..\source\Mesh.cpp" />
+    <ClCompile Include="..\source\Model.cpp" />
+    <ClCompile Include="..\source\Renderer.cpp" />
+    <ClCompile Include="..\source\Shader.cpp" />
+    <ClCompile Include="..\source\ShaderManager.cpp" />
+    <ClCompile Include="..\source\SQTTransform.cpp" />
+    <ClCompile Include="..\source\Timer.cpp" />
+    <ClCompile Include="..\source\tinyxml2.cpp" />
+    <ClCompile Include="..\source\TransferFunction.cpp" />
     <ClCompile Include="..\source\Volume.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\android_native_app_glue.h" />
+    <ClInclude Include="..\source\Camera.h" />
     <ClInclude Include="..\source\File.h" />
     <ClInclude Include="..\source\Common.h" />
     <ClInclude Include="..\source\Engine.h" />
+    <ClInclude Include="..\source\HelperFunctions.h" />
+    <ClInclude Include="..\source\Mesh.h" />
+    <ClInclude Include="..\source\Model.h" />
+    <ClInclude Include="..\source\Renderer.h" />
+    <ClInclude Include="..\source\Shader.h" />
+    <ClInclude Include="..\source\ShaderManager.h" />
+    <ClInclude Include="..\source\SQTTransform.h" />
+    <ClInclude Include="..\source\Timer.h" />
+    <ClInclude Include="..\source\tinyxml2.h" />
+    <ClInclude Include="..\source\TransferFunction.h" />
     <ClInclude Include="..\source\Volume.h" />
   </ItemGroup>
   <ItemGroup>

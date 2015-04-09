@@ -1,7 +1,6 @@
 #pragma once
 
 
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include "Common.h"
 
@@ -14,6 +13,7 @@ struct Vertex
 {
 	Vertex();
 	Vertex(const glm::vec3 position);
+	Vertex(float vx, float vy, float vz, float ts, float tt);
 	void operator=(const glm::vec3 &other);
 	glm::vec3 m_Position; //!< position in model space
 	glm::vec3 m_Normal;//!< normal of vertex in model space / +z-axis in tangent space

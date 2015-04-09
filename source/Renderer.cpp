@@ -1,27 +1,16 @@
 #include "Renderer.h"
 
-Renderer::Renderer()
-	:m_clearColor(glm::vec4(0,0,0, 1.0f)), m_clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-{
+Camera Renderer::m_camera;
 
+Renderer::Renderer(float screenWidth, float screenHeight)
+	:m_screenWidth(screenWidth), m_screenHeight(screenHeight)
+{
+	m_clearColor = CLEAR_COLOR;
+	m_clearMask = CLEAR_MASK;
+	m_camera.Position = INITIAL_CAMERA_POS;
+	m_camera.projection = glm::perspective(CAMERA_FOV, screenWidth / screenHeight, NEAR_CLIP_PLANE, FAR_CLIP_PLANE);
 }
 
-Renderer::Renderer(const glm::vec4 &clearColor, const GLbitfield &clearMask)
-	:m_clearColor(clearColor), m_clearMask(clearMask)
-{
-
-}
-
-void Renderer::preRenderUpdate()
-{
-	glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
-	glClear(m_clearMask);
-}
-
-void Renderer::postRenderUpdate(GLFWwindow* window)
-{
-	glfwSwapBuffers(window);
-}
 
 void Renderer::renderBasic(const Shader *shader, const Mesh &mesh, const glm::mat4 &MVP) const
 {
@@ -30,13 +19,23 @@ void Renderer::renderBasic(const Shader *shader, const Mesh &mesh, const glm::ma
 	mesh.render();
 }
 
-void Renderer::renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const glm::mat4 MVP, const Volume &volume, const glm::vec3 &eyePos, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPos, const TransferFunction &transferFn) const
+void Renderer::renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn) const
 {
+
+	const glm::mat4 MV = m_camera.GetViewMatrix() * cubeMesh.transform.getMatrix();
+	const glm::mat4 MVP = m_camera.GetProjectionMatrix() * MV;
+	const glm::mat3 inverseM = glm::inverse(glm::mat3(cubeMesh.transform.getMatrix()));
+	const glm::vec3 lightPos =  inverseM * lightPosWorld;
+	const glm::vec3 camPos =  inverseM * m_camera.Position;
+
 	GLuint shaderId = shader->getId();
 	glUseProgram(shader->m_Id);
 	GLuint uniformLoc;
 	uniformLoc = glGetUniformLocation (shaderId, "MVP");
 	glUniformMatrix4fv (uniformLoc, 1, GL_FALSE, glm::value_ptr(MVP));
+
+	//uniformLoc = glGetUniformLocation (shaderId, "ModelMatrix");
+	//glUniformMatrix4fv (uniformLoc, 1, GL_FALSE, glm::value_ptr(cubeMesh.transform.getMatrix()));
 
 	glActiveTexture (GL_TEXTURE0);
 	uniformLoc = glGetUniformLocation(shaderId,"volume");
@@ -44,7 +43,7 @@ void Renderer::renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const
 	glBindTexture (GL_TEXTURE_3D, volume.getTextureId());
 
 	uniformLoc = glGetUniformLocation(shaderId,"camPos");
-	glUniform3fv(uniformLoc, 1, glm::value_ptr(eyePos));
+	glUniform3fv(uniformLoc, 1, glm::value_ptr(camPos));
 
 	uniformLoc = glGetUniformLocation(shaderId, "maxRaySteps");
 	glUniform1i(uniformLoc, maxRaySteps);
@@ -64,5 +63,5 @@ void Renderer::renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const
 	glUniform1i(uniformLoc,1);
 	glBindTexture (GL_TEXTURE_2D, transferFn.getTextureId());
 
-	cubeMesh.render();
+	cubeMesh.render(GL_TRIANGLES, true);
 }

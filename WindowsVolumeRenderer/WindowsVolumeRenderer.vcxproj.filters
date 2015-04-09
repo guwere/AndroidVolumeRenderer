@@ -52,6 +52,9 @@
     <ClCompile Include="..\source\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\GLFWRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Common.h">
@@ -91,6 +94,9 @@
       <Filter>imported libs</Filter>
     </ClInclude>
     <ClInclude Include="..\source\Renderer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\GLFWRenderer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
