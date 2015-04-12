@@ -21,6 +21,8 @@
 
 #include "File.h"
 #include "Volume.h"
+#include "Shader.h"
+#include "ShaderManager.h"
 
 //extern struct engine engine;
 /**
@@ -28,6 +30,17 @@
  * android_native_app_glue.  It runs in its own thread, with its own
  * event loop for receiving input events and doing other things.
  */
+
+//everything that must access the opengl state must come after the window has been initialized which come as an event in the command queue
+void initAppParams()
+{
+	//Volume volume;
+	//volume.parseMHD(File("","CT-Knee.mhd"));
+	File vertexShader("","basicVS.glsl");
+	File fragmentShader("","basicFS.glsl");
+	Shader * basicShader = ShaderManager::get().getShader(vertexShader, fragmentShader);
+
+}
 void android_main(struct android_app* state) {
    // struct engine engine;
 
@@ -35,17 +48,17 @@ void android_main(struct android_app* state) {
     app_dummy();
 	LOGI("Initializing engine");
 	Engine &engine = Engine::get();
-	engine.init(state);
+	engine.setAppState(state);
+	engine.setApplicationInitCallback(initAppParams);
 
-
-
+	//android_app_pre_exec_cmd(state, APP_CMD_CONFIG_CHANGED);
     // loop waiting for stuff to do.
 
 	//AAssetDir *asset = AAssetManager_openDir(mgr, "");;
 
-	Volume volume;
-	volume.parseMHD(File("","CT-knee.mhd"));
-	
+
+
+
     while (1) {
         // Read all pending events.
         int ident;
@@ -55,7 +68,7 @@ void android_main(struct android_app* state) {
         // If not animating, we will block forever waiting for events.
         // If animating, we loop until all events are read, then continue
         // to draw the next frame of animation.
-        while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
+        while ((ident=ALooper_pollAll(engine.m_animating ? 0 : -1, NULL, &events,
                 (void**)&source)) >= 0) {
 
             // Process this event.
@@ -65,9 +78,9 @@ void android_main(struct android_app* state) {
 
             // If a sensor has data, process it now.
             if (ident == LOOPER_ID_USER) {
-                if (engine.accelerometerSensor != NULL) {
+                if (engine.m_accelerometerSensor != NULL) {
                     ASensorEvent event;
-                    while (ASensorEventQueue_getEvents(engine.sensorEventQueue,&event, 1) > 0) {
+                    while (ASensorEventQueue_getEvents(engine.m_sensorEventQueue,&event, 1) > 0) {
                         //LOGI("accelerometer: x=%f y=%f z=%f",event.acceleration.x, event.acceleration.y,event.acceleration.z);
                     }
                 }
@@ -80,11 +93,11 @@ void android_main(struct android_app* state) {
             }
         }
 
-        if (engine.animating) {
+        if (engine.m_animating) {
             // Done with events; draw next animation frame.
-            engine.state.angle += .01f;
-            if (engine.state.angle > 1) {
-                engine.state.angle = 0;
+            engine.m_state.angle += .01f;
+            if (engine.m_state.angle > 1) {
+                engine.m_state.angle = 0;
             }
 
             // Drawing is throttled to the screen update rate, so there

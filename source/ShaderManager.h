@@ -2,11 +2,12 @@
 #define SHADERMANAGER_H
 
 #pragma once
-#include <GL/glew.h>
-#include <unordered_set>
 
 #include "Shader.h"
 #include "Common.h"
+#include <set>
+
+
 
 /**@brief A singleton class that manages the lifetime of ShaderProgam objects. 
 @details Each pair(vertex shader, fragment shader) is considered a unique ShaderProgram.Loading of shaders should be done 
@@ -32,9 +33,8 @@ private:
 
 
 private:
-	typedef std::unordered_set<Shader*> ShaderSet;
+	typedef std::set<Shader*> ShaderSet;
 	ShaderSet m_loadedShaders;
-
 	GLuint m_currProgramId; //returned from createProgram
 	//it is good practice to delete the shader after they have been linked
 	GLuint m_tempVertexShaderId;

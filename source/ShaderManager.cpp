@@ -1,7 +1,5 @@
 ﻿#include <algorithm>    // std::find_if
 #include "ShaderManager.h"
-#include <GL/glew.h>
-#include <unordered_set>
 
 using std::endl;
 using std::cout;
@@ -28,7 +26,7 @@ ShaderManager::~ShaderManager()
 
 Shader* ShaderManager::getShader(File &vertexShader, File &fragmentShader)
 {
-
+	glGetString(GL_VERSION); // if opengl is not initialized this will throw a seg fault
 	Shader *newShader = new Shader(vertexShader, fragmentShader);
 	ShaderSet::const_iterator it =
 		std::find_if(m_loadedShaders.begin(), m_loadedShaders.end(),
@@ -72,6 +70,10 @@ GLuint ShaderManager::createProgram(File &vertexShader, File &fragmentShader)
 	if (!success) {
 		glGetProgramInfoLog(m_currProgramId, sizeof(errorLog), NULL, errorLog);
 		LOGI("Invalid shader program: [%s,%s]\n %s\n", vertexShader.m_fileName.c_str(), fragmentShader.m_fileName.c_str(),errorLog);
+	}
+	else
+	{
+		LOGI("Successfully created shader program: [%s,%s]\n", vertexShader.m_fileName.c_str(), fragmentShader.m_fileName.c_str());
 	}
 
 	//cleanup

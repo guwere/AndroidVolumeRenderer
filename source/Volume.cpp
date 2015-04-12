@@ -14,6 +14,7 @@ void Volume::parseMHD(const std::string &folderPath, const std::string &filePath
 {
 	File file(folderPath, filePath);
 	parseMHD(file);
+	reverseEndianness();
 
 }
 void Volume::parseMHD(File &file)
@@ -78,21 +79,7 @@ void Volume::parseMHD(File &file)
 
 void Volume::parsePVM(File &file)
 {
-	string line;
-	getline(file.m_file, line);
-	LOGI("first line: %s\n", line);
-	getline(file.m_file, line);
-	LOGI("second line: %s\n", line);
-	getline(file.m_file, line);
-	LOGI("third line: %s\n", line);
-	getline(file.m_file, line);
-	LOGI("third line: %s\n", line);
-	getline(file.m_file, line);
-	LOGI("third line: %s\n", line);
-	getline(file.m_file, line);
-	LOGI("third line: %s\n", line);
-	getline(file.m_file, line);
-	LOGI("third line: %s\n", line);
+
 }
 
 // Reads in the raw binary data using properties copied in from header
@@ -122,7 +109,7 @@ void Volume::readRaw()
 			files.push_back(findFileData.cFileName);
 
 	
-#elif
+#else
 	struct stat status;
 	//LOGI("%s",directory.c_str());
 	stat(directory.c_str(), &status);
@@ -234,9 +221,9 @@ void Volume::generate()
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 
-	// Reverses endianness in copy
-	if (!m_littleEndian)
-		glPixelStoref(GL_UNPACK_SWAP_BYTES, true);
+	// Reverses endianness in copy; NOT AVAILABLE IN OPENGL ES
+	//if (!m_littleEndian)
+		//glPixelStoref(GL_UNPACK_SWAP_BYTES, true);
 
 	if (m_elementType == "MET_UCHAR")
 		glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, m_xRes, m_yRes, m_zRes, 0,  GL_RED, GL_UNSIGNED_BYTE, m_memblock3D);
@@ -247,7 +234,7 @@ void Volume::generate()
 	else if (m_elementType == "FLOAT")
 		glTexImage3D(GL_TEXTURE_3D, 0, GL_R32F, m_xRes, m_yRes, m_zRes, 0, GL_RED, GL_FLOAT, m_memblock3D);
 
-	glPixelStoref(GL_UNPACK_SWAP_BYTES, false);
+	//glPixelStoref(GL_UNPACK_SWAP_BYTES, false);
 
 	glBindTexture(GL_TEXTURE_3D, 0);
 
@@ -259,8 +246,8 @@ void Volume::advance()
 	if(m_timeSteps > 1)
 	{
 		glBindTexture(GL_TEXTURE_3D, m_tex);
-		if (!m_littleEndian)
-			glPixelStoref(GL_UNPACK_SWAP_BYTES, true);
+		//if (!m_littleEndian)
+			//glPixelStoref(GL_UNPACK_SWAP_BYTES, true);
 
 		if (m_elementType == "MET_UCHAR")
 			glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, m_xRes, m_yRes, m_zRes, 0,  GL_RED, GL_UNSIGNED_BYTE, m_memblock3D + (m_textureSize * m_currTimeStep));
@@ -271,7 +258,7 @@ void Volume::advance()
 		else if (m_elementType == "FLOAT")
 			glTexImage3D(GL_TEXTURE_3D, 0, GL_R32F, m_xRes, m_yRes, m_zRes, 0, GL_RED, GL_FLOAT, m_memblock3D + (m_textureSize * m_currTimeStep));
 
-		glPixelStoref(GL_UNPACK_SWAP_BYTES, false);
+		//glPixelStoref(GL_UNPACK_SWAP_BYTES, false);
 
 		glBindTexture(GL_TEXTURE_3D, 0);
 

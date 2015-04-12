@@ -19,6 +19,8 @@
 #
 #----------------------------------------------------------------------------------
 LOCAL_PATH := $(subst //,/,$(call my-dir))
+LOCAL_CPPFLAGS  := -std=c++11
+
 include $(CLEAR_VARS)
 LOCAL_MODULE := AndroidVolumeRenderer
 

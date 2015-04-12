@@ -9,6 +9,7 @@ Renderer::Renderer(float screenWidth, float screenHeight)
 	m_clearMask = CLEAR_MASK;
 	m_camera.Position = INITIAL_CAMERA_POS;
 	m_camera.projection = glm::perspective(CAMERA_FOV, screenWidth / screenHeight, NEAR_CLIP_PLANE, FAR_CLIP_PLANE);
+
 }
 
 

@@ -31,7 +31,6 @@
     <ClCompile Include="..\source\Engine.cpp" />
     <ClCompile Include="..\source\HelperFunctions.cpp" />
     <ClCompile Include="..\source\Mesh.cpp" />
-    <ClCompile Include="..\source\Model.cpp" />
     <ClCompile Include="..\source\Renderer.cpp" />
     <ClCompile Include="..\source\Shader.cpp" />
     <ClCompile Include="..\source\ShaderManager.cpp" />
@@ -49,7 +48,6 @@
     <ClInclude Include="..\source\Engine.h" />
     <ClInclude Include="..\source\HelperFunctions.h" />
     <ClInclude Include="..\source\Mesh.h" />
-    <ClInclude Include="..\source\Model.h" />
     <ClInclude Include="..\source\Renderer.h" />
     <ClInclude Include="..\source\Shader.h" />
     <ClInclude Include="..\source\ShaderManager.h" />
@@ -72,6 +70,8 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Tegra-Android'">
     <AndroidTargetAPI>android-19</AndroidTargetAPI>
     <AndroidMinAPI>android-19</AndroidMinAPI>
+    <AndroidStlType>stlport_static</AndroidStlType>
+    <NdkToolchainVersion>Default</NdkToolchainVersion>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
     <AndroidTargetAPI>android-19</AndroidTargetAPI>
@@ -88,11 +88,15 @@
     <ClCompile>
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <PreprocessorDefinitions>DISABLE_IMPORTGL;ANDROID_APP</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\3rdparty\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\glm;$(SolutionDir)\3rdparty\tinydir;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>android;EGL;GLESv1_CM</AdditionalDependencies>
+      <AdditionalDependencies>android;EGL;GLESv3;stdc++</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
     <ClCompile>

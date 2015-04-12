@@ -44,9 +44,6 @@
     <ClCompile Include="..\source\Mesh.cpp">
       <Filter>jni</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Model.cpp">
-      <Filter>jni</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Renderer.cpp">
       <Filter>jni</Filter>
     </ClCompile>
@@ -95,9 +92,6 @@
       <Filter>jni</Filter>
     </ClInclude>
     <ClInclude Include="..\source\Mesh.h">
-      <Filter>jni</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Model.h">
       <Filter>jni</Filter>
     </ClInclude>
     <ClInclude Include="..\source\Renderer.h">

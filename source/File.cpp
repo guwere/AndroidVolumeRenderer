@@ -39,7 +39,10 @@ void File::open(const std::string &folderPath, const std::string &fileName)
 
 void File::open()
 {
-	m_file = ifstream(string(m_folderPath + m_fileName).c_str());
+
+	//Note: there is a bug in the gcc compiler 4.6 so we cannot the assignment operator on ifstream objects
+	//workaround is to use the open function
+	m_file.open(string(m_folderPath + m_fileName).c_str());
 	if (!m_file.is_open())
 	{
 		LOGI("Unable to open file %s%s\n", m_folderPath.c_str(), m_fileName.c_str());

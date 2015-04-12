@@ -19,26 +19,25 @@ struct Engine {
 public:
 	static Engine& get();
 
-    struct android_app* mApp;
+    struct android_app* m_App;
 
-    ASensorManager* sensorManager;
-    const ASensor* accelerometerSensor;
-    ASensorEventQueue* sensorEventQueue;
+    ASensorManager* m_sensorManager;
+    const ASensor* m_accelerometerSensor;
+    ASensorEventQueue* m_sensorEventQueue;
 
-    int animating;
-    EGLDisplay display;
-    EGLSurface surface;
-    EGLContext context;
-    int32_t width;
-    int32_t height;
-    struct saved_state state;
+    int m_animating;
+    EGLDisplay m_display;
+    EGLSurface m_surface;
+    EGLContext m_context;
+    int32_t m_width;
+    int32_t m_height;
+    struct saved_state m_state;
+	void (*applicationInitCallback)(void);
 
 public:
-	/**
-	 * Initialize an EGL context for the current display.
-	 */
-	int initDisplay();
-
+	void setAppState(android_app *state);
+	void setApplicationInitCallback(void (*applicationInitCallback)(void));
+	int  initEGL();
 	/**
 	 * Just the current frame in the display.
 	 */
@@ -48,9 +47,11 @@ public:
 	 * Tear down the EGL context currently associated with the display.
 	 */
 	void termDisplay();
-	void init(android_app *state);
-	void printInfoPath(android_app* state);
+	void printInfoPath();
+	void printGLContextInfo();
 	void setAssetManager();
+private:
+	Engine();
 };
 
 

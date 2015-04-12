@@ -9,13 +9,15 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <cmath>
 
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 
-#ifdef ANDROID
+#ifdef ANDROID_NDK
 //BEGIN_INCLUDE(all)
 #include <jni.h>
 #include <errno.h>
@@ -43,7 +45,7 @@
 #pragma region EnumsANDMisc
 enum Direction{FORWARD, BACKWARD, LEFT, RIGHT, NO_DIRECTION/*FORWARD_LEFT, FORWARD_RIGHT, BACKWARD_LEFT, BACKWARD_RIGHT*/};
 
-#ifdef ANDROID
+#ifdef ANDROID_NDK
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
 #elif WIN32
@@ -52,7 +54,7 @@ enum Direction{FORWARD, BACKWARD, LEFT, RIGHT, NO_DIRECTION/*FORWARD_LEFT, FORWA
 #pragma endregion
 
 #pragma region ApplicationParameters
-#ifdef ANDROID
+#ifdef ANDROID_NDK
 
 #elif WIN32
 
@@ -77,7 +79,7 @@ const float RAY_STEP_SIZE = 0.005f;
 const float GRADIENT_STEP_SIZE = 0.005f;
 const glm::vec3 LIGHT_POS = glm::vec3(-2.0f, 2.0f, 2.0f);
 
-const std::string VOLUME_NAME = "CTknee.mhd";
+const std::string VOLUME_NAME = "CT-Knee.mhd";
 //const std::string VOLUME_NAME = "backpack8.mhd";
 //const std::string VOLUME_NAME = "vertebra8.mhd";
 //const std::string VOLUME_NAME = "supine8.mhd";
