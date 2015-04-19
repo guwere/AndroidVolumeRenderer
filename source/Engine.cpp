@@ -1,36 +1,32 @@
 #include "Engine.h"
 #include "unistd.h"
 
-Engine& Engine::get()
-{
-	static Engine singleton;
-	return singleton;
-}
+
 Engine::Engine()
+	:Renderer()
 {
 	//set all member variables to 0
 	memset(this, 0, sizeof(Engine));
+
 }
 
 
-void Engine::setAppState(android_app *state)
+void Engine::init(android_app *state, void (*applicationInitCallback)(void))
 {
 	m_App = state;
+	m_applicationInitCallback = applicationInitCallback;
 	m_App->userData = this;
 	m_App->onAppCmd = engine_handle_cmd;
 	m_App->onInputEvent = engine_handle_input;
-	setAssetManager();
-	printInfoPath();
-}
 
-void Engine::setApplicationInitCallback(void (*applicationInitCallback)(void))
-{
-	this->applicationInitCallback = applicationInitCallback;
+
 }
 
 
 int Engine::initEGL()
 {
+	LOGI("Initializing EGL Context\n");
+
 	// Prepare to monitor accelerometer
 	m_sensorManager = ASensorManager_getInstance();
 	m_accelerometerSensor = ASensorManager_getDefaultSensor(m_sensorManager, ASENSOR_TYPE_ACCELEROMETER);
@@ -40,6 +36,15 @@ int Engine::initEGL()
 		// We are starting with a previous saved state; restore from it.
 		this->m_state = *(struct saved_state*)m_App->savedState;
 	}
+
+	setAssetManager();
+	printInfoPath();
+
+	if(EGL_BAD_DISPLAY == eglGetError())
+	{
+		LOGI("EGLDisplay argument does not name a valid EGL display connection");
+	}
+
 
 	// initialize OpenGL ES and EGL
 		EGLint w, h, dummy, format;
@@ -66,7 +71,6 @@ int Engine::initEGL()
 
     EGLint num_configs;
     eglChooseConfig( display, attribs, &config, 1, &num_configs );
-
     if( !num_configs )
     {
         //Fall back to 16bit depth buffer
@@ -76,7 +80,6 @@ int Engine::initEGL()
                 EGL_RED_SIZE, 8, EGL_DEPTH_SIZE, 16, EGL_NONE };
         eglChooseConfig( display, attribs, &config, 1, &num_configs );
     }
-
     if( !num_configs )
     {
         LOGI( "Unable to retrieve EGL config" );
@@ -95,7 +98,7 @@ int Engine::initEGL()
 	surface = eglCreateWindowSurface(display, config, m_App->window, NULL);
 	ANativeWindow_setBuffersGeometry(m_App->window, 0, 0, format);
 
-	const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, //Request opengl ES3.0
+	const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, //Request opengl ES3.0
 		EGL_NONE };
 	context = eglCreateContext(display, config, NULL, context_attribs);
 
@@ -110,9 +113,12 @@ int Engine::initEGL()
 	this->m_display = display;
 	this->m_context = context;
 	this->m_surface = surface;
-	this->m_width = w;
-	this->m_height = h;
+	this->m_screenWidth = w;
+	this->m_screenHeight = h;
 	this->m_state.angle = 0;
+
+
+	m_camera.projection = glm::perspective(CAMERA_FOV, (float)m_screenWidth / (float)m_screenHeight, NEAR_CLIP_PLANE, FAR_CLIP_PLANE);
 
 	// Initialize GL state.
 	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -123,20 +129,6 @@ int Engine::initEGL()
 	return 0;
 }
 
-void Engine::drawFrame()
-{
-	if (m_display == NULL) {
-		// No display.
-		return;
-	}
-
-	// Just fill the screen with a color.
-	glClearColor(((float)m_state.x)/m_width, m_state.angle,
-		((float)m_state.y)/m_height, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	eglSwapBuffers(m_display, m_surface);
-}
 
 void Engine::termDisplay()
 {
@@ -287,9 +279,9 @@ void engine_handle_cmd(struct android_app* app, int32_t cmd)
 		if (engine->m_App->window != NULL) {
 			engine->initEGL();
 			engine->printGLContextInfo();
-			engine->applicationInitCallback();
-			engine->drawFrame();
+			engine->m_applicationInitCallback();
 		}
+		engine->m_animating = 1;
 		break;
 	case APP_CMD_TERM_WINDOW:
 		// The window is being hidden or closed, clean it up.
@@ -314,9 +306,23 @@ void engine_handle_cmd(struct android_app* app, int32_t cmd)
 		}
 		// Also stop animating.
 		engine->m_animating = 0;
-		engine->drawFrame();
+		break;
+	case APP_CMD_START:
+
+		break;
+	case APP_CMD_INPUT_CHANGED:
+	case APP_CMD_WINDOW_RESIZED:
+	case APP_CMD_WINDOW_REDRAW_NEEDED:
+	case APP_CMD_CONTENT_RECT_CHANGED:
+	case APP_CMD_CONFIG_CHANGED:
+	case APP_CMD_LOW_MEMORY:
+	case APP_CMD_RESUME:
+	case APP_CMD_PAUSE:
+	case APP_CMD_STOP:
+	case APP_CMD_DESTROY:
 		break;
 	}
+
 }
 
 int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
@@ -329,4 +335,65 @@ int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 		return 1;
 	}
 	return 0;
+}
+
+
+void Engine::mainLoop()
+{
+	while (1) {
+		// Read all pending events.
+		int ident;
+		int events;
+		struct android_poll_source* source;
+
+		// If not animating, we will block forever waiting for events.
+		// If animating, we loop until all events are read, then continue
+		// to draw the next frame of animation.
+		while ((ident=ALooper_pollAll(m_animating ? 0 : -1, NULL, &events,(void**)&source)) >= 0) 
+		{
+
+			// Process this event.
+			if (source != NULL)
+			{
+				source->process(m_App, source);
+			}
+
+			// If a sensor has data, process it now.
+			if (ident == LOOPER_ID_USER)
+			{
+				if (m_accelerometerSensor != NULL)
+				{
+					ASensorEvent event;
+					while (ASensorEventQueue_getEvents(m_sensorEventQueue,&event, 1) > 0) {
+						//LOGI("accelerometer: x=%f y=%f z=%f",event.acceleration.x, event.acceleration.y,event.acceleration.z);
+					}
+				}
+			}
+
+			// Check if we are exiting.
+			if (m_App->destroyRequested != 0) {
+				termDisplay();
+				return;
+			}
+
+		}
+
+		if(m_animating)
+		{
+			glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
+			glClear((GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+			updateCallback();
+			eglSwapBuffers(m_display, m_surface);
+
+		}
+
+
+	}
+
+}
+
+
+void Engine::handleInput()
+{
+
 }

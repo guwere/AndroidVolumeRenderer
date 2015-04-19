@@ -1,4 +1,3 @@
-#pragma once
 #include "Camera.h"
 
 #include <vector>
@@ -6,13 +5,27 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-Camera::Camera(const glm::vec3 &position/* = glm::vec3(0.0f, 0.0f, 0.0f)*/,
-				const glm::vec3 &up /*= glm::vec3(0.0f, 1.0f, 0.0f)*/, 
-				GLfloat yaw /*= -90.0f*/
-				, GLfloat pitch /*= 0.0f*/)
-	: Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(5.0f), MouseSensitivity(0.25f), Zoom(45.0f),
+Camera::Camera()
+{
+	Front = glm::vec3(0.0f, 0.0f, -1.0f);
+	Position = INITIAL_CAMERA_POS;
+	WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	MovementSpeed = MOUSE_MOV_SPEED;
+	MouseSensitivity = MOUSE_SENSITIVITY;
+	Zoom = CAMERA_ZOOM;
+	Yaw = -90.0f;
+	Pitch = 0.0f;
+	this->updateCameraVectors();
+
+}
+Camera::Camera(const glm::vec3 &position,
+				const glm::vec3 &up, 
+				GLfloat yaw
+				, GLfloat pitch)
+	: Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(MOUSE_MOV_SPEED), MouseSensitivity(MOUSE_SENSITIVITY), Zoom(CAMERA_ZOOM),
 	Position(position), WorldUp(up), Yaw(yaw), Pitch(pitch)
 {
+
 	this->updateCameraVectors();
 }
 
@@ -23,8 +36,23 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat up
 	this->updateCameraVectors();
 }
 
+
+
+void Camera::setPosition(const glm::vec3 &position)
+{
+	Position = position;
+	this->updateCameraVectors();
+
+}
+
+glm::vec3 Camera::getPosition() const
+{
+	return Position;
+}
+
 glm::mat4 Camera::GetViewMatrix() const
 {
+	//glm::mat4 view = glm::lookAt(glm::vec3(0,2, -5), glm::vec3(0,0,0), glm::vec3(0,1,0));
 	glm::mat4 view = glm::lookAt(this->Position, this->Position + this->Front, this->WorldUp);
 	return view;
 }
@@ -89,4 +117,5 @@ void Camera::updateCameraVectors()
 glm::mat4 Camera::GetProjectionMatrix() const
 {
 	return projection;
+	//return glm::perspective(CAMERA_FOV, (float)1920 / (float)1200, NEAR_CLIP_PLANE, FAR_CLIP_PLANE);
 }

@@ -213,14 +213,14 @@ enum {
     /**
      * Command from main thread: the AInputQueue has changed.  Upon processing
      * this command, android_app->inputQueue will be updated to the new queue
-     * (or NULL).
+     * (or NULL).0
      */
     APP_CMD_INPUT_CHANGED,
 
     /**
      * Command from main thread: a new ANativeWindow is ready for use.  Upon
      * receiving this command, android_app->window will contain the new window
-     * surface.
+     * surface.1
      */
     APP_CMD_INIT_WINDOW,
 
@@ -228,60 +228,60 @@ enum {
      * Command from main thread: the existing ANativeWindow needs to be
      * terminated.  Upon receiving this command, android_app->window still
      * contains the existing window; after calling android_app_exec_cmd
-     * it will be set to NULL.
+     * it will be set to NULL.2
      */
     APP_CMD_TERM_WINDOW,
 
     /**
      * Command from main thread: the current ANativeWindow has been resized.
-     * Please redraw with its new size.
+     * Please redraw with its new size.3
      */
     APP_CMD_WINDOW_RESIZED,
 
     /**
      * Command from main thread: the system needs that the current ANativeWindow
      * be redrawn.  You should redraw the window before handing this to
-     * android_app_exec_cmd() in order to avoid transient drawing glitches.
+     * android_app_exec_cmd() in order to avoid transient drawing glitches.4
      */
     APP_CMD_WINDOW_REDRAW_NEEDED,
 
     /**
      * Command from main thread: the content area of the window has changed,
      * such as from the soft input window being shown or hidden.  You can
-     * find the new content rect in android_app::contentRect.
+     * find the new content rect in android_app::contentRect.5
      */
     APP_CMD_CONTENT_RECT_CHANGED,
 
     /**
      * Command from main thread: the app's activity window has gained
-     * input focus.
+     * input focus.6
      */
     APP_CMD_GAINED_FOCUS,
 
     /**
      * Command from main thread: the app's activity window has lost
-     * input focus.
+     * input focus.7
      */
     APP_CMD_LOST_FOCUS,
 
     /**
-     * Command from main thread: the current device configuration has changed.
+     * Command from main thread: the current device configuration has changed.8
      */
     APP_CMD_CONFIG_CHANGED,
 
     /**
      * Command from main thread: the system is running low on memory.
-     * Try to reduce your memory use.
+     * Try to reduce your memory use.9
      */
     APP_CMD_LOW_MEMORY,
 
     /**
-     * Command from main thread: the app's activity has been started.
+     * Command from main thread: the app's activity has been started.10
      */
     APP_CMD_START,
 
     /**
-     * Command from main thread: the app's activity has been resumed.
+     * Command from main thread: the app's activity has been resumed.11
      */
     APP_CMD_RESUME,
 
@@ -290,23 +290,23 @@ enum {
      * for itself, to restore from later if needed.  If you have saved state,
      * allocate it with malloc and place it in android_app.savedState with
      * the size in android_app.savedStateSize.  The will be freed for you
-     * later.
+     * later.12
      */
     APP_CMD_SAVE_STATE,
 
     /**
-     * Command from main thread: the app's activity has been paused.
+     * Command from main thread: the app's activity has been paused.13
      */
     APP_CMD_PAUSE,
 
     /**
-     * Command from main thread: the app's activity has been stopped.
+     * Command from main thread: the app's activity has been stopped.14
      */
     APP_CMD_STOP,
 
     /**
      * Command from main thread: the app's activity is being destroyed,
-     * and waiting for the app thread to clean up and exit before proceeding.
+     * and waiting for the app thread to clean up and exit before proceeding.15
      */
     APP_CMD_DESTROY,
 };

@@ -12,7 +12,7 @@ class GLFWRenderer
 public:
 	GLFWwindow* window;
 	GLFWRenderer();
-	virtual void mainLoop(void(*updateCallback)(void));
+	virtual void mainLoop();
 	virtual void handleInput();
 	static GLfloat lastX, lastY;
 	static bool keys[1024];

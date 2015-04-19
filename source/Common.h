@@ -64,26 +64,29 @@ const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 800;
 #endif
 
-const std::string APP_NAME = "VolumeRenderer";
-const glm::vec4 CLEAR_COLOR = glm::vec4(0.46f, 0.53f, 0.6f, 1.0f);
-const GLbitfield CLEAR_MASK = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
-const glm::vec3 INITIAL_CAMERA_POS = glm::vec3(0.0f, 1.0f, 3.0f);
-const float CAMERA_FOV = 45.0f;
-const float NEAR_CLIP_PLANE = 0.001f;
-const float FAR_CLIP_PLANE = 1000.0f;
+#define APP_NAME std::string("VolumeRenderer")
+#define CLEAR_COLOR glm::vec4(0.46f, 0.53f, 0.6f, 1.0f)
+#define CLEAR_MASK (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+#define INITIAL_CAMERA_POS glm::vec3(0.0f, 0.5f, 5.0f)
+#define MOUSE_MOV_SPEED 5.0f
+#define MOUSE_SENSITIVITY 0.25f
+#define CAMERA_ZOOM 45.0f
+#define CAMERA_FOV  45.0f
+#define NEAR_CLIP_PLANE 0.001f
+#define FAR_CLIP_PLANE 1000.0f
 //const glm::mat4 PROJECTION = glm::perspective(45.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.0001f, 1000.0f);
 //const glm::mat4 projection = glm::ortho(SCREEN_WIDTH/2, SCREEN_WIDTH, SCREEN_HEIGHT/2, SCREEN_HEIGHT);
-const float MESH_SCALE = 4.0f;
-const int MAX_RAY_STEPS = 1000;
-const float RAY_STEP_SIZE = 0.005f;
-const float GRADIENT_STEP_SIZE = 0.005f;
-const glm::vec3 LIGHT_POS = glm::vec3(-2.0f, 2.0f, 2.0f);
+#define MESH_SCALE 2.0f
+#define MAX_RAY_STEPS 1000
+#define RAY_STEP_SIZE 0.005f
+#define GRADIENT_STEP_SIZE 0.005f
+#define LIGHT_POS glm::vec3(-2.0f, 2.0f, 2.0f)
 
-const std::string VOLUME_NAME = "CT-Knee.mhd";
+#define VOLUME_NAME std::string("CT-Knee.mhd")
 //const std::string VOLUME_NAME = "backpack8.mhd";
 //const std::string VOLUME_NAME = "vertebra8.mhd";
 //const std::string VOLUME_NAME = "supine8.mhd";
-const std::string TRANSFER_FN_NAME = "CT-Knee.tfi";
+#define TRANSFER_FN_NAME std::string("CT-Knee.tfi")
 //const std::string TRANSFER_FN_NAME = "backpack8.tfi";
 //const std::string TRANSFER_FN_NAME = "vertebra8.tfi";
 //const std::string TRANSFER_FN_NAME = "supine8.tfi";

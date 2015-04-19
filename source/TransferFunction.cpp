@@ -13,7 +13,9 @@ void TransferFunction::parseVoreenXML(File &file)
 	tinyxml2::XMLError r = doc.Parse(file.asString().c_str());
 
 	if (r != tinyxml2::XML_NO_ERROR)
-		std::cout << "failed to open file" << std::endl;
+		LOGI("failed to open transfer function file:%s\n", file.m_fileName.c_str());
+	else
+		LOGI("Successfully opened transfer function file:%s\n", file.m_fileName.c_str());
 
 	tinyxml2::XMLElement* transFuncIntensity = doc.FirstChildElement("VoreenData")->FirstChildElement("TransFuncIntensity");
 

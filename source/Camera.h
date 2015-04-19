@@ -11,18 +11,19 @@ Vectors and Matrices for use in OpenGL
 class Camera
 {
 public:
-    /** Constructor with vectors
-	*/
-	Camera(const glm::vec3 &position = glm::vec3(0.0f, 0.0f, 0.0f), 
-		const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f),
-		GLfloat yaw = -90.0f, 
-		GLfloat pitch = 0.0f);
+	Camera();
+	Camera(const glm::vec3 &position, 
+		const glm::vec3 &up,
+		GLfloat yaw, 
+		GLfloat pitch);
     
 	/** Constructor with scalar values */
 	Camera(GLfloat posX, GLfloat posY, GLfloat posZ,
 		GLfloat upX, GLfloat upY, GLfloat upZ,
 		GLfloat yaw, GLfloat pitch);
-    
+
+    void setPosition(const glm::vec3 &position);
+	glm::vec3 getPosition() const;
     /** Returns the view matrix calculated using Eular Angles and the LookAt Matrix */
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetProjectionMatrix() const;
@@ -47,8 +48,7 @@ private:
 public:
 	glm::mat4 projection;
 
-    // Camera Attributes
-    glm::vec3 Position;
+
 	//direction vectors
 	glm::vec3 Front;
     glm::vec3 Up;
@@ -63,5 +63,6 @@ public:
     GLfloat Zoom;
 
 private:
-
+	// Camera Attributes
+	glm::vec3 Position;
 };

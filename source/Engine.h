@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Common.h"
+#include "Renderer.h"
 /**
  * Our saved state data.
  */
@@ -15,10 +16,10 @@ struct saved_state {
 /**
  * Shared state for our app.
  */
-struct Engine {
+struct Engine
+: Renderer{
 public:
-	static Engine& get();
-
+	Engine();
     struct android_app* m_App;
 
     ASensorManager* m_sensorManager;
@@ -29,19 +30,16 @@ public:
     EGLDisplay m_display;
     EGLSurface m_surface;
     EGLContext m_context;
-    int32_t m_width;
-    int32_t m_height;
+
     struct saved_state m_state;
-	void (*applicationInitCallback)(void);
+	void (*m_applicationInitCallback)(void);
 
 public:
-	void setAppState(android_app *state);
-	void setApplicationInitCallback(void (*applicationInitCallback)(void));
+	void init(android_app *state,void (*applicationInitCallback)(void));
+
 	int  initEGL();
-	/**
-	 * Just the current frame in the display.
-	 */
-	void drawFrame();
+	virtual void mainLoop();
+	virtual void handleInput();
 
 	/**
 	 * Tear down the EGL context currently associated with the display.
@@ -51,7 +49,6 @@ public:
 	void printGLContextInfo();
 	void setAssetManager();
 private:
-	Engine();
 };
 
 

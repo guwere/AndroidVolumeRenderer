@@ -45,7 +45,7 @@ GLFWRenderer::GLFWRenderer()
 
 }
 
-void GLFWRenderer::mainLoop(void(*updateCallback)(void))
+void GLFWRenderer::mainLoop()
 {
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);

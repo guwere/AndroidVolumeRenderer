@@ -120,10 +120,10 @@ void main()
 
 		if (abs(position.x) > 1.0f || abs(position.y) > 1.0f || abs(position.z) > 1.0f || absorption >= 1.0f)
 		{
-			if (absorption < 1.0f)
-				finalColor += vec4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0f - absorption);
+			// if (absorption < 1.0f)
+			// 	finalColor += vec4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0f - absorption);
 
-			break;
+			 break;
 		}
 	}
 

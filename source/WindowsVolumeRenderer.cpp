@@ -29,7 +29,7 @@ void updateCallback();
 int main(int argc, char* argv[])
 {
 
-	//basicShader = ShaderManager::get().getShader(File("","basicVS.glsl"), File("","basicFS.glsl"));
+	basicShader = ShaderManager::get().getShader(File("","basicVS.glsl"), File("","basicFS.glsl"));
 	raycastVRShader = ShaderManager::get().getShader(File("", "raycastVRShaderVS.glsl"), File("", "raycastVRShaderFS.glsl"));
 	mesh.generateCube(raycastVRShader);
 	mesh.transform.scaleUniform(MESH_SCALE);
@@ -44,7 +44,9 @@ int main(int argc, char* argv[])
 	transferFn.parseVoreenXML(File("",TRANSFER_FN_NAME));
 	transferFn.generate();
 	
-	renderer.mainLoop(updateCallback);
+
+	renderer.setUpdateCallback(updateCallback);
+	renderer.mainLoop();
 
 
 	return 0;
@@ -56,8 +58,8 @@ void updateCallback()
 	//glm::mat4 MVP = camera.GetProjectionMatrix() * camera.GetViewMatrix() * mesh.transform.getMatrix();
 	//glm::vec3 cameraPos = glm::vec3(camera.GetViewMatrix()[3]);
 	/* Render here */
-	//renderer.renderBasic(basicShader, mesh, camera.GetProjectionMatrix() * camera.GetViewMatrix() * mesh.transform.getMatrix());
-	renderer.renderRaycastVR(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
+	renderer.renderBasic(basicShader, mesh, renderer.m_camera.GetProjectionMatrix() * renderer.m_camera.GetViewMatrix() * mesh.transform.getMatrix());
+	//renderer.renderRaycastVR(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
 
 
 }

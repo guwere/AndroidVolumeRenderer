@@ -119,7 +119,7 @@ void android_app_pre_exec_cmd(struct android_app* android_app, int8_t cmd) {
 
         case APP_CMD_RESUME:
         case APP_CMD_START:
-        case APP_CMD_PAUSE:
+		case APP_CMD_PAUSE:
         case APP_CMD_STOP:
             LOGV("activityState=%d\n", cmd);
             pthread_mutex_lock(&android_app->mutex);
