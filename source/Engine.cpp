@@ -1,12 +1,13 @@
 #include "Engine.h"
 #include "unistd.h"
+#include "Timer.h"
+#include "perfMonitor.h"
 
 
 Engine::Engine()
 	:Renderer()
 {
-	//set all member variables to 0
-	memset(this, 0, sizeof(Engine));
+
 
 }
 
@@ -328,10 +329,19 @@ void engine_handle_cmd(struct android_app* app, int32_t cmd)
 int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 {
 	Engine* engine = (Engine*)app->userData;
-	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-		engine->m_animating = 1;
-		engine->m_state.x = AMotionEvent_getX(event, 0);
-		engine->m_state.y = AMotionEvent_getY(event, 0);
+	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
+	{
+		int32_t action = AMOTION_EVENT_ACTION_MASK & AMotionEvent_getAction((const AInputEvent*)event);
+		if (action == AMOTION_EVENT_ACTION_DOWN)
+		{
+			engine->m_state.x = AMotionEvent_getX(event, 0);
+			engine->m_state.y = AMotionEvent_getY(event, 0);
+			engine->m_screenPressed = true;
+		}
+		else if (action == AMOTION_EVENT_ACTION_UP)
+		{
+			engine->m_screenPressed = false;
+		}
 		return 1;
 	}
 	return 0;
@@ -346,6 +356,9 @@ void Engine::mainLoop()
 		int events;
 		struct android_poll_source* source;
 
+		ndk_helper::PerfMonitor timer;
+
+		Timer::get().updateInterval();
 		// If not animating, we will block forever waiting for events.
 		// If animating, we loop until all events are read, then continue
 		// to draw the next frame of animation.
@@ -378,10 +391,23 @@ void Engine::mainLoop()
 
 		}
 
+		if(m_screenPressed)
+		{
+			float deltaTime = Timer::get().getLastInterval();
+			GLfloat xoffset = m_state.x - m_screenWidth * 0.5;
+			GLfloat yoffset = m_state.y - m_screenHeight * 0.5;
+			m_camera.ProcessMouseMovement(xoffset * deltaTime * 0.2f, -yoffset * deltaTime * 0.2f);
+			float fps;
+			timer.Update(fps);
+			LOGI("Framerate: %dd\n", fps);
+			LOGI("Time elapsed: %d\n", timer.GetCurrentTime());
+		}
+
 		if(m_animating)
 		{
-			glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
-			glClear((GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+			//glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
+			glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
+			glClear(m_clearMask);
 			updateCallback();
 			eglSwapBuffers(m_display, m_surface);
 

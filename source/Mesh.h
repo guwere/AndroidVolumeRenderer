@@ -21,6 +21,12 @@ struct Vertex
 
 };
 
+struct Edge
+{
+	Edge(){};
+	Edge(unsigned int point1, unsigned int point2);
+	unsigned int p1, p2;
+};
 
 
 /**@brief Refer to one of the fragment shaders to see the layout of the material structure. 
@@ -70,6 +76,7 @@ public:
 public:
 	SQTTransform transform;
 	std::vector<Vertex> m_Vertices;
+	std::vector<Edge> m_Edges;
 	std::vector<GLuint> m_Indices;
 	Material m_Material;
 

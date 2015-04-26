@@ -31,6 +31,7 @@
     <ClCompile Include="..\source\Engine.cpp" />
     <ClCompile Include="..\source\HelperFunctions.cpp" />
     <ClCompile Include="..\source\Mesh.cpp" />
+    <ClCompile Include="..\source\perfMonitor.cpp" />
     <ClCompile Include="..\source\Renderer.cpp" />
     <ClCompile Include="..\source\Shader.cpp" />
     <ClCompile Include="..\source\ShaderManager.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="..\source\Engine.h" />
     <ClInclude Include="..\source\HelperFunctions.h" />
     <ClInclude Include="..\source\Mesh.h" />
+    <ClInclude Include="..\source\perfMonitor.h" />
     <ClInclude Include="..\source\Renderer.h" />
     <ClInclude Include="..\source\Shader.h" />
     <ClInclude Include="..\source\ShaderManager.h" />
@@ -88,7 +90,8 @@
     <ClCompile>
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <PreprocessorDefinitions>DISABLE_IMPORTGL;ANDROID_APP</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\glm2;$(SolutionDir)\3rdparty\tinydir;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\glm2;$(SolutionDir)\3rdparty\octree;$(SolutionDir)\3rdparty\tinydir;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalDependencies>android;EGL;GLESv3;stdc++</AdditionalDependencies>
@@ -97,6 +100,10 @@
       <Command>
       </Command>
     </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
     <ClCompile>

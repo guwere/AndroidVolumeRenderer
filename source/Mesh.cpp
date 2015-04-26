@@ -173,6 +173,22 @@ void Mesh::generateCube(Shader *shader)
 
 	m_Indices = vector<GLuint>(cube_elements, &cube_elements[0] + sizeof(cube_elements) / sizeof(GLushort) );
 
+	m_Edges.resize(12);
+	m_Edges[0] = Edge(0,1);
+	m_Edges[1] = Edge(1,2);
+	m_Edges[2] = Edge(2,3);
+	m_Edges[3] = Edge(3,0);
+
+	m_Edges[4] = Edge(0,4);
+	m_Edges[5] = Edge(1,5);
+	m_Edges[6] = Edge(4,5);
+	m_Edges[7] = Edge(4,7);
+
+	m_Edges[8] = Edge(5,6);
+	m_Edges[9] = Edge(6,7);
+	m_Edges[10] = Edge(3,7);
+	m_Edges[11] = Edge(2,6);
+
 	//the size of the dimensions of the pushed cube is 2; normalized between [0,1] range to match tex coords
 	//for(int i = 0; i < m_Vertices.size(); ++i)
 	//{
@@ -208,3 +224,8 @@ void Mesh::generatePlane(Shader *shader)
 	createVAO(shader);
 }
 
+Edge::Edge(unsigned int point1, unsigned int point2)
+	:p1(point1), p2(point2)
+{
+
+}

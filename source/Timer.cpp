@@ -21,7 +21,10 @@ double Timer::getLastInterval() const
 {
 	return m_lastInterval;
 }
-#define MICROSEC_TO_SEC 1.0f/1000000.0f;
+
+#define MICROSEC_TO_SEC 1.0f/1000000.0f
+#define SEC_TO_MICROSEC 1000000.0f
+
 void Timer::updateInterval()
 {
 	double currTime;
@@ -30,7 +33,7 @@ void Timer::updateInterval()
 #else
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
-	currTime = tv.tv_sec + tv.tv_usec * MICROSEC_TO_SEC;
+	currTime = MICROSEC_TO_SEC*(double)tv.tv_sec + (double)tv.tv_usec;
 #endif
 	m_lastInterval = currTime - m_lastTime;
 	m_lastTime = currTime;
@@ -55,8 +58,10 @@ void Timer::reset()
 	m_lastTime = glfwGetTime();
 #else
 	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	m_lastTime = tv.tv_sec + tv.tv_usec * MICROSEC_TO_SEC;
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
+	settimeofday(&tv, NULL);
+	m_lastTime = 0;
 #endif
 	m_frameElapsed = 0;
 	m_FrameUpdates = 0;

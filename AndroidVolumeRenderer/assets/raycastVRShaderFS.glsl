@@ -106,8 +106,8 @@ void main()
 		color = vec4(texture(transferFunc, vec2(index, 0.0)));
 		opacity = color.w;
 
-		//normal = CalculateNormal(position);
-		//color = CalculateLighting(color, normal);
+		normal = CalculateNormal(position);
+		color = CalculateLighting(color, normal);
 
 		if ((absorption + opacity) > 1.0f)
 			finalColor += color*(1.0f - absorption);
@@ -120,8 +120,8 @@ void main()
 
 		if (abs(position.x) > 1.0f || abs(position.y) > 1.0f || abs(position.z) > 1.0f || absorption >= 1.0f)
 		{
-			// if (absorption < 1.0f)
-			// 	finalColor += vec4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0f - absorption);
+			  if (absorption < 1.0f)
+			  	finalColor += vec4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0f - absorption);
 
 			 break;
 		}

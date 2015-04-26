@@ -68,6 +68,9 @@
     <ClCompile Include="..\source\Camera.cpp">
       <Filter>jni</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\perfMonitor.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\android_native_app_glue.h">
@@ -113,6 +116,9 @@
       <Filter>jni</Filter>
     </ClInclude>
     <ClInclude Include="..\source\TransferFunction.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\perfMonitor.h">
       <Filter>jni</Filter>
     </ClInclude>
   </ItemGroup>

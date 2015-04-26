@@ -24,6 +24,9 @@
 #include "Engine.h"
 #include "TransferFunction.h"
 
+#include <octree.h>
+
+
 #include "android\asset_manager.h"
 
 #pragma region VolumeDeclarations 
@@ -40,6 +43,12 @@ void updateCallback();
 //everything that must access the opengl state must come after the window has been initialized which come as an event in the command queue
 void initAppParams()
 {
+
+	Octree<double> o(8); /* Create 4096x4096x4096 octree containing doubles. */
+	o(7,7,7) = 3.1416;      /* Put pi in (1,2,3). */
+	double temp = o.at(7,7,7);
+	o.erase(1,2,3);         /* Erase that node. */
+
 	//Volume volume;
 	//volume.parseMHD(File("","CT-Knee.mhd"));
 	File vertexShader("","basicVS.glsl");

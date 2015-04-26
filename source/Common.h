@@ -63,11 +63,13 @@ const int OPENGL_VERSION_MINOR = 1;
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 800;
 #endif
-
+#define EPSILON 1e-6
 #define APP_NAME std::string("VolumeRenderer")
 #define CLEAR_COLOR glm::vec4(0.46f, 0.53f, 0.6f, 1.0f)
 #define CLEAR_MASK (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-#define INITIAL_CAMERA_POS glm::vec3(0.0f, 0.5f, 5.0f)
+#define DEBUG_VERTEX_SHADER_NAME "basicVS.glsl"
+#define DEBUG_FRAGMENT_SHADER_NAME "basicFS.glsl"
+#define INITIAL_CAMERA_POS glm::vec3(0.0f, 0.0f, 5.0f)
 #define MOUSE_MOV_SPEED 5.0f
 #define MOUSE_SENSITIVITY 0.25f
 #define CAMERA_ZOOM 45.0f

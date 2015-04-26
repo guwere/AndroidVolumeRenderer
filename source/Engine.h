@@ -30,8 +30,8 @@ public:
     EGLDisplay m_display;
     EGLSurface m_surface;
     EGLContext m_context;
-
-    struct saved_state m_state;
+	bool m_screenPressed;
+	struct saved_state m_state;
 	void (*m_applicationInitCallback)(void);
 
 public:
