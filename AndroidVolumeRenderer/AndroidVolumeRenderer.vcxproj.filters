@@ -121,6 +121,9 @@
     <ClInclude Include="..\source\perfMonitor.h">
       <Filter>jni</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\InitHeader.h">
+      <Filter>jni</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\source\Application.mk">

@@ -42,7 +42,6 @@ GLFWRenderer::GLFWRenderer()
 		LOGI("%s\n",glewGetErrorString(err));
 	}
 
-	loadDebugShader();
 
 }
 
@@ -94,5 +93,5 @@ void GLFWRenderer::handleInput()
 	if(keys[GLFW_KEY_D])
 		m_camera.ProcessKeyboard(RIGHT, deltaTime);
 	if(keys[GLFW_KEY_R])
-		constructIntersectRay = true;
+		m_constructIntersectRay = true;
 }

@@ -99,6 +99,9 @@
     <ClInclude Include="..\source\GLFWRenderer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\InitHeader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\AndroidVolumeRenderer\assets\basicVS.glsl">

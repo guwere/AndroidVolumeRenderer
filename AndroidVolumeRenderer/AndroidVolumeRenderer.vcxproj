@@ -48,6 +48,7 @@
     <ClInclude Include="..\source\Common.h" />
     <ClInclude Include="..\source\Engine.h" />
     <ClInclude Include="..\source\HelperFunctions.h" />
+    <ClInclude Include="..\source\InitHeader.h" />
     <ClInclude Include="..\source\Mesh.h" />
     <ClInclude Include="..\source\perfMonitor.h" />
     <ClInclude Include="..\source\Renderer.h" />
@@ -94,7 +95,7 @@
       <GccExceptionHandling>true</GccExceptionHandling>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>android;EGL;GLESv3;stdc++</AdditionalDependencies>
+      <AdditionalDependencies>android;EGL;GLESv3;stdc++;</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>

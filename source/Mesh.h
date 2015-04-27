@@ -24,8 +24,8 @@ struct Vertex
 struct Edge
 {
 	Edge(){};
-	Edge(unsigned int point1, unsigned int point2);
-	unsigned int p1, p2;
+	Edge(const glm::vec3 &point1, const glm::vec3 &point2);
+	glm::vec3 p1, p2;
 };
 
 
@@ -69,6 +69,11 @@ public:
 	/**@brief Writes material properties, textures and draws the triangles*/
 	virtual void render(GLenum mode, bool drawElements) const;
 
+	void renderWireframe() const;
+	std::vector<Vertex> getTransformedVertices(const glm::mat4 &transformMatrix) const;
+	std::vector<glm::vec3> getTransformedPositions(const glm::mat4 &transformMatrix) const;
+	std::vector<Edge> getTransformedEdges(const glm::mat4 &transformMatrix) const;
+
 	void generateCube(Shader *shader);
 	void generatePlane(Shader *shader);
 
@@ -84,6 +89,7 @@ protected:
 	GLuint m_VAO;
 	GLuint m_VBO;//!< single VAO initialised with subbuffer data
 	GLuint m_EBO; //!< index buffer
+	float m_diagonalLength;
 };
 
 

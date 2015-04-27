@@ -15,87 +15,22 @@
  *
  */
 #include "Common.h"
+#include "InitHeader.h"
 #include "Engine.h"
-
-#include "File.h"
-#include "Volume.h"
-#include "Shader.h"
-#include "ShaderManager.h"
-#include "Engine.h"
-#include "TransferFunction.h"
-
-#include <octree.h>
-
 
 #include "android\asset_manager.h"
 
-#pragma region VolumeDeclarations 
-Mesh mesh; // gio would be proud of the pragma regions !
-Shader *basicShader, *raycastVRShader;
-Volume volume;
-TransferFunction transferFn;
-Engine renderer;
-#pragma endregion
-void initAppParams();
-void updateCallback();
-
-#include <stdint.h>
-//everything that must access the opengl state must come after the window has been initialized which come as an event in the command queue
-void initAppParams()
-{
-
-	Octree<double> o(8); /* Create 4096x4096x4096 octree containing doubles. */
-	o(7,7,7) = 3.1416;      /* Put pi in (1,2,3). */
-	double temp = o.at(7,7,7);
-	o.erase(1,2,3);         /* Erase that node. */
-
-	//Volume volume;
-	//volume.parseMHD(File("","CT-Knee.mhd"));
-	File vertexShader("","basicVS.glsl");
-	File fragmentShader("","basicFS.glsl");
-	basicShader = ShaderManager::get().getShader(vertexShader, fragmentShader);
-	File vs("", "raycastVRShaderVS.glsl");
-	File fs("", "raycastVRShaderFS.glsl");
-	raycastVRShader = ShaderManager::get().getShader(vs, fs);
-	mesh.generateCube(raycastVRShader);
-	mesh.transform.scaleUniform(MESH_SCALE);
-
-
-	File vf("",VOLUME_NAME);
-	volume.parseMHD(vf);
-	//volume.parsePVM(File("","Box.pvm"));
-	//File temp = File("","Box.pvm");
-	//temp.print();
-	volume.printProperties();
-	volume.generate();
-
-	File tf("",TRANSFER_FN_NAME);
-	transferFn.parseVoreenXML(tf);
-	transferFn.generate();
-
-
-}
-
-void updateCallback()
-{
-	volume.advance();
-	glm::mat4 proj = renderer.m_camera.GetProjectionMatrix();
-	glm::mat4 view = renderer.m_camera.GetViewMatrix();
-	glm::mat4 model = glm::mat4();
-	glm::mat4 MVP = proj * view * model;
-	renderer.renderBasic(basicShader, mesh, MVP);
-	//renderer.renderRaycastVR(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
-
-}
+Engine engine;
 
 void android_main(struct android_app* state) {
    // struct engine engine;
 
     // Make sure glue isn't stripped.
     app_dummy();
-	renderer.init(state, initAppParams);
-	renderer.setUpdateCallback(updateCallback);
-	renderer.mainLoop();
+	renderer = &engine;
+	engine.init(state, initAppParams);
+	engine.setUpdateCallback(updateCallback);
+	engine.mainLoop();
 	//renderer.init(state, initAppParams);
 
 	//Engine &engine = Engine::get();
@@ -158,4 +93,4 @@ void android_main(struct android_app* state) {
 
  
 }
-//END_INCLUDE(all)
+

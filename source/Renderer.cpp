@@ -3,6 +3,7 @@
 #include <glm/gtx/intersect.hpp>
 #include "HelperFunctions.h"
 #include "ShaderManager.h"
+
 Camera Renderer::m_camera;
 
 
@@ -11,9 +12,15 @@ Renderer::Renderer(float screenWidth, float screenHeight)
 {
 	m_clearColor = CLEAR_COLOR;
 	m_clearMask = CLEAR_MASK;
-	constructIntersectRay = false;
+	m_constructIntersectRay = false;
 	//m_camera.setPosition(INITIAL_CAMERA_POS);
 	m_camera.projection = glm::perspective(CAMERA_FOV, screenWidth / screenHeight, NEAR_CLIP_PLANE, FAR_CLIP_PLANE);
+
+	m_crosshairPts.push_back(glm::vec3(-0.03f,0,0));
+	m_crosshairPts.push_back(glm::vec3(0.03f,0,0));
+	m_crosshairPts.push_back(glm::vec3(0,-0.03f,0));
+	m_crosshairPts.push_back(glm::vec3(0,0.03f,0));
+
 }
 
 
@@ -21,81 +28,59 @@ Renderer::Renderer()
 {
 	m_clearColor = CLEAR_COLOR;
 	m_clearMask = CLEAR_MASK;
-	constructIntersectRay = false;
+	m_constructIntersectRay = false;
+	m_crosshairPts.push_back(glm::vec3(-0.03f,0,0));
+	m_crosshairPts.push_back(glm::vec3(0.03f,0,0));
+	m_crosshairPts.push_back(glm::vec3(0,-0.03f,0));
+	m_crosshairPts.push_back(glm::vec3(0,0.03f,0));
+
+
 	//glm::vec3 INITIAL_CAMERA_POS = glm::vec3(0.0f, 1.0f, 10.0f);
 	//m_camera.setPosition(INITIAL_CAMERA_POS);
 }
 
-void Renderer::getMinMaxPoints(const glm::mat4 &modelViewMatrix, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
+void Renderer::getMinMaxPoints(const std::vector<glm::vec3> positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
 {
-	glm::mat4 inverseP = glm::inverse(m_camera.GetProjectionMatrix());
-	glm::vec4 vertexView = modelViewMatrix * glm::vec4(cubeMesh.m_Vertices[0].m_Position, 1.0f);
-	//float distanceToCamera = abs(vertexView.z);
-	glm::vec4 origin = inverseP * glm::vec4(0,0,0,1);
-	float distanceToCamera = glm::length2(vertexView - origin);
-	float currMin = distanceToCamera;
-	float currMax = distanceToCamera;
-	glm::vec4 currMinPt = vertexView;
-	glm::vec4 currMaxPt = vertexView;
-	int currMinIndex = 0;
-	int currMaxIndex = 0;
-	std::vector<glm::vec4> temp;
+	//assume first point as both min and max
+	float currMin, currMax, distanceToCamera ;
+	currMin = currMax = positions.at(0).z;
+	int currMinIndex = 0, currMaxIndex = 0;
 	for (unsigned int i = 1; i < cubeMesh.m_Vertices.size(); ++i)
 	{
-		vertexView = modelViewMatrix * glm::vec4(cubeMesh.m_Vertices[i].m_Position, 1.0f);
-		temp.push_back(vertexView);
+		const glm::vec3 &vertexView = positions[i];
 		//distanceToCamera = abs(vertexView.z);
-		distanceToCamera = glm::length2(vertexView - origin);
+		distanceToCamera = vertexView.z;
 		if(distanceToCamera < currMin)
 		{
 			currMin = distanceToCamera;
-			currMinPt = vertexView;
 			currMinIndex = i;
 		}
 		else if(distanceToCamera > currMax)
 		{
 			currMax = distanceToCamera;
-			currMaxPt = vertexView;
 			currMaxIndex = i;
 		}
 	}
-	minPos = cubeMesh.m_Vertices[currMinIndex].m_Position;
-	maxPos = cubeMesh.m_Vertices[currMaxIndex].m_Position;
-
-
+	//maxPos = glm::vec3(0, 0, positions.at(currMinIndex).z);
+	//minPos = glm::vec3(0, 0, positions.at(currMaxIndex).z);	
+	maxPos = positions.at(currMinIndex);
+	minPos = positions.at(currMaxIndex);
 
 }
 
 
 
-void Renderer::getMinMaxPoints2(const glm::mat4 &modelViewMatrix, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
+void Renderer::getMinMaxPoints2(const std::vector<glm::vec3> positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
 {
-	int intersections = 0;
 	std::vector<glm::vec3> intersectioPts;
-	std::vector<glm::vec3> intersectionVertices;
-	float currMin = FLT_MAX;
-	float currMax = FLT_MIN;
-	glm::vec3 currMinPt;
-	glm::vec3 currMaxPt;
-	glm::vec3 front = m_camera.Front;
-	glm::vec3 position = m_camera.getPosition();
-	
-	glm::mat4 inverseM = glm::inverse(cubeMesh.transform.getMatrix());
-	glm::mat4 inverseP = glm::inverse(m_camera.GetProjectionMatrix());
-	glm::mat4 viewMatrix = m_camera.GetViewMatrix();
-	glm::mat4 modelMatrix = cubeMesh.transform.getMatrix();
-	glm::mat4 inverseMV = glm::inverse(modelViewMatrix);
-	glm::mat4 inverseMVP = m_camera.GetProjectionMatrix() * viewMatrix * modelMatrix;
-	glm::vec3 origin = glm::vec3(inverseM * glm::vec4(position,1));
-	//glm::vec3 origin = glm::vec3(inverseP * glm::vec4(glm::vec3(0), 1.0f));
-	glm::vec3 direction  = glm::vec3(inverseM * glm::vec4(front,1));
-	//glm::vec3 direction  = glm::vec3(0,0,-1);
+	glm::vec3 origin = glm::vec3(0);
+	glm::vec3 direction  = glm::vec3(0,0,-1);
 	for (unsigned int i = 0; i < cubeMesh.m_Indices.size(); i +=3)
 	{
 
-		glm::vec3 v1 = glm::vec3(glm::vec4(cubeMesh.m_Vertices[cubeMesh.m_Indices[i]].m_Position, 1.0f));
-		glm::vec3 v2 = glm::vec3(glm::vec4(cubeMesh.m_Vertices[cubeMesh.m_Indices[i+1]].m_Position, 1.0f));
-		glm::vec3 v3 = glm::vec3(glm::vec4(cubeMesh.m_Vertices[cubeMesh.m_Indices[i+2]].m_Position, 1.0f));
+		glm::vec3 v1 = positions[cubeMesh.m_Indices[i]];
+		glm::vec3 v2 = positions[cubeMesh.m_Indices[i+1]];
+		glm::vec3 v3 = positions[cubeMesh.m_Indices[i+2]];
 
 		glm::vec3 uvtCoord;
 		//if(glm::intersectRayTriangle(origin, direction , vertexView1, vertexView2, vertexView3, intersectPos))
@@ -105,39 +90,60 @@ void Renderer::getMinMaxPoints2(const glm::mat4 &modelViewMatrix, const Mesh &cu
 			glm::vec3 d2 = (v3 - v1) * uvtCoord.y;
 			glm::vec3 intersecPt = v1 + (d1 + d2); 
 			intersectioPts.push_back(intersecPt);
-			intersectionVertices.push_back(glm::vec3(cubeMesh.m_Indices[i],cubeMesh.m_Indices[i+1],cubeMesh.m_Indices[i+2]));
 		}
 	}
 	if(intersectioPts.size() < 2)
 		return;
-	else if(intersectioPts.size() == 1)
-	{
-		return;
-	}
-	float distance1 = glm::length2(intersectioPts.at(0) - origin);
-	float distance2 = glm::length2(intersectioPts.at(1) - origin);
+
+	float distance1 = glm::length2(intersectioPts.at(0));
+	float distance2 = glm::length2(intersectioPts.at(1));
 	if(distance1 < distance2)
 	{
-		minPos = glm::vec3(glm::vec4(intersectioPts.at(0), 1.0f));
-		maxPos = glm::vec3(glm::vec4(intersectioPts.at(1), 1.0f));
+		minPos = intersectioPts.at(0);
+		maxPos = intersectioPts.at(1);
 	}
 	else
 	{
-		minPos = glm::vec3(glm::vec4(intersectioPts.at(1), 1.0f));
-		maxPos = glm::vec3(glm::vec4(intersectioPts.at(0), 1.0f));
+		minPos = intersectioPts.at(1);
+		maxPos = intersectioPts.at(0);
 	}
-	//minPos = glm::vec3(currMinPt);
-	//maxPos = glm::vec3(currMaxPt);
-	//minPos = glm::vec3(inverseMV * glm::vec4(currMinPt, 1.0f));
-	//maxPos = glm::vec3(inverseMV * glm::vec4(currMaxPt, 1.0f));
-	int x = 0;
+
+}
+
+void Renderer::getMinMaxPoints3(const std::vector<glm::vec3> positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
+{
+	//assume first point as both min and max
+	float currMin, currMax, distanceToCamera ;
+	currMin = currMax = positions.at(0).z;
+	int currMinIndex = 0, currMaxIndex = 0;
+	for (unsigned int i = 1; i < cubeMesh.m_Vertices.size(); ++i)
+	{
+		const glm::vec3 &vertexView = positions[i];
+		//distanceToCamera = abs(vertexView.z);
+		distanceToCamera = vertexView.z;
+		if(distanceToCamera < currMin)
+		{
+			currMin = distanceToCamera;
+			currMinIndex = i;
+		}
+		else if(distanceToCamera > currMax)
+		{
+			currMax = distanceToCamera;
+			currMaxIndex = i;
+		}
+	}
+	maxPos = glm::vec3(0, 0, positions.at(currMinIndex).z);
+	minPos = glm::vec3(0, 0, positions.at(currMaxIndex).z);	
+	//maxPos = positions.at(currMinIndex);
+	//minPos = positions.at(currMaxIndex);
+
 }
 
 void Renderer::loadDebugShader()
 {
-	//File vs("", std::string(DEBUG_VERTEX_SHADER_NAME));
-	//File fs("", std::string(DEBUG_FRAGMENT_SHADER_NAME));
-	m_debugShader = ShaderManager::get().getShader(File("", std::string(DEBUG_VERTEX_SHADER_NAME)),File("", std::string(DEBUG_FRAGMENT_SHADER_NAME)));
+	File vs("", std::string(DEBUG_VERTEX_SHADER_NAME));
+	File fs("", std::string(DEBUG_FRAGMENT_SHADER_NAME));
+	m_debugShader = ShaderManager::get().getShader(vs,fs);
 }
 
 void Renderer::setUpdateCallback(void(*updateCallback)(void))
@@ -169,12 +175,11 @@ void Renderer::renderBasic(const Shader *shader, const Mesh &mesh, const glm::ma
 	//};
 	//static float rot = 0.0f;
 	//rot += 0.002f;
-	if(renderWireframe)
-		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glUniformMatrix4fv(glGetUniformLocation(shader->getId(),"MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
-	mesh.render();
 	if(renderWireframe)
-		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
+		mesh.renderWireframe();
+	else
+		mesh.render();
 
 	//glm::vec3 pt1(0);
 	//glm::vec3 pt2(-1);
@@ -239,7 +244,7 @@ void Renderer::renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const
 	cubeMesh.render(GL_TRIANGLES, true);
 }
 
-void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, float numSamples, const TransferFunction &transferFn)
+void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, const TransferFunction &transferFn)
 {
 	const glm::mat4 modelMatrix = cubeMesh.transform.getMatrix();
 	const glm::mat4 viewMatrix = m_camera.GetViewMatrix();
@@ -248,6 +253,10 @@ void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, 
 	glm::mat4 MVPMatrix = projMatrix * viewMatrix * modelMatrix;
 	glm::mat3 inverseMVPMatrix = glm::mat3(glm::inverse(MVPMatrix));
 	glm::mat4 inverseMV = glm::inverse(modelViewMatrix);
+	glm::mat4 inverseP = glm::inverse(projMatrix);
+
+	std::vector<glm::vec3> transformedPositions = cubeMesh.getTransformedPositions(modelViewMatrix);
+	std::vector<Edge> transformedEdges = cubeMesh.getTransformedEdges(modelViewMatrix);
 
 	GLuint shaderId = shader->getId();
 	glUseProgram(shader->m_Id);
@@ -275,19 +284,24 @@ void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, 
 	//do the actual texture based algorithm
 	glm::vec3 minPos, maxPos;
 	//Find the minimum and maximum z coordinates of transformed vertices in view space
-	getMinMaxPoints2(modelViewMatrix, cubeMesh, minPos, maxPos);
-	if(constructIntersectRay)
+	getMinMaxPoints3(transformedPositions, cubeMesh, minPos, maxPos);
+	//for (int i = 0; i < transformedPositions.size(); i++)
+	//{
+	//	transformedPositions[i] = TRANSFORM3(inverseP, transformedPositions[i]);
+	//}
+
+	if(m_constructIntersectRay)
 	{
-		rayStart = minPos;
-		rayEnd = maxPos;
-		constructIntersectRay = false;
+		m_rayStart = glm::vec3(inverseMV * glm::vec4(minPos, 1.0f));
+		m_rayEnd = glm::vec3(inverseMV * glm::vec4(maxPos, 1.0f));
+		m_constructIntersectRay = false;
 	}
 	//glm::vec3 minposview = glm::vec3(modelViewMatrix * glm::vec4(minPos,1.0f));
 	//glm::vec3 maxposview = glm::vec3(modelViewMatrix * glm::vec4(maxPos,1.0f));
 
 	std::vector<glm::vec3> linePts;
-	linePts.push_back(rayStart);
-	linePts.push_back(rayEnd);
+	linePts.push_back(m_rayStart);
+	linePts.push_back(m_rayEnd);
 	drawObject(MVPMatrix, linePts, GL_LINE_STRIP, glm::vec4(0,1,1,1));
 
 	//linePts.push_back(glm::vec3(-0.2f, -0.2f, 0.2f));
@@ -299,50 +313,53 @@ void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, 
 	////linePts.push_back(glm::vec3(projMatrix * viewMatrix * glm::vec4(minPos, 1.0f)));
 	//linePts.push_back(glm::vec3(glm::vec4(minPos, 1.0f)));
 	//drawObject(MVPMatrix, linePts, GL_LINE_STRIP, glm::vec4(0,0,1,1));
-	linePts.clear();
-	linePts.push_back(glm::vec3(0));
-	linePts.push_back(glm::vec3(MVPMatrix * glm::vec4(0,0,0, 1.0f)));
-	drawObject(glm::mat4(), linePts, GL_LINE_STRIP, glm::vec4(0,0,1,1));
+	
+
 
 	//Compute the number of sampling planes used between these two values using equidistant spacing from the view origin
-	std::vector<glm::vec3> samplingPlanePts;
-	samplingPlanePts.resize((int)numSamples);
-	glm::vec3 dir = minPos-maxPos;
-	float lengthTotal = glm::length(dir);
-	dir = glm::normalize(dir);
-	float lengthSample = lengthTotal / numSamples;
-	glm::vec3 dirSample = dir * lengthSample;
+	glm::vec3 backToFrontVec = minPos-maxPos;
+	float lengthTotal = glm::length(backToFrontVec);
+	glm::vec3 dirModel = glm::vec3(inverseMV * glm::vec4(minPos, 1.0f)) - glm::vec3(inverseMV * glm::vec4(maxPos, 1.0f));
+	float lengthTotalModel = glm::length(dirModel);
+	backToFrontVec = glm::normalize(backToFrontVec);
+	glm::vec3 dirSample = backToFrontVec * float(RAY_STEP_SIZE_MODEL_SPACE) * (MESH_SCALE);
 	std::vector<glm::vec3> centers;
 //	For each plane in front-to-back or back-to-front order
-	for (int currSample = 999; currSample < (int)999; ++currSample)
+	const int maxRays = MAX_RAY_STEPS * (lengthTotalModel / MESH_CUBE_DIAGONAL_LEN); // dependent on the ratio of maximum allowed rays and the current direction
+	static int currSampleDisplay = 1;
+	currSampleDisplay+=3;
+	if(currSampleDisplay >= maxRays)
+		currSampleDisplay = 1;
+
+	for (int currSample = 1; currSample < (int)maxRays; ++currSample)
 	{
 		std::vector<glm::vec3> proxyPlane;
 		//Test for intersections with the edges of the bounding box. 
 		//Add each intersection point to a temporary vertex list.
 		//Up to six intersections are generated, so the maximum size of the list is fixed.
-		glm::vec3 currPt = glm::vec3(modelViewMatrix * glm::vec4(maxPos + dirSample * (float)currSample,1.0f));
+		glm::vec3 currPt = glm::vec3(glm::vec4(maxPos + dirSample * (float)currSample,1.0f));
 		int slotsFilled = 0;
 		glm::vec3 accumulatedPt;
 		//if inbetween the z coordinate of both points of the edge then the current pt intersects the edge
-const int MAX_NUM_PTS_PROXY_PLANE  = 6;
+		const int MAX_NUM_PTS_PROXY_PLANE  = 6;
 		for (int i = 0; i < cubeMesh.m_Edges.size() && slotsFilled < MAX_NUM_PTS_PROXY_PLANE; i++)
 		{
-			const glm::vec3 &p1 = glm::vec3(modelViewMatrix * glm::vec4(cubeMesh.m_Vertices[cubeMesh.m_Edges[i].p1].m_Position, 1.0f));
-			const glm::vec3 &p2 = glm::vec3(modelViewMatrix * glm::vec4(cubeMesh.m_Vertices[cubeMesh.m_Edges[i].p2].m_Position, 1.0f));
+			//can compute this earlier
+			const glm::vec3 &p1 = glm::vec3(glm::vec4(transformedEdges[i].p1, 1.0f));
+			const glm::vec3 &p2 = glm::vec3(glm::vec4(transformedEdges[i].p2, 1.0f));
 			if((currPt.z < p1.z && currPt.z > p2.z) || (currPt.z < p2.z && currPt.z > p1.z))
 			{
 				slotsFilled++;
 				glm::vec3 ptOnLine = glm::closestPointOnLine(currPt, p1, p2);
-				const glm::vec3 &p1Model = glm::vec3(inverseMV * glm::vec4(p1, 1.0f));
-				const glm::vec3 &p2Model = glm::vec3(inverseMV * glm::vec4(p2, 1.0f));
-				const glm::vec3 &ptOnLineModel = glm::vec3(inverseMV * glm::vec4(ptOnLine, 1.0f));
-				//ptOnLine.z = currPt.z;
+				const glm::vec3 &p1Model = glm::vec3(glm::vec4(p1, 1.0f));
+				const glm::vec3 &p2Model = glm::vec3(glm::vec4(p2, 1.0f));
+				const glm::vec3 &ptOnLineModel = glm::vec3(glm::vec4(ptOnLine, 1.0f));
+				ptOnLine.z = currPt.z;
 				accumulatedPt += ptOnLine;
 				proxyPlane.push_back(ptOnLine);
 			}
 		}
-		//proxyPlane.pop_back();
-		//drawLine(m_camera.GetProjectionMatrix(), proxyPlane);
+
 		if(slotsFilled < 3)
 		{
 			int x = 0;
@@ -365,7 +382,6 @@ const int MAX_NUM_PTS_PROXY_PLANE  = 6;
 		{
 			int x = 0;
 		}
-		//drawObject(MVPMatrix, proxyPlane, GL_LINE_STRIP, glm::vec4(0,1.0f,0, 1.0f));
 
 	//	//Compute the center of the proxy polygon by averaging the intersection points.
 		glm::vec3 centerPt = accumulatedPt / (float)slotsFilled;
@@ -389,6 +405,17 @@ const int MAX_NUM_PTS_PROXY_PLANE  = 6;
 			}
 			sortedProxyPlane.insert(sortedProxyPlane.begin() + insertIndex , currPt);
 		}
+		//PVEC3 centerDebug;
+		//glm::vec3 centerPtScreen = TRANSFORM3(projMatrix, centerPt);
+		//centerDebug.push_back(centerPt - glm::vec3(0.1f,0.1f,0));
+		//centerDebug.push_back(centerPt + glm::vec3(0.1f,0.1f,0));
+		//drawObject(projMatrix, centerDebug, GL_LINES, glm::vec4(1,0,1,1));
+		//centers.push_back(centerPt);
+		//pushback the first point on the edge of the constructed polygon to close out the triangle fan
+		sortedProxyPlane.push_back(sortedProxyPlane[1]);
+		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+		if(currSampleDisplay == currSample)
+			drawObject(projMatrix, sortedProxyPlane, GL_TRIANGLE_FAN, glm::vec4(0,1.0f,0, 1.0f));
 
 		//Tessellate the proxy polygon into triangles and add the resulting vertices to the output vertex array. 
 		//The slice polygon can be tessellated into a triangle strip or a triangle fan using the center.
@@ -405,11 +432,18 @@ const int MAX_NUM_PTS_PROXY_PLANE  = 6;
 		glDeleteBuffers(1, &proxyVBO);
 
 	}
-	if(centers.size())
-		drawObject(m_camera.GetProjectionMatrix(), centers, GL_LINE_STRIP, glm::vec4(1));
+	//if(centers.size())
+	//	drawObject(m_camera.GetProjectionMatrix(), centers, GL_LINE_STRIP, glm::vec4(1));
 }
 
-void Renderer::drawObject(const glm::mat4 &transformMatrix, const std::vector<glm::vec3> &points, GLenum mode, glm::vec4 color) const
+void Renderer::drawCrosshair(const glm::vec4 &color) const
+{
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	drawObject(glm::mat4(), m_crosshairPts, GL_LINES, color);
+}
+
+void Renderer::drawObject(const glm::mat4 &transformMatrix, const std::vector<glm::vec3> &points, GLenum mode, const glm::vec4 &color) const
 {
 	GLint currShader;
 	glGetIntegerv(GL_CURRENT_PROGRAM,&currShader);

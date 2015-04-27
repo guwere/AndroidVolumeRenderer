@@ -104,7 +104,47 @@ void Mesh::render() const
 {
 	render(GL_TRIANGLES,true);
 }
+void Mesh::renderWireframe() const
+{
+	render(GL_LINES,true);
+}
 
+std::vector<Vertex> Mesh::getTransformedVertices(const glm::mat4 &transformMatrix) const
+{
+	glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(transformMatrix)));
+	std::vector<Vertex> result(m_Vertices.size());
+	for(unsigned int i = 0; i < m_Vertices.size(); ++i)
+	{
+		const Vertex &v = m_Vertices[i];
+		result[i].m_Position = glm::vec3(transformMatrix * glm::vec4(m_Vertices[i].m_Position, 1.0f));
+		result[i].m_TexCoord = m_Vertices[i].m_TexCoord;
+		result[i].m_Normal = normalMatrix * m_Vertices[i].m_Normal;
+	}
+	return result;
+}
+
+std::vector<glm::vec3> Mesh::getTransformedPositions(const glm::mat4 &transformMatrix) const
+{
+	std::vector<glm::vec3> result(m_Vertices.size());
+	for(unsigned int i = 0; i < m_Vertices.size(); ++i)
+	{
+		const Vertex &v = m_Vertices[i];
+		result[i] = glm::vec3(transformMatrix * glm::vec4(m_Vertices[i].m_Position, 1.0f));
+	}
+	return result;
+}
+
+std::vector<Edge> Mesh::getTransformedEdges(const glm::mat4 &transformMatrix) const
+{
+	std::vector<Edge> result(m_Edges.size());
+	for(unsigned int i = 0; i < m_Edges.size(); ++i)
+	{
+		const Edge &v = m_Edges[i];
+		result[i].p1 = glm::vec3(transformMatrix * glm::vec4(m_Edges[i].p1, 1.0f));
+		result[i].p2 = glm::vec3(transformMatrix * glm::vec4(m_Edges[i].p2, 1.0f));
+	}
+	return result;
+}
 
 void Mesh::generateCube(Shader *shader)
 {
@@ -140,15 +180,17 @@ void Mesh::generateCube(Shader *shader)
 	//m_Vertices.push_back(Vertex(1,1,-1,1,1  ));
 
 
-	m_Vertices.push_back(Vertex(glm::vec3(-1.0, -1.0,  1.0)));
-	m_Vertices.push_back(Vertex(glm::vec3(1.0, -1.0,  1.0)));
-	m_Vertices.push_back(Vertex(glm::vec3(1.0,  1.0,  1.0)));
-	m_Vertices.push_back(Vertex(glm::vec3(-1.0,  1.0,  1.0)));
+	m_Vertices.push_back(Vertex(glm::vec3(MIN_MESH_X, MIN_MESH_Y, MAX_MESH_Z)));
+	m_Vertices.push_back(Vertex(glm::vec3(MAX_MESH_X, MIN_MESH_Y, MAX_MESH_Z)));
+	m_Vertices.push_back(Vertex(glm::vec3(MAX_MESH_X, MAX_MESH_Y, MAX_MESH_Z)));
+	m_Vertices.push_back(Vertex(glm::vec3(MIN_MESH_X, MAX_MESH_Y, MAX_MESH_Z)));
 
-	m_Vertices.push_back(Vertex(glm::vec3(-1.0, -1.0, -1.0)));
-	m_Vertices.push_back(Vertex(glm::vec3(1.0, -1.0, -1.0)));
-	m_Vertices.push_back(Vertex(glm::vec3(1.0,  1.0, -1.0)));
-	m_Vertices.push_back(Vertex(glm::vec3(-1.0,  1.0, -1.0)));
+	m_Vertices.push_back(Vertex(glm::vec3(MIN_MESH_X, MIN_MESH_Y, MIN_MESH_Z)));
+	m_Vertices.push_back(Vertex(glm::vec3(MAX_MESH_X, MIN_MESH_Y, MIN_MESH_Z)));
+	m_Vertices.push_back(Vertex(glm::vec3(MAX_MESH_X, MAX_MESH_Y, MIN_MESH_Z)));
+	m_Vertices.push_back(Vertex(glm::vec3(MIN_MESH_X, MAX_MESH_Y, MIN_MESH_Z)));
+
+	m_diagonalLength = glm::distance(glm::vec3(MIN_MESH_X, MIN_MESH_Y, MIN_MESH_Z), glm::vec3(MAX_MESH_X,  MAX_MESH_Y,  MAX_MESH_Z));
 
 	GLushort cube_elements[] = {
 		// front
@@ -174,20 +216,21 @@ void Mesh::generateCube(Shader *shader)
 	m_Indices = vector<GLuint>(cube_elements, &cube_elements[0] + sizeof(cube_elements) / sizeof(GLushort) );
 
 	m_Edges.resize(12);
-	m_Edges[0] = Edge(0,1);
-	m_Edges[1] = Edge(1,2);
-	m_Edges[2] = Edge(2,3);
-	m_Edges[3] = Edge(3,0);
+	m_Edges[0] = Edge(m_Vertices[0].m_Position,m_Vertices[1].m_Position);
+	m_Edges[1] = Edge(m_Vertices[1].m_Position,m_Vertices[2].m_Position);
+	m_Edges[2] = Edge(m_Vertices[2].m_Position,m_Vertices[3].m_Position);
+	m_Edges[3] = Edge(m_Vertices[3].m_Position,m_Vertices[0].m_Position);
 
-	m_Edges[4] = Edge(0,4);
-	m_Edges[5] = Edge(1,5);
-	m_Edges[6] = Edge(4,5);
-	m_Edges[7] = Edge(4,7);
+	m_Edges[4] = Edge(m_Vertices[0].m_Position,m_Vertices[4].m_Position);
+	m_Edges[5] = Edge(m_Vertices[1].m_Position,m_Vertices[5].m_Position);
+	m_Edges[6] = Edge(m_Vertices[4].m_Position,m_Vertices[5].m_Position);
+	m_Edges[7] = Edge(m_Vertices[4].m_Position,m_Vertices[7].m_Position);
 
-	m_Edges[8] = Edge(5,6);
-	m_Edges[9] = Edge(6,7);
-	m_Edges[10] = Edge(3,7);
-	m_Edges[11] = Edge(2,6);
+	m_Edges[8] = Edge(m_Vertices[5].m_Position,m_Vertices[6].m_Position);
+	m_Edges[9] = Edge(m_Vertices[6].m_Position,m_Vertices[7].m_Position);
+	m_Edges[10] = Edge(m_Vertices[3].m_Position,m_Vertices[7].m_Position);
+	m_Edges[11] = Edge(m_Vertices[2].m_Position,m_Vertices[6].m_Position);
+
 
 	//the size of the dimensions of the pushed cube is 2; normalized between [0,1] range to match tex coords
 	//for(int i = 0; i < m_Vertices.size(); ++i)
@@ -224,7 +267,7 @@ void Mesh::generatePlane(Shader *shader)
 	createVAO(shader);
 }
 
-Edge::Edge(unsigned int point1, unsigned int point2)
+Edge::Edge(const glm::vec3 &point1, const glm::vec3 &point2)
 	:p1(point1), p2(point2)
 {
 
