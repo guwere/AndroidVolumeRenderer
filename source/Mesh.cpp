@@ -106,7 +106,7 @@ void Mesh::render() const
 }
 void Mesh::renderWireframe() const
 {
-	render(GL_LINES,true);
+	render(GL_LINE_STRIP,true);
 }
 
 std::vector<Vertex> Mesh::getTransformedVertices(const glm::mat4 &transformMatrix) const

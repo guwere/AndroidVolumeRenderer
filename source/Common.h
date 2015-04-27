@@ -93,7 +93,7 @@ const int SCREEN_HEIGHT = 800;
 assume that the volume texture is of dimensions [0,1] ( texture space)
 the number of maximum ray steps is the based on diagonal length of the texture
 */
-#define MAX_RAY_STEPS (100.0f * TEXTURE_CUBE_DIAGONAL_LEN)
+#define MAX_RAY_STEPS (500.0f * TEXTURE_CUBE_DIAGONAL_LEN)
 #define RAY_STEP_SIZE_TEX_SPACE (TEXTURE_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
 #define RAY_STEP_SIZE_MODEL_SPACE (MESH_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
 #define GRADIENT_STEP_SIZE (TEXTURE_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)

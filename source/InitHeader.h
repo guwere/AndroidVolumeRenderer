@@ -69,13 +69,13 @@ void updateCallback()
 	//glm::vec3 cameraPos = glm::vec3(camera.GetViewMatrix()[3]);
 	/* Render here */
 	//mesh.transform.pivotOnLocalAxis(0, 0.02 * delta, 0);
-	//renderer->renderBasic(basicShader, mesh, renderer->m_camera.GetProjectionMatrix() * renderer->m_camera.GetViewMatrix() * mesh.transform.getMatrix(), true);
+	renderer->renderBasic(basicShader, mesh, renderer->m_camera.GetProjectionMatrix() * renderer->m_camera.GetViewMatrix() * mesh.transform.getMatrix(), true);
 	//float delta = Timer::get().getLastInterval();
 	//mesh.transform.pivotOnLocalAxis(0,0.001, 0);
 
 
 	//renderer->renderRaycastVR(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
-	renderer->renderTextureBasedVR(textureBasedVRShader, mesh, volume, transferFn);
+	//renderer->renderTextureBasedVR(textureBasedVRShader, mesh, volume, transferFn);
 
 	renderer->drawCrosshair(glm::vec4(0,0,1,1));
 
