@@ -11,7 +11,7 @@
 #include "ShaderManager.h"
 #include "TransferFunction.h"
 
-#include <omp.h>
+//#include <omp.h>
 
 Mesh mesh; 
 Shader *basicShader, *raycastVRShader, *textureBasedVRShader;
@@ -19,7 +19,15 @@ Volume volume;
 TransferFunction transferFn;
 Renderer *renderer;
 
-
+//static int r;
+void fn(int t, int f, int l, std::vector<int> *r)
+{
+	for (int i = f; i < l; i++)
+	{
+		(*r)[30000 - i - 1] = i;
+		//LOGI("%d num: %d\n", t, i);
+	}
+}
 
 //everything that must access the opengl state must come after the window has been initialized (which come as an event in the command queue in the case of android)
 void initAppParams()
@@ -54,12 +62,17 @@ void initAppParams()
 	transferFn.generate();
 	renderer->loadDebugShader();
 
-
-#pragma omp parallel for 
-	for(int i = 0;i < 100;i++) {
-		LOGI("num: %d\n", i);
-	}
-
+	//int *res1 = new int;
+	std::vector<int> res1(30000);
+	//*res1 = 0;
+	std::thread t1(fn, 1, 0, 12000, &res1);
+	std::thread t2(fn, 2, 12000, 23000, &res1);
+	std::thread t3(fn, 3, 23000, 30000, &res1);
+	t1.join();
+	t2.join();
+	t3.join();
+	//LOGI("res1: %d\n", *res1);
+	int x = res1[0];
 }
 
 void updateCallback()
@@ -76,6 +89,7 @@ void updateCallback()
 
 	//renderer->renderRaycastVR(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
 	//renderer->renderTextureBasedVR(textureBasedVRShader, mesh, volume, transferFn);
+	renderer->renderTextureBasedVRMT(textureBasedVRShader, mesh, volume, transferFn);
 
 	renderer->drawCrosshair(glm::vec4(0,0,1,1));
 

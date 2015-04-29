@@ -1,4 +1,4 @@
-#include "Renderer.h"
+﻿#include "Renderer.h"
 #include <glm/gtx/closest_point.hpp>
 #include <glm/gtx/intersect.hpp>
 #include "HelperFunctions.h"
@@ -39,7 +39,7 @@ Renderer::Renderer()
 	//m_camera.setPosition(INITIAL_CAMERA_POS);
 }
 
-void Renderer::getMinMaxPointsVertices(const PVEC3 positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
+void Renderer::getMinMaxPointsVertices(const PTVEC3 positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
 {
 	//assume first point as both min and max
 	float currMin, currMax, distanceToCamera ;
@@ -70,9 +70,9 @@ void Renderer::getMinMaxPointsVertices(const PVEC3 positions, const Mesh &cubeMe
 
 
 
-void Renderer::getMinMaxPointsCube(const PVEC3 positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
+void Renderer::getMinMaxPointsCube(const PTVEC3 positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
 {
-	PVEC3 intersectioPts;
+	PTVEC3 intersectioPts;
 	glm::vec3 origin = glm::vec3(0);
 	glm::vec3 direction  = glm::vec3(0,0,-1);
 	for (unsigned int i = 0; i < cubeMesh.m_Indices.size(); i +=3)
@@ -110,7 +110,7 @@ void Renderer::getMinMaxPointsCube(const PVEC3 positions, const Mesh &cubeMesh, 
 
 }
 
-void Renderer::getMinMaxPointsView(const PVEC3 positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
+void Renderer::getMinMaxPointsView(const PTVEC3 positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
 {
 	//assume first point as both min and max
 	float currMin, currMax, distanceToCamera ;
@@ -167,6 +167,12 @@ void Renderer::writeUniform(GLuint shaderId, const char *uniformName, glm::vec3 
 {
 	GLuint uniformLoc = glGetUniformLocation (shaderId, uniformName);
 	glUniform3fv(uniformLoc, 1, glm::value_ptr(val));
+}
+
+void Renderer::writeUniform(GLuint shaderId, const char *uniformName, glm::vec4 val) const
+{
+	GLuint uniformLoc = glGetUniformLocation (shaderId, uniformName);
+	glUniform4fv(uniformLoc, 1, glm::value_ptr(val));
 }
 
 void Renderer::writeUniform(GLuint shaderId, const char *uniformName, glm::mat3 val) const
@@ -237,17 +243,13 @@ void Renderer::renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const
 
 void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, const TransferFunction &transferFn)
 {
-	PVEC3 slotsFilled;
-	const glm::mat4 modelMatrix = cubeMesh.transform.getMatrix();
-	const glm::mat4 viewMatrix = m_camera.GetViewMatrix();
-	const glm::mat4 projMatrix = m_camera.GetProjectionMatrix();
+	const glm::mat4 &modelMatrix = cubeMesh.transform.getMatrix();
+	const glm::mat4 &viewMatrix = m_camera.GetViewMatrix();
+	const glm::mat4 &projMatrix = m_camera.GetProjectionMatrix();
 	glm::mat4 modelViewMatrix = viewMatrix * cubeMesh.transform.getMatrix();
-	glm::mat4 MVPMatrix = projMatrix * viewMatrix * modelMatrix;
-	glm::mat3 inverseMVPMatrix = glm::mat3(glm::inverse(MVPMatrix));
 	glm::mat4 inverseMV = glm::inverse(modelViewMatrix);
-	glm::mat4 inverseP = glm::inverse(projMatrix);
 
-	PVEC3 transformedPositions = cubeMesh.getTransformedPositions(modelViewMatrix);
+	PTVEC3 transformedPositions = cubeMesh.getTransformedPositions(modelViewMatrix);
 	std::vector<Edge> transformedEdges = cubeMesh.getTransformedEdges(modelViewMatrix);
 
 	//enable proper alpha blending for back-to-front order
@@ -266,7 +268,7 @@ void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, 
 
 	glm::vec3 minPos, maxPos;
 	//Find the minimum and maximum z coordinates of transformed vertices in view space
-	getMinMaxPointsVertices(transformedPositions, cubeMesh, minPos, maxPos);
+	getMinMaxPointsCube(transformedPositions, cubeMesh, minPos, maxPos);
 
 	//Compute the number of sampling planes used between these two values using equidistant spacing from the view origin
 	glm::vec3 backToFrontVec = minPos-maxPos;
@@ -278,7 +280,6 @@ void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, 
 //	For each plane in front-to-back or back-to-front order
 	const int maxRays = MAX_RAY_STEPS * (lengthTotalModel / MESH_CUBE_DIAGONAL_LEN); // dependent on the ratio of maximum allowed rays and the current direction
 
-
 	for (int currSample = 1; currSample < (int)maxRays; ++currSample)
 	{
 		
@@ -286,12 +287,12 @@ void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, 
 		//Add each intersection point to a temporary vertex list.
 		//Up to six intersections are generated, so the maximum size of the list is fixed.
 		glm::vec3 centerPt;
-		PVEC3 proxyPlane;
+		PTVEC3 proxyPlane;
 		getClosestPtsOnEdges(maxPos, dirSample, currSample, cubeMesh, transformedEdges, proxyPlane, centerPt);
 	//	//Compute the center of the proxy polygon by averaging the intersection points.
 		//Sort the polygon vertices clockwise or counterclockwise by projecting them onto the x-y plane
 		//and computing their angle around the center, with the first vertex or the x axis as the reference.
-		PVEC3 sortedProxyPlane;
+		PTVEC3 sortedProxyPlane;
 		sortPolygonClockwise(proxyPlane, centerPt, sortedProxyPlane);
 
 		//Tessellate the proxy polygon into triangles and add the resulting vertices to the output vertex array. 
@@ -300,7 +301,7 @@ void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, 
 		GLuint proxyVBO;
 		glGenBuffers(1, &proxyVBO);
 		glBindBuffer(GL_ARRAY_BUFFER, proxyVBO);
-		glBufferData(GL_ARRAY_BUFFER, sortedProxyPlane.size() * sizeof(glm::vec3), &sortedProxyPlane[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sortedProxyPlane.size() * sizeof(glm::vec3), &sortedProxyPlane[0], GL_DYNAMIC_DRAW);
 		GLuint position = glGetAttribLocation(shader->m_Id,"position");
 		glEnableVertexAttribArray(position);
 		glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (GLvoid*)0);
@@ -312,7 +313,115 @@ void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, 
 
 }
 
-void Renderer::sortPolygonClockwise(const PVEC3 &proxyPlane, glm::vec3 centerPt, PVEC3 &sortedProxyPlane) const
+void Renderer::renderTextureBasedVRMT(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, const TransferFunction &transferFn)
+{
+	const glm::mat4 &modelMatrix = cubeMesh.transform.getMatrix();
+	const glm::mat4 &viewMatrix = m_camera.GetViewMatrix();
+	const glm::mat4 &projMatrix = m_camera.GetProjectionMatrix();
+	const glm::mat4 modelViewMatrix = viewMatrix * cubeMesh.transform.getMatrix();
+	const glm::mat4 inverseMV = glm::inverse(modelViewMatrix);
+
+	PTVEC3 transformedPositions = cubeMesh.getTransformedPositions(modelViewMatrix);
+	std::vector<Edge> transformedEdges = cubeMesh.getTransformedEdges(modelViewMatrix);
+
+	//enable proper alpha blending for back-to-front order
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	//glBlendEquation(GL_ADD);
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+	GLuint shaderId = shader->getId();
+	glUseProgram(shaderId);
+	//write uniform variables
+	GLuint uniformLoc;
+	writeUniform3DTex(shaderId, "volume", 0, volume.getTextureId());
+	writeUniform2DTex(shaderId, "transferFunc", 1, transferFn.getTextureId());
+	writeUniform(shaderId, "projMatrix", projMatrix);
+	writeUniform(shaderId, "inverseMV", inverseMV);
+
+	glm::vec3 minPos, maxPos;
+	//Find the minimum and maximum z coordinates of transformed vertices in view space
+	getMinMaxPointsCube(transformedPositions, cubeMesh, minPos, maxPos);
+
+	//Compute the number of sampling planes used between these two values using equidistant spacing from the view origin
+	glm::vec3 backToFrontVec = minPos-maxPos;
+	float lengthTotal = glm::length(backToFrontVec);
+	glm::vec3 dirModel = glm::vec3(inverseMV * glm::vec4(minPos, 1.0f)) - glm::vec3(inverseMV * glm::vec4(maxPos, 1.0f));
+	float lengthTotalModel = glm::length(dirModel);
+	backToFrontVec = glm::normalize(backToFrontVec);
+	glm::vec3 dirSample = backToFrontVec * float(RAY_STEP_SIZE_MODEL_SPACE) * (MESH_SCALE);
+	//	For each plane in front-to-back or back-to-front order
+	const int maxRays = MAX_RAY_STEPS * (lengthTotalModel / MESH_CUBE_DIAGONAL_LEN); // dependent on the ratio of maximum allowed rays and the current direction
+
+	std::vector<PTVEC3> sortedProxyPlanes(maxRays);
+	const int MAX_THREADS = 1;
+	int samplesThread = maxRays / MAX_THREADS;
+	std::vector<std::thread> threads(MAX_THREADS);
+
+	ThreadParameters params(0, maxPos, dirSample, cubeMesh, transformedEdges, 0, 0, sortedProxyPlanes);
+
+	//last thread gets the extra left overs
+	params.threadId = MAX_THREADS - 1;
+	params.first = samplesThread * (MAX_THREADS - 1) + 1;
+	params.last = int(maxRays);
+	//won't compile on android without std::ref
+	threads[MAX_THREADS-1] = std::thread(&Renderer::calculateProxyPlanes, this, std::ref(params));
+
+	for (int t = 0; t < MAX_THREADS-1; t++)
+	{
+		params.threadId = t;
+		params.first = samplesThread * t + 1;
+		params.last = samplesThread * (t + 1) + 1;
+		params.sortedProxyPlanes = sortedProxyPlanes;
+		threads[t] = std::thread(&Renderer::calculateProxyPlanes, this, std::ref(params));
+		//threads[t] = std::thread(&Renderer::calculateProxyPlanes, this, maxPos, dirSample, cubeMesh, transformedEdges, sortedProxyPlanes);
+	}
+
+	for (int t = 0; t < MAX_THREADS; t++)
+	{
+		threads[t].join();
+	}
+
+	for (int i = 1; i < sortedProxyPlanes.size(); i++)
+	{
+		GLuint proxyVBO;
+		glGenBuffers(1, &proxyVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, proxyVBO);
+		glBufferData(GL_ARRAY_BUFFER, sortedProxyPlanes[i].size() * sizeof(glm::vec3), &sortedProxyPlanes[i][0], GL_STATIC_DRAW);
+		GLuint position = glGetAttribLocation(shader->m_Id,"position");
+		glEnableVertexAttribArray(position);
+		glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (GLvoid*)0);
+		glDrawArrays(GL_TRIANGLE_FAN,0, sortedProxyPlanes[i].size());
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+		glDeleteBuffers(1, &proxyVBO);
+	}
+
+	//delete sortedProxyPlanes;
+
+}
+
+
+
+void Renderer::calculateProxyPlanes(ThreadParameters &params)
+{
+	for (int currSample = params.first; currSample < params.last; ++currSample)
+	{
+		//Test for intersections with the edges of the bounding box. 
+		//Add each intersection point to a temporary vertex list.
+		//Up to six intersections are generated, so the maximum size of the list is fixed.
+		glm::vec3 centerPt;
+		PTVEC3 proxyPlane;
+		getClosestPtsOnEdges(params.maxPos, params.dirSample, currSample, params.cubeMesh, params.transformedEdges, proxyPlane, centerPt);
+		//	//Compute the center of the proxy polygon by averaging the intersection points.
+		//Sort the polygon vertices clockwise or counterclockwise by projecting them onto the x-y plane
+		//and computing their angle around the center, with the first vertex or the x axis as the reference.
+		PTVEC3 sortedProxyPlane;
+		sortPolygonClockwise(proxyPlane, centerPt, params.sortedProxyPlanes[currSample]);
+
+	}
+}
+
+void Renderer::sortPolygonClockwise(const PTVEC3 &proxyPlane, glm::vec3 centerPt, PTVEC3 &sortedProxyPlane) const
 {
 	const glm::vec3 referencePt = proxyPlane[0];
 	sortedProxyPlane.push_back(centerPt);
@@ -334,13 +443,12 @@ void Renderer::sortPolygonClockwise(const PVEC3 &proxyPlane, glm::vec3 centerPt,
 	sortedProxyPlane.push_back(sortedProxyPlane[1]);
 }
 
-void Renderer::getClosestPtsOnEdges(const glm::vec3 &maxPos, const glm::vec3 &dirSample, int currSample, const Mesh &cubeMesh, const std::vector<Edge> &transformedEdges, PVEC3 &proxyPlane, glm::vec3 &centerPt) const
+void Renderer::getClosestPtsOnEdges(const glm::vec3 &maxPos, const glm::vec3 &dirSample, int currSample, const Mesh &cubeMesh, const std::vector<Edge> &transformedEdges, PTVEC3 &proxyPlane, glm::vec3 &centerPt) const
 {
 	glm::vec3 currPt = glm::vec3(glm::vec4(maxPos + dirSample * (float)currSample,1.0f));
 	int slotsFilled = 0;
 	glm::vec3 accumulatedPt;
 	//if inbetween the z coordinate of both points of the edge then the current pt intersects the edge
-	const int MAX_NUM_PTS_PROXY_PLANE  = 6;
 	for (int i = 0; i < cubeMesh.m_Edges.size() && slotsFilled < MAX_NUM_PTS_PROXY_PLANE; i++)
 	{
 		const glm::vec3 &p1 = transformedEdges[i].p1;
@@ -365,10 +473,10 @@ void Renderer::drawCrosshair(const glm::vec4 &color) const
 	drawObject(glm::mat4(), m_crosshairPts, GL_LINES, color);
 }
 
-void Renderer::drawObject(const glm::mat4 &transformMatrix, const PVEC3 &points, GLenum mode, const glm::vec4 &color) const
+void Renderer::drawObject(const glm::mat4 &transformMatrix, const PTVEC3 &points, GLenum mode, const glm::vec4 &color) const
 {
 	GLint currShader;
-	glGetIntegerv(GL_CURRENT_PROGRAM,&currShader);
+	glGetIntegerv(GL_CURRENT_PROGRAM, &currShader);
 	GLuint shaderId = m_debugShader->m_Id;
 	glUseProgram(shaderId);
 
@@ -383,20 +491,22 @@ void Renderer::drawObject(const glm::mat4 &transformMatrix, const PVEC3 &points,
 	glEnableVertexAttribArray(position);
 	glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (GLvoid*)0);
 
-	uniformLoc = glGetUniformLocation (shaderId, "color");
 	if(color.w != 0.0f)
-	{
-		glUniform4fv(uniformLoc, 1, glm::value_ptr(color));
-	}
+		writeUniform(shaderId, "color", color);
 	
 	glDrawArrays(mode,0, points.size());
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 	glDeleteBuffers(1, &vbo);
 
 	if(color.w != 0.0f)
-	{
-		glUniform4fv(uniformLoc, 1, glm::value_ptr(glm::vec4(0,0,0,0)));
-	}
+		writeUniform(shaderId, "color", glm::vec4(0,0,0,0));
 
 	glUseProgram(currShader);
+}
+
+
+Renderer::ThreadParameters::ThreadParameters(int threadId, glm::vec3 &maxPos, glm::vec3 &dirSample, const Mesh &cubeMesh, std::vector<Edge> &transformedEdges, int first, int last, std::vector<PTVEC3> &sortedProxyPlanes)
+	:threadId(threadId), maxPos(maxPos), dirSample(dirSample), cubeMesh(cubeMesh), transformedEdges(transformedEdges), first(first), last(last), sortedProxyPlanes(sortedProxyPlanes)
+{
+
 }

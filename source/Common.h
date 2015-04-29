@@ -10,7 +10,7 @@
 #include <vector>
 #include <sstream>
 #include <cmath>
-
+#include <thread>
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -44,7 +44,7 @@
 
 #pragma region EnumsANDMisc
 enum Direction{FORWARD, BACKWARD, LEFT, RIGHT, NO_DIRECTION/*FORWARD_LEFT, FORWARD_RIGHT, BACKWARD_LEFT, BACKWARD_RIGHT*/};
-#define PVEC3 std::vector<glm::vec3>
+#define PTVEC3 std::vector<glm::vec3>
 #define TRANSFORM3(MAT,VEC) (glm::vec3(MAT * glm::vec4(VEC, 1.0f)))
 
 #ifdef ANDROID_NDK
@@ -97,6 +97,9 @@ the number of maximum ray steps is the based on diagonal length of the texture
 #define RAY_STEP_SIZE_TEX_SPACE (TEXTURE_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
 #define RAY_STEP_SIZE_MODEL_SPACE (MESH_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
 #define GRADIENT_STEP_SIZE (TEXTURE_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
+
+#define MAX_NUM_PTS_PROXY_PLANE 6
+
 #define LIGHT_POS glm::vec3(-2.0f, 2.0f, 2.0f)
 
 #define VOLUME_NAME std::string("CT-Knee.mhd")

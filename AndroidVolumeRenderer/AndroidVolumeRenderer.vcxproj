@@ -78,6 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
     <AndroidTargetAPI>android-19</AndroidTargetAPI>
+    <AndroidMinAPI>android-19</AndroidMinAPI>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -105,14 +106,19 @@
       <Command>
       </Command>
     </CustomBuildStep>
+    <AntBuild>
+      <NativeLibDependencies>%(NativeLibDependencies)</NativeLibDependencies>
+    </AntBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
     <ClCompile>
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\glm2;$(SolutionDir)\3rdparty\octree;$(SolutionDir)\3rdparty\tinydir;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>android;EGL;GLESv1_CM</AdditionalDependencies>
+      <AdditionalDependencies>android;EGL;GLESv3;stdc++;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -20,7 +20,20 @@ public:
 	static Camera m_camera;
 	bool m_constructIntersectRay;
 	glm::vec3 m_rayStart, m_rayEnd;
-	PVEC3 m_crosshairPts;
+	struct ThreadParameters
+	{
+		ThreadParameters(int threadId, glm::vec3 &maxPos,  glm::vec3 &dirSample,  const Mesh &cubeMesh,  std::vector<Edge> &transformedEdges, int first, int last, std::vector<PTVEC3> &sortedProxyPlanes);
+		int threadId;
+		glm::vec3 &maxPos;
+		glm::vec3 &dirSample;
+		const Mesh &cubeMesh;
+		std::vector<Edge> &transformedEdges;
+		int first;
+		int last;
+		std::vector<PTVEC3> &sortedProxyPlanes;
+	};
+
+	PTVEC3 m_crosshairPts;
 	virtual void mainLoop() = 0;
 	virtual void setUpdateCallback(void(*updateCallback)(void));
 	virtual void handleInput() = 0;
@@ -28,10 +41,11 @@ public:
 	void renderBasic(const Shader *shader, const Mesh &mesh, const glm::mat4 &MVP, bool renderWireframe) const;
 	void renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn) const;
 	void renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, const TransferFunction &transferFn);
-
-	void sortPolygonClockwise(const PVEC3 &proxyPlane, glm::vec3 centerPt, PVEC3 &sortedProxyPlane) const;
-
-	void getClosestPtsOnEdges(const glm::vec3 &maxPos, const glm::vec3 &dirSample, int currSample, const Mesh &cubeMesh, const std::vector<Edge> &transformedEdges, PVEC3 &proxyPlane, glm::vec3 &centerPt) const;
+	void renderTextureBasedVRMT(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, const TransferFunction &transferFn);
+	
+	void calculateProxyPlanes(ThreadParameters &params);
+	void sortPolygonClockwise(const PTVEC3 &proxyPlane, glm::vec3 centerPt, PTVEC3 &sortedProxyPlane) const;
+	void getClosestPtsOnEdges(const glm::vec3 &maxPos, const glm::vec3 &dirSample, int currSample, const Mesh &cubeMesh, const std::vector<Edge> &transformedEdges, PTVEC3 &proxyPlane, glm::vec3 &centerPt) const;
 
 	void drawCrosshair(const glm::vec4 &color) const;
 
@@ -49,6 +63,7 @@ protected:
 	void writeUniform(GLuint shaderId, const char *uniformName, float val) const;
 	void writeUniform(GLuint shaderId, const char *uniformName, int val) const;
 	void writeUniform(GLuint shaderId, const char *uniformName, glm::vec3 val) const;
+	void writeUniform(GLuint shaderId, const char *uniformName, glm::vec4 val) const;
 	void writeUniform(GLuint shaderId, const char *uniformName, glm::mat3 val) const;
 	void writeUniform(GLuint shaderId, const char *uniformName, glm::mat4 val) const;
 	void writeUniform2DTex(GLuint shaderId, const char *uniformName, unsigned int texUnit, GLuint texId) const;
