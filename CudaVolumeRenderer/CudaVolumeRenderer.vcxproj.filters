@@ -1,28 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="assets">
-      <UniqueIdentifier>{1c90ec80-7a79-4096-bd59-9e3ef26acee7}</UniqueIdentifier>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4b6e8516-dcc8-485f-bd6f-d90de1ae50ca}</UniqueIdentifier>
     </Filter>
     <Filter Include="imported libs">
-      <UniqueIdentifier>{7e7644a2-bddc-4b52-92c9-3625d4162002}</UniqueIdentifier>
+      <UniqueIdentifier>{55cc6b18-aa13-4b7c-ba12-22f22238039f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{c91ffe1f-5056-40a5-a850-6c618dba93e6}</UniqueIdentifier>
+    <Filter Include="Cuda">
+      <UniqueIdentifier>{b5ca438f-45e1-4bed-8392-534d9bfa0ea4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\AndroidVolumeRenderer\assets\basicVS.glsl">
-      <Filter>assets</Filter>
-    </None>
-    <None Include="..\AndroidVolumeRenderer\assets\basicFS.glsl">
-      <Filter>assets</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\source\tinyxml2.cpp">
-      <Filter>imported libs</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -62,11 +51,11 @@
     <ClCompile Include="..\source\WindowsVolumeRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\tinyxml2.cpp">
+      <Filter>imported libs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\source\tinyxml2.h">
-      <Filter>imported libs</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\Camera.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -109,5 +98,13 @@
     <ClInclude Include="..\source\Volume.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\tinyxml2.h">
+      <Filter>imported libs</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\source\cuda_volume_renderer.cu">
+      <Filter>Cuda</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

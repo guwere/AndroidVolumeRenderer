@@ -81,14 +81,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\AndroidVolumeRenderer\assets\basicFS.glsl" />
+    <None Include="..\AndroidVolumeRenderer\assets\basicVS.glsl" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\source\Camera.cpp" />
     <ClCompile Include="..\source\File.cpp" />
     <ClCompile Include="..\source\GLFWRenderer.cpp" />
     <ClCompile Include="..\source\HelperFunctions.cpp" />
     <ClCompile Include="..\source\Mesh.cpp" />
     <ClCompile Include="..\source\Renderer.cpp" />
-    <ClCompile Include="..\source\ShaderManager.cpp" />
     <ClCompile Include="..\source\Shader.cpp" />
+    <ClCompile Include="..\source\ShaderManager.cpp" />
     <ClCompile Include="..\source\SQTTransform.cpp" />
     <ClCompile Include="..\source\Timer.cpp" />
     <ClCompile Include="..\source\tinyxml2.cpp" />
@@ -98,24 +102,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Camera.h" />
-    <ClInclude Include="..\source\File.h" />
     <ClInclude Include="..\source\Common.h" />
+    <ClInclude Include="..\source\File.h" />
     <ClInclude Include="..\source\GLFWRenderer.h" />
     <ClInclude Include="..\source\HelperFunctions.h" />
     <ClInclude Include="..\source\InitHeader.h" />
     <ClInclude Include="..\source\Mesh.h" />
     <ClInclude Include="..\source\Renderer.h" />
-    <ClInclude Include="..\source\ShaderManager.h" />
     <ClInclude Include="..\source\Shader.h" />
+    <ClInclude Include="..\source\ShaderManager.h" />
     <ClInclude Include="..\source\SQTTransform.h" />
     <ClInclude Include="..\source\Timer.h" />
     <ClInclude Include="..\source\tinyxml2.h" />
     <ClInclude Include="..\source\TransferFunction.h" />
     <ClInclude Include="..\source\Volume.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\AndroidVolumeRenderer\assets\basicFS.glsl" />
-    <None Include="..\AndroidVolumeRenderer\assets\basicVS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

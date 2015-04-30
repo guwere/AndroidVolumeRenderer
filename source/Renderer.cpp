@@ -10,6 +10,7 @@ Camera Renderer::m_camera;
 Renderer::Renderer(float screenWidth, float screenHeight)
 	:m_screenWidth(screenWidth), m_screenHeight(screenHeight)
 {
+	initCuda();
 	m_clearColor = CLEAR_COLOR;
 	m_clearMask = CLEAR_MASK;
 	m_constructIntersectRay = false;
@@ -26,6 +27,7 @@ Renderer::Renderer(float screenWidth, float screenHeight)
 
 Renderer::Renderer()
 {
+	initCuda();
 	m_clearColor = CLEAR_COLOR;
 	m_clearMask = CLEAR_MASK;
 	m_constructIntersectRay = false;
@@ -402,6 +404,11 @@ void Renderer::renderTextureBasedVRMT(const Shader *shader, const Mesh &cubeMesh
 
 
 
+void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn) const
+{
+
+}
+
 void Renderer::calculateProxyPlanes(ThreadParameters &params)
 {
 	for (int currSample = params.first; currSample < params.last; ++currSample)
@@ -510,3 +517,4 @@ Renderer::ThreadParameters::ThreadParameters(int threadId, glm::vec3 &maxPos, gl
 {
 
 }
+
