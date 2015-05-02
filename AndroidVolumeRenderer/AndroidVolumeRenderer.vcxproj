@@ -28,7 +28,7 @@
     <ClCompile Include="..\source\android_native_app_glue.c" />
     <ClCompile Include="..\source\Camera.cpp" />
     <ClCompile Include="..\source\File.cpp" />
-    <ClCompile Include="..\source\Engine.cpp" />
+    <ClCompile Include="..\source\AndroidRenderer.cpp" />
     <ClCompile Include="..\source\HelperFunctions.cpp" />
     <ClCompile Include="..\source\Mesh.cpp" />
     <ClCompile Include="..\source\perfMonitor.cpp" />
@@ -46,7 +46,7 @@
     <ClInclude Include="..\source\Camera.h" />
     <ClInclude Include="..\source\File.h" />
     <ClInclude Include="..\source\Common.h" />
-    <ClInclude Include="..\source\Engine.h" />
+    <ClInclude Include="..\source\AndroidRenderer.h" />
     <ClInclude Include="..\source\HelperFunctions.h" />
     <ClInclude Include="..\source\InitHeader.h" />
     <ClInclude Include="..\source\Mesh.h" />

@@ -99,8 +99,10 @@ the number of maximum ray steps is the based on diagonal length of the texture
 #define GRADIENT_STEP_SIZE (TEXTURE_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
 
 #define MAX_NUM_PTS_PROXY_PLANE 6
-
+#define TRANSFER_FN_TABLE_SIZE 256
 #define LIGHT_POS glm::vec3(-2.0f, 2.0f, 2.0f)
+
+#define BLOCK_SIZE 16
 
 #define VOLUME_NAME std::string("CT-Knee.mhd")
 //const std::string VOLUME_NAME = "backpack8.mhd";

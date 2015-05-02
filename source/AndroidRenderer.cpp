@@ -1,10 +1,10 @@
-#include "Engine.h"
+#include "AndroidRenderer.h"
 #include "unistd.h"
 #include "Timer.h"
 #include "perfMonitor.h"
+#include "HelperFunctions.h"
 
-
-Engine::Engine()
+AndroidRenderer::AndroidRenderer()
 	:Renderer()
 {
 
@@ -12,7 +12,7 @@ Engine::Engine()
 }
 
 
-void Engine::init(android_app *state, void (*applicationInitCallback)(void))
+void AndroidRenderer::init(android_app *state, void (*applicationInitCallback)(void))
 {
 	m_App = state;
 	m_applicationInitCallback = applicationInitCallback;
@@ -24,7 +24,7 @@ void Engine::init(android_app *state, void (*applicationInitCallback)(void))
 }
 
 
-int Engine::initEGL()
+int AndroidRenderer::initEGL()
 {
 	LOGI("Initializing EGL Context\n");
 
@@ -116,10 +116,13 @@ int Engine::initEGL()
 	this->m_surface = surface;
 	this->m_screenWidth = w;
 	this->m_screenHeight = h;
-	this->m_state.angle = 0;
 
+	m_blockSize = dim3(BLOCK_SIZE, BLOCK_SIZE);
+	m_gridSize = dim3(HelperFunctions::iDivUp(w, m_blockSize.x), HelperFunctions::iDivUp(h, m_blockSize.y));
+	initPixelBufferCuda();
 
 	m_camera.projection = glm::perspective(CAMERA_FOV, (float)m_screenWidth / (float)m_screenHeight, NEAR_CLIP_PLANE, FAR_CLIP_PLANE);
+
 
 	// Initialize GL state.
 	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -131,7 +134,7 @@ int Engine::initEGL()
 }
 
 
-void Engine::termDisplay()
+void AndroidRenderer::termDisplay()
 {
 	if (m_display != EGL_NO_DISPLAY) {
 		eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -151,7 +154,7 @@ void Engine::termDisplay()
 
 
 
-void Engine::printInfoPath()
+void AndroidRenderer::printInfoPath()
 {
 	LOGI("Printing relevant package paths.");
 	// Get usable JNI context
@@ -205,7 +208,7 @@ void Engine::printInfoPath()
 	}
 }
 
-void Engine::setAssetManager()
+void AndroidRenderer::setAssetManager()
 {
 	JNIEnv* env = m_App->activity->env;
 	JavaVM* vm = m_App->activity->vm;
@@ -249,7 +252,7 @@ void Engine::setAssetManager()
 }
 
 
-void Engine::printGLContextInfo()
+void AndroidRenderer::printGLContextInfo()
 {
 	
 	LOGI("--OpenGL Context Information---");
@@ -267,7 +270,7 @@ void Engine::printGLContextInfo()
 
 void engine_handle_cmd(struct android_app* app, int32_t cmd)
 {
-	Engine* engine = (Engine*)app->userData;
+	AndroidRenderer* engine = (AndroidRenderer*)app->userData;
 	switch (cmd) {
 	case APP_CMD_SAVE_STATE:
 		// The system has asked us to save our current state.  Do so.
@@ -328,7 +331,7 @@ void engine_handle_cmd(struct android_app* app, int32_t cmd)
 
 int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 {
-	Engine* engine = (Engine*)app->userData;
+	AndroidRenderer* engine = (AndroidRenderer*)app->userData;
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
 	{
 		int32_t action = AMOTION_EVENT_ACTION_MASK & AMotionEvent_getAction((const AInputEvent*)event);
@@ -348,7 +351,7 @@ int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 }
 
 
-void Engine::mainLoop()
+void AndroidRenderer::mainLoop()
 {
 	while (1) {
 		// Read all pending events.
@@ -419,7 +422,7 @@ void Engine::mainLoop()
 }
 
 
-void Engine::handleInput()
+void AndroidRenderer::handleInput()
 {
 
 }

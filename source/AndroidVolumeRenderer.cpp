@@ -16,11 +16,11 @@
  */
 #include "Common.h"
 #include "InitHeader.h"
-#include "Engine.h"
+#include "AndroidRenderer.h"
 
 #include "android\asset_manager.h"
 
-Engine engine;
+AndroidRenderer engine;
 
 void android_main(struct android_app* state) {
    // struct engine engine;

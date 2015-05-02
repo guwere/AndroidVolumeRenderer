@@ -88,8 +88,9 @@ void updateCallback()
 
 
 	//renderer->renderRaycastVR(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
-	renderer->renderTextureBasedVR(textureBasedVRShader, mesh, volume, transferFn);
+	//renderer->renderTextureBasedVR(textureBasedVRShader, mesh, volume, transferFn);
 	//renderer->renderTextureBasedVRMT(textureBasedVRShader, mesh, volume, transferFn);
+	renderer->renderRaycastVRCUDA(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
 
 	renderer->drawCrosshair(glm::vec4(0,0,1,1));
 

@@ -6,121 +6,243 @@
 #include "device_launch_parameters.h"
 #include "Common.h"
 
+#include <helper_cuda.h>
+#include <helper_math.h>
 
-cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size);
+typedef unsigned int  uint;
+typedef unsigned char uchar;
+
+cudaArray *d_volumeArray = 0;
+cudaArray *d_transferFuncArray;
+
+typedef unsigned char VolumeType;
+//typedef unsigned short VolumeType;
+
+texture<VolumeType, 3, cudaReadModeNormalizedFloat> tex;         // 3D texture
+texture<float4, 1, cudaReadModeElementType>         transferTex; // 1D transfer function texture
+
+typedef struct
+{
+    float4 m[3];
+} float3x4;
+
+__constant__ float3x4 c_invViewMatrix;  // inverse view matrix
+
+struct Ray
+{
+    float3 o;   // origin
+    float3 d;   // direction
+};
+
+
+__device__
+int intersectBox(Ray r, float3 boxmin, float3 boxmax, float *tnear, float *tfar)
+{
+    // compute intersection of ray with all six bbox planes
+    float3 invR = make_float3(1.0f) / r.d;
+    float3 tbot = invR * (boxmin - r.o);
+    float3 ttop = invR * (boxmax - r.o);
+
+    // re-order intersections to find smallest and largest on each axis
+    float3 tmin = fminf(ttop, tbot);
+    float3 tmax = fmaxf(ttop, tbot);
+
+    // find the largest tmin and the smallest tmax
+    float largest_tmin = fmaxf(fmaxf(tmin.x, tmin.y), fmaxf(tmin.x, tmin.z));
+    float smallest_tmax = fminf(fminf(tmax.x, tmax.y), fminf(tmax.x, tmax.z));
+
+    *tnear = largest_tmin;
+    *tfar = smallest_tmax;
+
+    return smallest_tmax > largest_tmin;
+}
+
+// transform vector by matrix (no translation)
+__device__
+float3 mul(const float3x4 &M, const float3 &v)
+{
+    float3 r;
+    r.x = dot(v, make_float3(M.m[0]));
+    r.y = dot(v, make_float3(M.m[1]));
+    r.z = dot(v, make_float3(M.m[2]));
+    return r;
+}
+
+// transform vector by matrix with translation
+__device__
+float4 mul(const float3x4 &M, const float4 &v)
+{
+    float4 r;
+    r.x = dot(v, M.m[0]);
+    r.y = dot(v, M.m[1]);
+    r.z = dot(v, M.m[2]);
+    r.w = 1.0f;
+    return r;
+}
+
+__device__ uint rgbaFloatToInt(float4 rgba)
+{
+    rgba.x = __saturatef(rgba.x);   // clamp to [0.0, 1.0]
+    rgba.y = __saturatef(rgba.y);
+    rgba.z = __saturatef(rgba.z);
+    rgba.w = __saturatef(rgba.w);
+    return (uint(rgba.w*255)<<24) | (uint(rgba.z*255)<<16) | (uint(rgba.y*255)<<8) | uint(rgba.x*255);
+}
+
+__global__ void
+d_render(uint *d_output, uint imageW, uint imageH)
+{
+    const int maxSteps = 500;
+    const float tstep = 0.01f;
+    const float opacityThreshold = 0.95f;
+    const float3 boxMin = make_float3(-1.0f, -1.0f, -1.0f);
+    const float3 boxMax = make_float3(1.0f, 1.0f, 1.0f);
+
+    uint x = blockIdx.x*blockDim.x + threadIdx.x;
+    uint y = blockIdx.y*blockDim.y + threadIdx.y;
+
+    if ((x >= imageW) || (y >= imageH)) return;
+
+    float u = (x / (float) imageW)*2.0f-1.0f;
+    float v = (y / (float) imageH)*2.0f-1.0f;
+
+    // calculate eye ray in world space
+    Ray eyeRay;
+    eyeRay.o = make_float3(mul(c_invViewMatrix, make_float4(0.0f, 0.0f, 0.0f, 1.0f)));
+    eyeRay.d = normalize(make_float3(u, v, -2.0f));
+    eyeRay.d = mul(c_invViewMatrix, eyeRay.d);
+
+    // find intersection with box
+    float tnear, tfar;
+    int hit = intersectBox(eyeRay, boxMin, boxMax, &tnear, &tfar);
+
+    if (!hit) return;
+
+    if (tnear < 0.0f) tnear = 0.0f;     // clamp to near plane
+
+    // march along ray from front to back, accumulating color
+    float4 sum = make_float4(0.0f);
+    float t = tnear;
+    float3 pos = eyeRay.o + eyeRay.d*tnear;
+    float3 step = eyeRay.d*tstep;
+
+    for (int i=0; i<maxSteps; i++)
+    {
+        // read from 3D texture
+        // remap position to [0, 1] coordinates
+        float sample = tex3D(tex, pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+        //sample *= 64.0f;    // scale for 10-bit data
+
+        // lookup in transfer function texture
+        //float4 col = tex1D(transferTex, (sample-transferOffset)*transferScale);
+        float4 col = tex1D(transferTex, sample);
+      //  col.w *= density;
+
+        // "under" operator for back-to-front blending
+        //sum = lerp(sum, col, col.w);
+
+        // pre-multiply alpha
+        col.x *= col.w;
+        col.y *= col.w;
+        col.z *= col.w;
+        // "over" operator for front-to-back blending
+        sum = sum + col*(1.0f - sum.w);
+
+        // exit early if opaque
+        if (sum.w > opacityThreshold)
+            break;
+
+        t += tstep;
+
+        if (t > tfar) break;
+
+        pos += step;
+    }
+
+   // sum *= brightness;
+
+    // write output color
+    d_output[y*imageW + x] = rgbaFloatToInt(sum);
+}
+
+
 
 extern "C"
 void initCuda()
 {
-	const int arraySize = 5;
-    const int a[arraySize] = { 1, 2, 3, 4, 5 };
-    const int b[arraySize] = { 10, 20, 30, 40, 50 };
-    int c[arraySize] = { 0 };
 
-    // Add vectors in parallel.
-    cudaError_t cudaStatus = addWithCuda(c, a, b, arraySize);
-    if (cudaStatus != cudaSuccess) {
-        LOGI("addWithCuda failed!");
-    }
-
-    LOGI("{1,2,3,4,5} + {10,20,30,40,50} = {%d,%d,%d,%d,%d}\n",
-        c[0], c[1], c[2], c[3], c[4]);
-
-    // cudaDeviceReset must be called before exiting in order for profiling and
-    // tracing tools such as Nsight and Visual Profiler to show complete traces.
-    cudaStatus = cudaDeviceReset();
-    if (cudaStatus != cudaSuccess) {
-        LOGI("cudaDeviceReset failed!");
-  
-    }
 }
-
-
-__global__ void addKernel(int *c, const int *a, const int *b)
+extern "C" void exitCuda()
 {
-    int i = threadIdx.x;
-    c[i] = a[i] + b[i];
+    checkCudaErrors(cudaFreeArray(d_volumeArray));
+    checkCudaErrors(cudaFreeArray(d_transferFuncArray));
 }
 
 
-// Helper function for using CUDA to add vectors in parallel.
-cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
+extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *transferFunction)
 {
-    int *dev_a = 0;
-    int *dev_b = 0;
-    int *dev_c = 0;
-    cudaError_t cudaStatus;
+	    // create 3D array
+    cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<VolumeType>();
+    checkCudaErrors(cudaMalloc3DArray(&d_volumeArray, &channelDesc, volumeSize));
 
-    // Choose which GPU to run on, change this on a multi-GPU system.
-    cudaStatus = cudaSetDevice(0);
-    if (cudaStatus != cudaSuccess) {
-        LOGI("cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
-        goto Error;
-    }
+    // copy data to 3D array
+    cudaMemcpy3DParms copyParams = {0};
+    copyParams.srcPtr   = make_cudaPitchedPtr(volume, volumeSize.width*sizeof(VolumeType), volumeSize.width, volumeSize.height);
+    copyParams.dstArray = d_volumeArray;
+    copyParams.extent   = volumeSize;
+    copyParams.kind     = cudaMemcpyHostToDevice;
+    checkCudaErrors(cudaMemcpy3D(&copyParams));
 
-    // Allocate GPU buffers for three vectors (two input, one output)    .
-    cudaStatus = cudaMalloc((void**)&dev_c, size * sizeof(int));
-    if (cudaStatus != cudaSuccess) {
-        LOGI("cudaMalloc failed!");
-        goto Error;
-    }
+    // set texture parameters
+    tex.normalized = true;                      // access with normalized texture coordinates
+    tex.filterMode = cudaFilterModeLinear;      // linear interpolation
+    tex.addressMode[0] = cudaAddressModeClamp;  // clamp texture coordinates
+    tex.addressMode[1] = cudaAddressModeClamp;
 
-    cudaStatus = cudaMalloc((void**)&dev_a, size * sizeof(int));
-    if (cudaStatus != cudaSuccess) {
-        LOGI("cudaMalloc failed!");
-        goto Error;
-    }
+    // bind array to 3D texture
+    checkCudaErrors(cudaBindTextureToArray(tex, d_volumeArray, channelDesc));
 
-    cudaStatus = cudaMalloc((void**)&dev_b, size * sizeof(int));
-    if (cudaStatus != cudaSuccess) {
-        LOGI("cudaMalloc failed!");
-        goto Error;
-    }
+    //// create transfer function texture
+    //float4 transferFunc[LOGI*4] =
+    //{
+    //    {  0.0, 0.0, 0.0, 0.0, },
+    //    {  1.0, 0.0, 0.0, 1.0, },
+    //    {  1.0, 0.5, 0.0, 1.0, },
+    //    {  1.0, 1.0, 0.0, 1.0, },
+    //    {  0.0, 1.0, 0.0, 1.0, },
+    //    {  0.0, 1.0, 1.0, 1.0, },
+    //    {  0.0, 0.0, 1.0, 1.0, },
+    //    {  1.0, 0.0, 1.0, 1.0, },
+    //    {  0.0, 0.0, 0.0, 0.0, },
+    //};
 
-    // Copy input vectors from host memory to GPU buffers.
-    cudaStatus = cudaMemcpy(dev_a, a, size * sizeof(int), cudaMemcpyHostToDevice);
-    if (cudaStatus != cudaSuccess) {
-        LOGI("cudaMemcpy failed!");
-        goto Error;
-    }
+    cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
+    cudaArray *d_transferFuncArray;
+    checkCudaErrors(cudaMallocArray(&d_transferFuncArray, &channelDesc2, TRANSFER_FN_TABLE_SIZE * sizeof(float), 1));
+    checkCudaErrors(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, TRANSFER_FN_TABLE_SIZE * sizeof(float), cudaMemcpyHostToDevice));
 
-    cudaStatus = cudaMemcpy(dev_b, b, size * sizeof(int), cudaMemcpyHostToDevice);
-    if (cudaStatus != cudaSuccess) {
-        LOGI("cudaMemcpy failed!");
-        goto Error;
-    }
+    transferTex.filterMode = cudaFilterModeLinear;
+    transferTex.normalized = true;    // access with normalized texture coordinates
+    transferTex.addressMode[0] = cudaAddressModeClamp;   // wrap texture coordinates
 
-    // Launch a kernel on the GPU with one thread for each element.
-    addKernel<<<1, size>>>(dev_c, dev_a, dev_b);
-
-    // Check for any errors launching the kernel
-    cudaStatus = cudaGetLastError();
-    if (cudaStatus != cudaSuccess) {
-        LOGI("addKernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
-        goto Error;
-    }
-    
-    // cudaDeviceSynchronize waits for the kernel to finish, and returns
-    // any errors encountered during the launch.
-    cudaStatus = cudaDeviceSynchronize();
-    if (cudaStatus != cudaSuccess) {
-        LOGI("cudaDeviceSynchronize returned error code %d after launching addKernel!\n", cudaStatus);
-        goto Error;
-    }
-
-    // Copy output vector from GPU buffer to host memory.
-    cudaStatus = cudaMemcpy(c, dev_c, size * sizeof(int), cudaMemcpyDeviceToHost);
-    if (cudaStatus != cudaSuccess) {
-        LOGI("cudaMemcpy failed!");
-        goto Error;
-    }
-
-Error:
-    cudaFree(dev_c);
-    cudaFree(dev_a);
-    cudaFree(dev_b);
-    
-    return cudaStatus;
+    // Bind the array to the texture
+    checkCudaErrors(cudaBindTextureToArray(transferTex, d_transferFuncArray, channelDesc2));
 }
+
+
+extern "C" void render_kernel(dim3 gridSize, dim3 blockSize, uint *d_output, uint imageW, uint imageH)
+{
+    d_render<<<gridSize, blockSize>>>(d_output, imageW, imageH);
+}
+
+
+extern "C" void copyInvViewMatrix(float *invViewMatrix, size_t sizeofMatrix)
+{
+    checkCudaErrors(cudaMemcpyToSymbol(c_invViewMatrix, invViewMatrix, sizeofMatrix));
+}
+
+
+
+
 
 #endif // !CUDA_VOLUME_RENDERER_CU

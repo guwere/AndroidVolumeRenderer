@@ -4,7 +4,7 @@
 TransferFunction::TransferFunction()
 {
 	// Want the transfer functions to have 256 possible values
-	m_colorTable.resize(256);
+	m_colorTable.resize(TRANSFER_FN_TABLE_SIZE);
 }
 
 void TransferFunction::parseVoreenXML(File &file)
@@ -48,13 +48,13 @@ void TransferFunction::generate()
 	glBindTexture(GL_TEXTURE_2D, m_tfTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 1, 0, GL_RGBA, GL_FLOAT, 0); //1d textures not supported in opengl es
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TRANSFER_FN_TABLE_SIZE, 1, 0, GL_RGBA, GL_FLOAT, 0); //1d textures not supported in opengl es
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	loadLookup();
 
 	glBindTexture(GL_TEXTURE_2D, m_tfTexture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGBA, GL_FLOAT, &m_colorTable[0]);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, TRANSFER_FN_TABLE_SIZE, 1, GL_RGBA, GL_FLOAT, &m_colorTable[0]);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -69,7 +69,7 @@ void TransferFunction::loadLookup()
 	float previousIntensity = 0.0f;
 	int next = 0;
 
-	for (int i=0; i<256; i++)
+	for (int i=0; i<TRANSFER_FN_TABLE_SIZE; i++)
 	{
 		float currentIntensity = (float)i / (float)255;
 

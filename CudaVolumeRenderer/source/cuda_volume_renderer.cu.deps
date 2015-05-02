@@ -441,3 +441,7 @@ C:\Program Files (x86)\Windows Kits\8.0\Include\shared\winapifamily.h
 C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
 D:\C++\ShieldVolumeRenderer\\3rdparty\glfw\include\GLFW/glfw3.h
 C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
+D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_cuda.h
+D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_string.h
+D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_math.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda_runtime.h

@@ -16,10 +16,10 @@ struct saved_state {
 /**
  * Shared state for our app.
  */
-struct Engine
+struct AndroidRenderer
 : Renderer{
 public:
-	Engine();
+	AndroidRenderer();
     struct android_app* m_App;
 
     ASensorManager* m_sensorManager;

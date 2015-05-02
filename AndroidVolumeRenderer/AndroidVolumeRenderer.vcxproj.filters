@@ -29,9 +29,6 @@
     <ClCompile Include="..\source\AndroidVolumeRenderer.cpp">
       <Filter>jni</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Engine.cpp">
-      <Filter>jni</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\File.cpp">
       <Filter>jni</Filter>
     </ClCompile>
@@ -71,12 +68,12 @@
     <ClCompile Include="..\source\perfMonitor.cpp">
       <Filter>jni</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\AndroidRenderer.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\android_native_app_glue.h">
-      <Filter>jni</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Engine.h">
       <Filter>jni</Filter>
     </ClInclude>
     <ClInclude Include="..\source\Common.h">
@@ -122,6 +119,9 @@
       <Filter>jni</Filter>
     </ClInclude>
     <ClInclude Include="..\source\InitHeader.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\AndroidRenderer.h">
       <Filter>jni</Filter>
     </ClInclude>
   </ItemGroup>

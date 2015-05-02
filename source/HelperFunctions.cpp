@@ -66,3 +66,8 @@ bool HelperFunctions::intersectRayTriangle(const glm::vec3 &va, const glm::vec3 
 	uvtCoord = glm::vec3(u,v,t);
 	return true;
 }
+
+int HelperFunctions::iDivUp(int a, int b)
+{
+	return (a % b != 0) ? (a / b + 1) : (a / b);
+}

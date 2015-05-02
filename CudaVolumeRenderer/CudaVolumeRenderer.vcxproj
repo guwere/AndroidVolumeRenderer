@@ -68,7 +68,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)\3rdparty\glew\include;$(SolutionDir)\3rdparty\octree;$(SolutionDir)\3rdparty\glm;$(SolutionDir)\3rdparty\tinydir;$(SolutionDir)\3rdparty\glfw\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\3rdparty\glew\include;$(SolutionDir)\3rdparty\octree;$(SolutionDir)\3rdparty\glm;$(SolutionDir)\3rdparty\tinydir;$(SolutionDir)\3rdparty\glfw\include;$(SolutionDir)\3rdparty\cudaHelper;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

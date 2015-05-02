@@ -42,6 +42,7 @@ GLFWRenderer::GLFWRenderer()
 		LOGI("%s\n",glewGetErrorString(err));
 	}
 
+	initPixelBufferCuda();
 
 }
 
