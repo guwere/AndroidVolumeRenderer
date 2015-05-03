@@ -497,47 +497,16 @@ void Renderer::renderTextureBasedVRMT(const Shader *shader, const Mesh &cubeMesh
 
 void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn)
 {
-	//glViewport(0, 0, m_screenWidth, m_screenHeight);
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
 
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	//glOrtho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
 
-	//// use OpenGL to build view matrix
-	//GLfloat modelView[16];
-	//glMatrixMode(GL_MODELVIEW);
-	//glPushMatrix();
-	//glLoadIdentity();
-	//float3 viewRotation = make_float3(0.0, 0.0, 0.0);;
-	//float3 viewTranslation = make_float3(0.0, 0.0, -4.0f);
-	//glRotatef(-viewRotation.x, 1.0, 0.0, 0.0);
-	//glRotatef(-viewRotation.y, 0.0, 1.0, 0.0);
-	//glTranslatef(-viewTranslation.x, -viewTranslation.y, -viewTranslation.z);
-	//glGetFloatv(GL_MODELVIEW_MATRIX, modelView);
-	//glPopMatrix();
-	//float invViewMatrix[12];
-	//invViewMatrix[0] = modelView[0];
-	//invViewMatrix[1] = modelView[4];
-	//invViewMatrix[2] = modelView[8];
-	//invViewMatrix[3] = modelView[12];
-	//invViewMatrix[4] = modelView[1];
-	//invViewMatrix[5] = modelView[5];
-	//invViewMatrix[6] = modelView[9];
-	//invViewMatrix[7] = modelView[13];
-	//invViewMatrix[8] = modelView[2];
-	//invViewMatrix[9] = modelView[6];
-	//invViewMatrix[10] = modelView[10];
-	//invViewMatrix[11] = modelView[14];
-	//copyInvViewMatrix(invViewMatrix, sizeof(float4)*3);
-	glm::mat4 modelMatrix = glm::mat4();
-	glm::mat4 viewMatrix = glm::translate(glm::mat4(), glm::vec3(0,0,-4.0f));
-	glm::mat4 projMatrix =  glm::ortho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
-	//glm::mat4 modelViewMatrix = m_camera.GetViewMatrix() * planeMesh.transform.getMatrix();
+	const glm::mat4 &modelMatrix = planeMesh.transform.getMatrix();
+	const glm::mat4 &viewMatrix = m_camera.GetViewMatrix();
+	//glm::mat4 modelViewMatrix = glm::translate(glm::mat4(), -viewTranslation);
 	glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-	glm::mat4 MVP = projMatrix * modelViewMatrix;
-	glm::mat3x4 invViewMatrix = glm::mat3x4(glm::inverse(viewMatrix));
+	glm::mat3x4 invViewMatrix = glm::mat3x4(glm::transpose(glm::inverse(modelViewMatrix)));
+	//const glm::mat4 projection = glm::ortho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
+	const glm::mat4 &projection = m_camera.GetProjectionMatrix();
+	glm::mat4 MVP = projection * modelViewMatrix;
 	copyInvViewMatrix(glm::value_ptr(invViewMatrix), sizeof(float4)*3);
 
 	// map PBO to get CUDA device pointer
@@ -559,10 +528,10 @@ void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, 
 	checkCudaErrorsLog(cudaGraphicsUnmapResources(1, &cuda_pbo_resource, 0));
 
 	// display results
-	glClear(GL_COLOR_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT);
 
 	// draw image from PBO
-	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_DEPTH_TEST);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -584,21 +553,6 @@ void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, 
 	writeUniform2DTex(shaderId, "tex", 0, m_cudaTex);
 	writeUniform(shaderId, "trasformMat", MVP);
 	planeMesh.render();
-	// draw textured quad
-	//glEnable(GL_TEXTURE_2D);
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0, 0);
-	//glVertex2f(0, 0);
-	//glTexCoord2f(1, 0);
-	//glVertex2f(1, 0);
-	//glTexCoord2f(1, 1);
-	//glVertex2f(1, 1);
-	//glTexCoord2f(0, 1);
-	//glVertex2f(0, 1);
-	//glEnd();
-
-	//glDisable(GL_TEXTURE_2D);
-
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 

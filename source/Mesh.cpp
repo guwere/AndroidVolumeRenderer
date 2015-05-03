@@ -257,10 +257,10 @@ void Mesh::generatePlane(Shader *shader)
 		0,1,0, 0,1
 
 	};
-	m_Vertices.push_back(Vertex(glm::vec3(0,0,0)));
-	m_Vertices.push_back(Vertex(glm::vec3(1,0,0)));
-	m_Vertices.push_back(Vertex(glm::vec3(1,1,0)));
-	m_Vertices.push_back(Vertex(glm::vec3(0,1,0)));
+	m_Vertices.push_back(Vertex(glm::vec3(MIN_MESH_X, MIN_MESH_Y, 0)));
+	m_Vertices.push_back(Vertex(glm::vec3(MAX_MESH_X, MIN_MESH_Y, 0)));
+	m_Vertices.push_back(Vertex(glm::vec3(MAX_MESH_X, MAX_MESH_Y, 0)));
+	m_Vertices.push_back(Vertex(glm::vec3(MIN_MESH_X, MAX_MESH_Y, 0)));
 
 	GLushort cube_elements[] = {
 		// front

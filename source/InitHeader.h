@@ -49,8 +49,9 @@ void initAppParams()
 	File planeShaderFS("", "planeFS.glsl");
 	planeShader = ShaderManager::get().getShader(planeShaderVS, planeShaderFS);
 	cubeMesh.generateCube(raycastVRShader);
-	planeMesh.generatePlane(raycastVRShader);
+	planeMesh.generatePlane(planeShader);
 	cubeMesh.transform.scaleUniform(MESH_SCALE);
+	planeMesh.transform.scaleUniform(MESH_SCALE);
 
 
 	File vf("",VOLUME_NAME);
@@ -92,7 +93,7 @@ void updateCallback()
 	//mesh.transform.pivotOnLocalAxis(0,0.001, 0);
 
 
-	//renderer->renderRaycastVR(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
+	//renderer->renderRaycastVR(raycastVRShader, cubeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
 	//renderer->renderTextureBasedVR(textureBasedVRShader, mesh, volume, transferFn);
 	//renderer->renderTextureBasedVRMT(textureBasedVRShader, mesh, volume, transferFn);
 	renderer->renderRaycastVRCUDA(planeShader, planeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);

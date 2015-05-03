@@ -137,7 +137,7 @@ d_render(uint *d_output, uint imageW, uint imageH)
         // lookup in transfer function texture
         //float4 col = tex1D(transferTex, (sample-transferOffset)*transferScale);
         float4 col = tex1D(transferTex, sample);
-        col.w *= 0.05f;
+       // col.w *= 0.05f;
 
         // "under" operator for back-to-front blending
         //sum = lerp(sum, col, col.w);
@@ -206,25 +206,46 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *tra
     checkCudaErrorsLog(cudaBindTextureToArray(tex, d_volumeArray, channelDesc));
 
     //// create transfer function texture
-    float4 transferFunc[] =
-    {
-        {  0.0, 0.0, 0.0, 0.0, },
-        {  1.0, 0.0, 0.0, 1.0, },
-        {  1.0, 0.5, 0.0, 1.0, },
-        {  1.0, 1.0, 0.0, 1.0, },
-        {  0.0, 1.0, 0.0, 1.0, },
-        {  0.0, 1.0, 1.0, 1.0, },
-        {  0.0, 0.0, 1.0, 1.0, },
-        {  1.0, 0.0, 1.0, 1.0, },
-        {  0.0, 0.0, 0.0, 0.0, },
-    };
+    //float4 transferFunc[] =
+    //{
+    //    {  0.0, 0.0, 0.0, 0.0, },
+    //    {  1.0, 0.0, 0.0, 1.0, },
+    //    {  1.0, 0.5, 0.0, 1.0, },
+    //    {  1.0, 1.0, 0.0, 1.0, },
+    //    {  0.0, 1.0, 0.0, 1.0, },
+    //    {  0.0, 1.0, 1.0, 1.0, },
+    //    {  0.0, 0.0, 1.0, 1.0, },
+    //    {  1.0, 0.0, 1.0, 1.0, },
+    //    {  0.0, 0.0, 0.0, 0.0, },
+    //};
+    //float4 transferFunc[] =
+    //{
+    //    {  0.0, 0.0, 0.0, 0.0, },
+    //    {  1.0, 0.0, 0.0, 8.0f/100.0f, },
+    //    {  1.0, 95.0f/255.0f, 0.0, 0.0, },
+    //    {  1.0, 191.0f/255.0f, 0.0, 0.0, },
+    //    {  223.0f/255.0f, 1.0f, 0.0, 1.0f/100.0f, },
+    //    {  127.0f/255.0f, 1.0f, 0.0, 12.0f/100.0f, },
+    //    {  31.0f/255.0f, 1.0f, 0.0, 2.0f/100.0f, },
+    //    {  0.0, 1.0f, 63.0f/255.0f, 5.0/100.0f, },
+    //    {  0.0, 1.0f, 159.0f/255.0f, 24.0f/100.0f, },
+    //    {  0.0, 1.0f, 1.0f, 18.0f/100.0f, },
+    //    {  0.0, 159.0f/255.0f, 1.0f, 24.0f/100.0f, },
+    //    {  0.0, 63.0f/255.0f, 1.0f, 30.0f/100.0f, },
+    //    {  31.0f/255.0f, 0.0, 1.0f, 34.0f/100.0f, },
+    //    {  127.0f/255.0f, 0.0, 1.0f, 24.0f/100.0f, },
+    //    {  223.0f/255.0f, 0.0, 1.0f, 21.0f/100.0f, },
+    //    {  1.0f, 0.0, 191.0f/255.0f, 53.0f/100.0f, },
+    //    {  1.0f, 0.0, 95.0f/255.0f, 61.0f/100.0f, },
+    //    {  1.0f, 1.0f, 1.0f, 0.0f/100.0f, },
+    //};
 
     cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
     cudaArray *d_transferFuncArray;
-    //checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, TRANSFER_FN_TABLE_SIZE, 1));
-    //checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, TRANSFER_FN_TABLE_SIZE * 4 * sizeof(GLfloat), cudaMemcpyHostToDevice));
-    checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
-    checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
+    checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, TRANSFER_FN_TABLE_SIZE, 1));
+    checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, TRANSFER_FN_TABLE_SIZE * 4 * sizeof(GLfloat), cudaMemcpyHostToDevice));
+    //checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
+    //checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
 
 
     transferTex.filterMode = cudaFilterModeLinear;
