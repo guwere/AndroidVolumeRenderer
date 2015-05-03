@@ -1,7 +1,6 @@
 #include "AndroidRenderer.h"
 #include "unistd.h"
 #include "Timer.h"
-#include "perfMonitor.h"
 #include "HelperFunctions.h"
 
 AndroidRenderer::AndroidRenderer()
@@ -350,7 +349,7 @@ void AndroidRenderer::mainLoop()
 		int events;
 		struct android_poll_source* source;
 
-		ndk_helper::PerfMonitor timer;
+	//	ndk_helper::PerfMonitor timer;
 
 		Timer::get().updateInterval();
 		// If not animating, we will block forever waiting for events.
@@ -392,9 +391,8 @@ void AndroidRenderer::mainLoop()
 			GLfloat yoffset = m_state.y - m_screenHeight * 0.5;
 			m_camera.ProcessMouseMovement(xoffset * deltaTime * 0.2f, -yoffset * deltaTime * 0.2f);
 			float fps;
-			timer.Update(fps);
-			LOGI("Framerate: %dd\n", fps);
-			LOGI("Time elapsed: %d\n", timer.GetCurrentTime());
+//			LOGI("Framerate: %dd\n", fps);
+//			LOGI("Time elapsed: %d\n", timer.GetCurrentTime());
 		}
 
 		if(m_animating)

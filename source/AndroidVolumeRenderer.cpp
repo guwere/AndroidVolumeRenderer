@@ -18,7 +18,7 @@
 #include "InitHeader.h"
 #include "AndroidRenderer.h"
 
-#include "android\asset_manager.h"
+#include "android/asset_manager.h"
 
 AndroidRenderer engine;
 

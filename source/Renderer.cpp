@@ -34,11 +34,7 @@ void Renderer::init(float screenWidth, float screenHeight)
 	m_blockSize = dim3(BLOCK_SIZE, BLOCK_SIZE);
 	m_gridSize = dim3(HelperFunctions::iDivUp(m_screenWidth, m_blockSize.x), HelperFunctions::iDivUp(m_screenHeight, m_blockSize.y));
 
-	if (!glewIsSupported("GL_VERSION_3_0 GL_ARB_pixel_buffer_object"))
-	{
-		printf("Required OpenGL extensions missing.");
-		exit(EXIT_SUCCESS);
-	}
+
 	m_cudaPBO = 0;
 	cuda_pbo_resource = NULL;
 	initCuda();
@@ -102,15 +98,15 @@ void Renderer::initPixelBufferCuda()
 		checkCudaErrorsLog(cudaGraphicsUnregisterResource(cuda_pbo_resource));
 
 		// delete old buffer
-		glDeleteBuffersARB(1, &m_cudaPBO);
+		glDeleteBuffers(1, &m_cudaPBO);
 		glDeleteTextures(1, &m_cudaTex);
 	}
 
 	// create pixel buffer object for display
-	glGenBuffersARB(1, &m_cudaPBO);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, m_cudaPBO);
-	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, m_screenWidth*m_screenHeight*sizeof(GLubyte)*4, 0, GL_STREAM_DRAW_ARB);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
+	glGenBuffers(1, &m_cudaPBO);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_cudaPBO);
+	glBufferData(GL_PIXEL_UNPACK_BUFFER, m_screenWidth*m_screenHeight*sizeof(GLubyte)*4, 0, GL_STREAM_DRAW);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
 	// register this buffer object with CUDA
 	checkCudaErrorsLog(cudaGraphicsGLRegisterBuffer(&cuda_pbo_resource, m_cudaPBO, cudaGraphicsMapFlagsWriteDiscard));
@@ -541,10 +537,10 @@ void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, 
 	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, m_cudaPBO);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_cudaPBO);
 	glBindTexture(GL_TEXTURE_2D, m_cudaTex);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
 	GLuint shaderId = shader->getId();
 	glUseProgram(shaderId);

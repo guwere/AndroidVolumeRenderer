@@ -13,8 +13,8 @@
 #include <cuda.h>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include <helper_cuda.h>
-#include <helper_math.h>
+#include "../3rdparty/cudaHelper/helper_cuda.h"
+#include "../3rdparty/cudaHelper/helper_math.h"
 
 class Renderer
 {

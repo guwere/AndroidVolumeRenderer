@@ -1,6 +1,6 @@
 #include "Volume.h"
 #include "HelperFunctions.h"
-#include <tinydir.h>
+#include "../3rdparty/tinydir/tinydir.h"
 #include <algorithm>
 
 using namespace std;

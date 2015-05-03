@@ -2,16 +2,23 @@
 #define CUDA_VOLUME_RENDERER_CU
 
 //#include "Common.h"
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#ifdef WIN32
+//#include <GL/glew.h>
+//#include <GLFW/glfw3.h>
+#else
 
+//#include <GLES3/gl3.h>
+//#include <GLES3/gl3ext.h>
+#endif
+#include "../3rdparty/cudaHelper/helper_cuda.h"
+#include "../3rdparty/cudaHelper/helper_math.h"
+//#include "../3rdparty/cudaHelper/helper_cuda_gl.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <cuda_gl_interop.h>
 #include <device_launch_parameters.h>
+//#include <cuda_gl_interop.h>
 
-#include <helper_cuda.h>
-#include <helper_math.h>
+
 
 typedef unsigned int  uint;
 typedef unsigned char uchar;
@@ -179,9 +186,9 @@ d_render(uint *d_output, uint imageW, uint imageH, float3x4 invViewMatrix, float
 extern "C"
 void initCuda()
 {
-	    // Otherwise pick the device with highest Gflops/s
-    int devID = gpuGetMaxGflopsDeviceId();
-    cudaGLSetGLDevice(devID);
+//	    // Otherwise pick the device with highest Gflops/s
+//    int devID = gpuGetMaxGflopsDeviceId();
+//    cudaGLSetGLDevice(devID);
 }
 extern "C" void exitCuda()
 {
@@ -190,7 +197,7 @@ extern "C" void exitCuda()
 }
 
 
-extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *transferFunction, int transferFunctionSize)
+extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, float *transferFunction, int transferFunctionSize)
 {
 	    // create 3D array
     cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<VolumeType>();
@@ -251,7 +258,7 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *tra
     cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
     cudaArray *d_transferFuncArray;
     checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, transferFunctionSize, 1));
-    checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, transferFunctionSize * 4 * sizeof(GLfloat), cudaMemcpyHostToDevice));
+    checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, transferFunctionSize * 4 * sizeof(float), cudaMemcpyHostToDevice));
     //checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
     //checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
 

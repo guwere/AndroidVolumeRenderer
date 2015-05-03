@@ -96,8 +96,8 @@ void updateCallback()
 	float step_size = RAY_STEP_SIZE_MODEL_SPACE;
 	//renderer->renderRaycastVR(raycastVRShader, cubeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
 	//renderer->renderTextureBasedVR(textureBasedVRShader, cubeMesh, volume, transferFn);
-	renderer->renderTextureBasedVRMT(textureBasedVRShader, cubeMesh, volume, transferFn);
-	//renderer->renderRaycastVRCUDA(planeShader, planeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
+	//renderer->renderTextureBasedVRMT(textureBasedVRShader, cubeMesh, volume, transferFn);
+	renderer->renderRaycastVRCUDA(planeShader, planeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
 	renderer->renderBasic(basicShader, cubeMesh, renderer->m_camera.GetProjectionMatrix() * renderer->m_camera.GetViewMatrix() * cubeMesh.transform.getMatrix(), true);
 
 	renderer->drawCrosshair(glm::vec4(0,0,1,1));

@@ -17,7 +17,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-#ifdef ANDROID_NDK
+#ifdef WIN32
+#include <stdio.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#else
 //BEGIN_INCLUDE(all)
 #include <jni.h>
 #include <errno.h>
@@ -31,13 +35,6 @@
 #include <android/sensor.h>
 #include <android/log.h>
 #include "android_native_app_glue.h"
-
-
-#elif WIN32
-#include <stdio.h>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
 #endif
 
 #pragma endregion
@@ -47,23 +44,23 @@ enum Direction{FORWARD, BACKWARD, LEFT, RIGHT, NO_DIRECTION/*FORWARD_LEFT, FORWA
 #define PTVEC3 std::vector<glm::vec3>
 #define TRANSFORM3(MAT,VEC) (glm::vec3(MAT * glm::vec4(VEC, 1.0f)))
 
-#ifdef ANDROID_NDK
+#ifdef  WIN32
+#define LOGI(...) ((void) printf(__VA_ARGS__))
+#else
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
-#elif WIN32
-#define LOGI(...) ((void) printf(__VA_ARGS__))
 #endif 
 #pragma endregion
 
 #pragma region ApplicationParameters
-#ifdef ANDROID_NDK
-
-#elif WIN32
-
+#ifdef WIN32
 const int OPENGL_VERSION_MAJOR  = 3;
 const int OPENGL_VERSION_MINOR = 1;
 const int SCREEN_WIDTH = 500;
 const int SCREEN_HEIGHT = 500;
+#else
+
+
 #endif
 #define EPSILON 1e-6
 #define APP_NAME std::string("VolumeRenderer")
