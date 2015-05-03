@@ -251,12 +251,17 @@ void Mesh::generateCube(Shader *shader)
 void Mesh::generatePlane(Shader *shader)
 {
 	GLfloat cube_vertices[] = {
-		// front
-		-1.0, -1.0,  1.0,
-		1.0, -1.0,  1.0,
-		1.0,  1.0,  1.0,
-		-1.0,  1.0,  1.0,
+		0,0,0, 0,0,
+		1,0,0, 1,0,
+		1,1,0, 1,1,
+		0,1,0, 0,1
+
 	};
+	m_Vertices.push_back(Vertex(glm::vec3(0,0,0)));
+	m_Vertices.push_back(Vertex(glm::vec3(1,0,0)));
+	m_Vertices.push_back(Vertex(glm::vec3(1,1,0)));
+	m_Vertices.push_back(Vertex(glm::vec3(0,1,0)));
+
 	GLushort cube_elements[] = {
 		// front
 		0, 1, 2,

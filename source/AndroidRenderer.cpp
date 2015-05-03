@@ -5,10 +5,7 @@
 #include "HelperFunctions.h"
 
 AndroidRenderer::AndroidRenderer()
-	:Renderer()
 {
-
-
 }
 
 
@@ -117,13 +114,7 @@ int AndroidRenderer::initEGL()
 	this->m_screenWidth = w;
 	this->m_screenHeight = h;
 
-	m_blockSize = dim3(BLOCK_SIZE, BLOCK_SIZE);
-	m_gridSize = dim3(HelperFunctions::iDivUp(w, m_blockSize.x), HelperFunctions::iDivUp(h, m_blockSize.y));
-	initPixelBufferCuda();
-
-	m_camera.projection = glm::perspective(CAMERA_FOV, (float)m_screenWidth / (float)m_screenHeight, NEAR_CLIP_PLANE, FAR_CLIP_PLANE);
-
-
+	Renderer::init(w,h);
 	// Initialize GL state.
 	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 	//glEnable(GL_CULL_FACE);

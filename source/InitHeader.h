@@ -13,8 +13,8 @@
 
 //#include <omp.h>
 
-Mesh mesh; 
-Shader *basicShader, *raycastVRShader, *textureBasedVRShader;
+Mesh cubeMesh, planeMesh; 
+Shader *basicShader, *raycastVRShader, *textureBasedVRShader, *planeShader;
 Volume volume;
 TransferFunction transferFn;
 Renderer *renderer;
@@ -45,8 +45,12 @@ void initAppParams()
 	File textureBasedVRShaderVS("", "textureBasedVRShaderVS.glsl");
 	File textureBasedVRShaderFS("", "textureBasedVRShaderFS.glsl");
 	textureBasedVRShader = ShaderManager::get().getShader(textureBasedVRShaderVS, textureBasedVRShaderFS);
-	mesh.generateCube(raycastVRShader);
-	mesh.transform.scaleUniform(MESH_SCALE);
+	File planeShaderVS("", "planeVS.glsl");
+	File planeShaderFS("", "planeFS.glsl");
+	planeShader = ShaderManager::get().getShader(planeShaderVS, planeShaderFS);
+	cubeMesh.generateCube(raycastVRShader);
+	planeMesh.generatePlane(raycastVRShader);
+	cubeMesh.transform.scaleUniform(MESH_SCALE);
 
 
 	File vf("",VOLUME_NAME);
@@ -62,17 +66,19 @@ void initAppParams()
 	transferFn.generate();
 	renderer->loadDebugShader();
 
+	renderer->loadCudaVolume(volume, transferFn);
+
 	//int *res1 = new int;
-	std::vector<int> res1(30000);
-	//*res1 = 0;
-	std::thread t1(fn, 1, 0, 12000, &res1);
-	std::thread t2(fn, 2, 12000, 23000, &res1);
-	std::thread t3(fn, 3, 23000, 30000, &res1);
-	t1.join();
-	t2.join();
-	t3.join();
+	//std::vector<int> res1(30000);
+	////*res1 = 0;
+	//std::thread t1(fn, 1, 0, 12000, &res1);
+	//std::thread t2(fn, 2, 12000, 23000, &res1);
+	//std::thread t3(fn, 3, 23000, 30000, &res1);
+	//t1.join();
+	//t2.join();
+	//t3.join();
 	//LOGI("res1: %d\n", *res1);
-	int x = res1[0];
+	//int x = res1[0];
 }
 
 void updateCallback()
@@ -82,7 +88,6 @@ void updateCallback()
 	//glm::vec3 cameraPos = glm::vec3(camera.GetViewMatrix()[3]);
 	/* Render here */
 	//mesh.transform.pivotOnLocalAxis(0, 0.02 * delta, 0);
-	renderer->renderBasic(basicShader, mesh, renderer->m_camera.GetProjectionMatrix() * renderer->m_camera.GetViewMatrix() * mesh.transform.getMatrix(), true);
 	//float delta = Timer::get().getLastInterval();
 	//mesh.transform.pivotOnLocalAxis(0,0.001, 0);
 
@@ -90,7 +95,8 @@ void updateCallback()
 	//renderer->renderRaycastVR(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
 	//renderer->renderTextureBasedVR(textureBasedVRShader, mesh, volume, transferFn);
 	//renderer->renderTextureBasedVRMT(textureBasedVRShader, mesh, volume, transferFn);
-	renderer->renderRaycastVRCUDA(raycastVRShader, mesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
+	renderer->renderRaycastVRCUDA(planeShader, planeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
+	renderer->renderBasic(basicShader, cubeMesh, renderer->m_camera.GetProjectionMatrix() * renderer->m_camera.GetViewMatrix() * cubeMesh.transform.getMatrix(), true);
 
 	renderer->drawCrosshair(glm::vec4(0,0,1,1));
 

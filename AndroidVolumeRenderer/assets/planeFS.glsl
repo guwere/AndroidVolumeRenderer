@@ -1,6 +1,7 @@
 #version 310 es
 precision highp float;
 
+uniform sampler2D tex;
 in vec2 fsTexCoord;
 out vec4 color;
 
@@ -9,5 +10,5 @@ out vec4 color;
 
 void main()
 {
-	//out
+	color = texture(tex, fsTexCoord);
 }  

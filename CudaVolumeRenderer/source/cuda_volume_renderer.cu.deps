@@ -242,9 +242,6 @@ c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\host_defines.h
 c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\vector_functions.h
 c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\device_launch_parameters.h
 c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\vector_types.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda_runtime.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\device_launch_parameters.h
 d:\c++\shieldvolumerenderer\source\Common.h
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\iterator
@@ -354,6 +351,7 @@ d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\setup.hpp
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\cassert
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\assert.h
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\crtdefs.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda.h
 d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_float.hpp
 d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_vec.hpp
 d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\precision.hpp
@@ -441,6 +439,18 @@ C:\Program Files (x86)\Windows Kits\8.0\Include\shared\winapifamily.h
 C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
 D:\C++\ShieldVolumeRenderer\\3rdparty\glfw\include\GLFW/glfw3.h
 C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda_runtime.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda_gl_interop.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\builtin_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\device_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\driver_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\surface_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\texture_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\vector_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\host_defines.h
+C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\device_launch_parameters.h
 D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_cuda.h
 D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_string.h
 D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_math.h

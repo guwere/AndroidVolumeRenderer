@@ -10,10 +10,17 @@
 Camera Renderer::m_camera;
 
 
-Renderer::Renderer(float screenWidth, float screenHeight)
-	:m_screenWidth(screenWidth), m_screenHeight(screenHeight)
+//Renderer::Renderer(float screenWidth, float screenHeight)
+//	:m_screenWidth(screenWidth), m_screenHeight(screenHeight)
+//{
+//
+//}
+
+void Renderer::init(float screenWidth, float screenHeight)
 {
-	initCuda();
+	m_screenWidth = screenWidth;
+	m_screenHeight = screenHeight;
+
 	m_clearColor = CLEAR_COLOR;
 	m_clearMask = CLEAR_MASK;
 	m_constructIntersectRay = false;
@@ -25,26 +32,35 @@ Renderer::Renderer(float screenWidth, float screenHeight)
 	m_crosshairPts.push_back(glm::vec3(0,0.03f,0));
 
 	m_blockSize = dim3(BLOCK_SIZE, BLOCK_SIZE);
-	m_gridSize = dim3(HelperFunctions::iDivUp(screenWidth, m_blockSize.x), HelperFunctions::iDivUp(screenHeight, m_blockSize.y));
-}
+	m_gridSize = dim3(HelperFunctions::iDivUp(m_screenWidth, m_blockSize.x), HelperFunctions::iDivUp(m_screenHeight, m_blockSize.y));
 
-
-Renderer::Renderer()
-{
+	if (!glewIsSupported("GL_VERSION_3_0 GL_ARB_pixel_buffer_object"))
+	{
+		printf("Required OpenGL extensions missing.");
+		exit(EXIT_SUCCESS);
+	}
+	m_cudaPBO = 0;
+	cuda_pbo_resource = NULL;
 	initCuda();
-
-	m_clearColor = CLEAR_COLOR;
-	m_clearMask = CLEAR_MASK;
-	m_constructIntersectRay = false;
-	m_crosshairPts.push_back(glm::vec3(-0.03f,0,0));
-	m_crosshairPts.push_back(glm::vec3(0.03f,0,0));
-	m_crosshairPts.push_back(glm::vec3(0,-0.03f,0));
-	m_crosshairPts.push_back(glm::vec3(0,0.03f,0));
-
-
-	//glm::vec3 INITIAL_CAMERA_POS = glm::vec3(0.0f, 1.0f, 10.0f);
-	//m_camera.setPosition(INITIAL_CAMERA_POS);
+	initPixelBufferCuda();
 }
+
+//Renderer::Renderer()
+//{
+//	initCuda();
+//
+//	m_clearColor = CLEAR_COLOR;
+//	m_clearMask = CLEAR_MASK;
+//	m_constructIntersectRay = false;
+//	m_crosshairPts.push_back(glm::vec3(-0.03f,0,0));
+//	m_crosshairPts.push_back(glm::vec3(0.03f,0,0));
+//	m_crosshairPts.push_back(glm::vec3(0,-0.03f,0));
+//	m_crosshairPts.push_back(glm::vec3(0,0.03f,0));
+//
+//
+//	//glm::vec3 INITIAL_CAMERA_POS = glm::vec3(0.0f, 1.0f, 10.0f);
+//	//m_camera.setPosition(INITIAL_CAMERA_POS);
+//}
 
 Renderer::~Renderer()
 {
@@ -53,24 +69,51 @@ Renderer::~Renderer()
 
 void Renderer::initPixelBufferCuda()
 {
+	//if (m_cudaPBO)
+	//{
+	//	// unregister this buffer object from CUDA C
+	//	checkCudaErrorsLog(cudaGraphicsUnregisterResource(cuda_pbo_resource));
+
+	//	// delete old buffer
+	//	glDeleteBuffers(1, &m_cudaPBO);
+	//	glDeleteTextures(1, &m_cudaTex);
+	//}
+
+	//// create pixel buffer object for display
+	//glGenBuffers(1, &m_cudaPBO);
+	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_cudaPBO);
+	//glBufferData(GL_PIXEL_UNPACK_BUFFER, m_screenWidth*m_screenHeight*sizeof(GLubyte)*4, 0, GL_STREAM_DRAW);
+	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+	//// register this buffer object with CUDA
+	//checkCudaErrorsLog(cudaGraphicsGLRegisterBuffer(&cuda_pbo_resource, m_cudaPBO, cudaGraphicsMapFlagsWriteDiscard));
+
+	//// create texture for display
+	//glGenTextures(1, &m_cudaTex);
+	//glBindTexture(GL_TEXTURE_2D, m_cudaTex);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_screenWidth, m_screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+
 	if (m_cudaPBO)
 	{
 		// unregister this buffer object from CUDA C
-		checkCudaErrors(cudaGraphicsUnregisterResource(cuda_pbo_resource));
+		checkCudaErrorsLog(cudaGraphicsUnregisterResource(cuda_pbo_resource));
 
 		// delete old buffer
-		glDeleteBuffers(1, &m_cudaPBO);
+		glDeleteBuffersARB(1, &m_cudaPBO);
 		glDeleteTextures(1, &m_cudaTex);
 	}
 
 	// create pixel buffer object for display
-	glGenBuffers(1, &m_cudaPBO);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_cudaPBO);
-	glBufferData(GL_PIXEL_UNPACK_BUFFER, m_screenWidth*m_screenHeight*sizeof(GLubyte)*4, 0, GL_STREAM_DRAW);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+	glGenBuffersARB(1, &m_cudaPBO);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, m_cudaPBO);
+	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, m_screenWidth*m_screenHeight*sizeof(GLubyte)*4, 0, GL_STREAM_DRAW_ARB);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
 
 	// register this buffer object with CUDA
-	checkCudaErrors(cudaGraphicsGLRegisterBuffer(&cuda_pbo_resource, m_cudaPBO, cudaGraphicsMapFlagsWriteDiscard));
+	checkCudaErrorsLog(cudaGraphicsGLRegisterBuffer(&cuda_pbo_resource, m_cudaPBO, cudaGraphicsMapFlagsWriteDiscard));
 
 	// create texture for display
 	glGenTextures(1, &m_cudaTex);
@@ -109,8 +152,6 @@ void Renderer::getMinMaxPointsVertices(const PTVEC3 positions, const Mesh &cubeM
 	minPos = positions.at(currMaxIndex);
 
 }
-
-
 
 void Renderer::getMinMaxPointsCube(const PTVEC3 positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
 {
@@ -195,7 +236,8 @@ void Renderer::loadCudaVolume(const Volume &volume, const TransferFunction &tran
 	extent.width = volume.m_xRes;
 	extent.height = volume.m_yRes;
 	extent.depth = volume.m_zRes;
-	GLfloat *transferFnPtr = (GLfloat*)&(transferFunction.m_colorTable)[0];
+
+	GLfloat *transferFnPtr = (GLfloat*)&transferFunction.m_colorTable[0];
 	initCudaVolume(volumePtr, extent, transferFnPtr);
 }
 
@@ -453,30 +495,68 @@ void Renderer::renderTextureBasedVRMT(const Shader *shader, const Mesh &cubeMesh
 
 }
 
-
-
-void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn)
+void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn)
 {
-	glm::mat3x4 invViewMatrix = glm::mat3x4(glm::inverse(m_camera.GetViewMatrix() * cubeMesh.transform.getMatrix()));
+	//glViewport(0, 0, m_screenWidth, m_screenHeight);
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
+
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//glOrtho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
+
+	//// use OpenGL to build view matrix
+	//GLfloat modelView[16];
+	//glMatrixMode(GL_MODELVIEW);
+	//glPushMatrix();
+	//glLoadIdentity();
+	//float3 viewRotation = make_float3(0.0, 0.0, 0.0);;
+	//float3 viewTranslation = make_float3(0.0, 0.0, -4.0f);
+	//glRotatef(-viewRotation.x, 1.0, 0.0, 0.0);
+	//glRotatef(-viewRotation.y, 0.0, 1.0, 0.0);
+	//glTranslatef(-viewTranslation.x, -viewTranslation.y, -viewTranslation.z);
+	//glGetFloatv(GL_MODELVIEW_MATRIX, modelView);
+	//glPopMatrix();
+	//float invViewMatrix[12];
+	//invViewMatrix[0] = modelView[0];
+	//invViewMatrix[1] = modelView[4];
+	//invViewMatrix[2] = modelView[8];
+	//invViewMatrix[3] = modelView[12];
+	//invViewMatrix[4] = modelView[1];
+	//invViewMatrix[5] = modelView[5];
+	//invViewMatrix[6] = modelView[9];
+	//invViewMatrix[7] = modelView[13];
+	//invViewMatrix[8] = modelView[2];
+	//invViewMatrix[9] = modelView[6];
+	//invViewMatrix[10] = modelView[10];
+	//invViewMatrix[11] = modelView[14];
+	//copyInvViewMatrix(invViewMatrix, sizeof(float4)*3);
+	glm::mat4 modelMatrix = glm::mat4();
+	glm::mat4 viewMatrix = glm::translate(glm::mat4(), glm::vec3(0,0,-4.0f));
+	glm::mat4 projMatrix =  glm::ortho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
+	//glm::mat4 modelViewMatrix = m_camera.GetViewMatrix() * planeMesh.transform.getMatrix();
+	glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
+	glm::mat4 MVP = projMatrix * modelViewMatrix;
+	glm::mat3x4 invViewMatrix = glm::mat3x4(glm::inverse(viewMatrix));
 	copyInvViewMatrix(glm::value_ptr(invViewMatrix), sizeof(float4)*3);
 
 	// map PBO to get CUDA device pointer
 	uint *d_output;
 	// map PBO to get CUDA device pointer
-	checkCudaErrors(cudaGraphicsMapResources(1, &cuda_pbo_resource, 0));
+	checkCudaErrorsLog(cudaGraphicsMapResources(1, &cuda_pbo_resource, 0));
 	size_t num_bytes;
-	checkCudaErrors(cudaGraphicsResourceGetMappedPointer((void **)&d_output, &num_bytes, cuda_pbo_resource));
+	checkCudaErrorsLog(cudaGraphicsResourceGetMappedPointer((void **)&d_output, &num_bytes, cuda_pbo_resource));
 	//printf("CUDA mapped PBO: May access %ld bytes\n", num_bytes);
 
 	// clear image
-	checkCudaErrors(cudaMemset(d_output, 0, m_screenWidth*m_screenHeight*4));
+	checkCudaErrorsLog(cudaMemset(d_output, 0, m_screenWidth*m_screenHeight*4));
 
 	// call CUDA kernel, writing results to PBO
 	render_kernel(m_gridSize, m_blockSize, d_output, m_screenWidth, m_screenHeight);
 
-	getLastCudaError("kernel failed");
+	getLastCudaErrorLog("kernel failed");
 
-	checkCudaErrors(cudaGraphicsUnmapResources(1, &cuda_pbo_resource, 0));
+	checkCudaErrorsLog(cudaGraphicsUnmapResources(1, &cuda_pbo_resource, 0));
 
 	// display results
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -489,25 +569,37 @@ void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &cubeMesh, c
 	// draw using texture
 
 	// copy from pbo to texture
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_cudaPBO);
+	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_cudaPBO);
+	//glBindTexture(GL_TEXTURE_2D, m_cudaTex);
+	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, m_cudaPBO);
 	glBindTexture(GL_TEXTURE_2D, m_cudaTex);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
 
+	GLuint shaderId = shader->getId();
+	glUseProgram(shaderId);
+	writeUniform2DTex(shaderId, "tex", 0, m_cudaTex);
+	writeUniform(shaderId, "trasformMat", MVP);
+	planeMesh.render();
 	// draw textured quad
-	glEnable(GL_TEXTURE_2D);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0);
-	glVertex2f(0, 0);
-	glTexCoord2f(1, 0);
-	glVertex2f(1, 0);
-	glTexCoord2f(1, 1);
-	glVertex2f(1, 1);
-	glTexCoord2f(0, 1);
-	glVertex2f(0, 1);
-	glEnd();
+	//glEnable(GL_TEXTURE_2D);
+	//glBegin(GL_QUADS);
+	//glTexCoord2f(0, 0);
+	//glVertex2f(0, 0);
+	//glTexCoord2f(1, 0);
+	//glVertex2f(1, 0);
+	//glTexCoord2f(1, 1);
+	//glVertex2f(1, 1);
+	//glTexCoord2f(0, 1);
+	//glVertex2f(0, 1);
+	//glEnd();
 
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_2D);
+
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 

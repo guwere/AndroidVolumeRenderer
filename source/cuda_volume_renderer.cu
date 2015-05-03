@@ -1,10 +1,11 @@
 #ifndef CUDA_VOLUME_RENDERER_CU
 #define CUDA_VOLUME_RENDERER_CU
 
-#include <cuda.h>
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
 #include "Common.h"
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <cuda_gl_interop.h>
+#include <device_launch_parameters.h>
 
 #include <helper_cuda.h>
 #include <helper_math.h>
@@ -106,7 +107,7 @@ d_render(uint *d_output, uint imageW, uint imageH)
     float u = (x / (float) imageW)*2.0f-1.0f;
     float v = (y / (float) imageH)*2.0f-1.0f;
 
-    // calculate eye ray in world space
+    // calculate eye ray in model space
     Ray eyeRay;
     eyeRay.o = make_float3(mul(c_invViewMatrix, make_float4(0.0f, 0.0f, 0.0f, 1.0f)));
     eyeRay.d = normalize(make_float3(u, v, -2.0f));
@@ -136,7 +137,7 @@ d_render(uint *d_output, uint imageW, uint imageH)
         // lookup in transfer function texture
         //float4 col = tex1D(transferTex, (sample-transferOffset)*transferScale);
         float4 col = tex1D(transferTex, sample);
-      //  col.w *= density;
+        col.w *= 0.05f;
 
         // "under" operator for back-to-front blending
         //sum = lerp(sum, col, col.w);
@@ -170,12 +171,14 @@ d_render(uint *d_output, uint imageW, uint imageH)
 extern "C"
 void initCuda()
 {
-
+	    // Otherwise pick the device with highest Gflops/s
+    int devID = gpuGetMaxGflopsDeviceId();
+    cudaGLSetGLDevice(devID);
 }
 extern "C" void exitCuda()
 {
-    checkCudaErrors(cudaFreeArray(d_volumeArray));
-    checkCudaErrors(cudaFreeArray(d_transferFuncArray));
+    checkCudaErrorsLog(cudaFreeArray(d_volumeArray));
+    checkCudaErrorsLog(cudaFreeArray(d_transferFuncArray));
 }
 
 
@@ -183,7 +186,7 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *tra
 {
 	    // create 3D array
     cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<VolumeType>();
-    checkCudaErrors(cudaMalloc3DArray(&d_volumeArray, &channelDesc, volumeSize));
+    checkCudaErrorsLog(cudaMalloc3DArray(&d_volumeArray, &channelDesc, volumeSize));
 
     // copy data to 3D array
     cudaMemcpy3DParms copyParams = {0};
@@ -191,7 +194,7 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *tra
     copyParams.dstArray = d_volumeArray;
     copyParams.extent   = volumeSize;
     copyParams.kind     = cudaMemcpyHostToDevice;
-    checkCudaErrors(cudaMemcpy3D(&copyParams));
+    checkCudaErrorsLog(cudaMemcpy3D(&copyParams));
 
     // set texture parameters
     tex.normalized = true;                      // access with normalized texture coordinates
@@ -200,33 +203,36 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *tra
     tex.addressMode[1] = cudaAddressModeClamp;
 
     // bind array to 3D texture
-    checkCudaErrors(cudaBindTextureToArray(tex, d_volumeArray, channelDesc));
+    checkCudaErrorsLog(cudaBindTextureToArray(tex, d_volumeArray, channelDesc));
 
     //// create transfer function texture
-    //float4 transferFunc[LOGI*4] =
-    //{
-    //    {  0.0, 0.0, 0.0, 0.0, },
-    //    {  1.0, 0.0, 0.0, 1.0, },
-    //    {  1.0, 0.5, 0.0, 1.0, },
-    //    {  1.0, 1.0, 0.0, 1.0, },
-    //    {  0.0, 1.0, 0.0, 1.0, },
-    //    {  0.0, 1.0, 1.0, 1.0, },
-    //    {  0.0, 0.0, 1.0, 1.0, },
-    //    {  1.0, 0.0, 1.0, 1.0, },
-    //    {  0.0, 0.0, 0.0, 0.0, },
-    //};
+    float4 transferFunc[] =
+    {
+        {  0.0, 0.0, 0.0, 0.0, },
+        {  1.0, 0.0, 0.0, 1.0, },
+        {  1.0, 0.5, 0.0, 1.0, },
+        {  1.0, 1.0, 0.0, 1.0, },
+        {  0.0, 1.0, 0.0, 1.0, },
+        {  0.0, 1.0, 1.0, 1.0, },
+        {  0.0, 0.0, 1.0, 1.0, },
+        {  1.0, 0.0, 1.0, 1.0, },
+        {  0.0, 0.0, 0.0, 0.0, },
+    };
 
     cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
     cudaArray *d_transferFuncArray;
-    checkCudaErrors(cudaMallocArray(&d_transferFuncArray, &channelDesc2, TRANSFER_FN_TABLE_SIZE * sizeof(float), 1));
-    checkCudaErrors(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, TRANSFER_FN_TABLE_SIZE * sizeof(float), cudaMemcpyHostToDevice));
+    //checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, TRANSFER_FN_TABLE_SIZE, 1));
+    //checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, TRANSFER_FN_TABLE_SIZE * 4 * sizeof(GLfloat), cudaMemcpyHostToDevice));
+    checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
+    checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
+
 
     transferTex.filterMode = cudaFilterModeLinear;
     transferTex.normalized = true;    // access with normalized texture coordinates
     transferTex.addressMode[0] = cudaAddressModeClamp;   // wrap texture coordinates
 
     // Bind the array to the texture
-    checkCudaErrors(cudaBindTextureToArray(transferTex, d_transferFuncArray, channelDesc2));
+    checkCudaErrorsLog(cudaBindTextureToArray(transferTex, d_transferFuncArray, channelDesc2));
 }
 
 
@@ -238,7 +244,7 @@ extern "C" void render_kernel(dim3 gridSize, dim3 blockSize, uint *d_output, uin
 
 extern "C" void copyInvViewMatrix(float *invViewMatrix, size_t sizeofMatrix)
 {
-    checkCudaErrors(cudaMemcpyToSymbol(c_invViewMatrix, invViewMatrix, sizeofMatrix));
+    checkCudaErrorsLog(cudaMemcpyToSymbol(c_invViewMatrix, invViewMatrix, sizeofMatrix));
 }
 
 

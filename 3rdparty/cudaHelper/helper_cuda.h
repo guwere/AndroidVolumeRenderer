@@ -775,12 +775,35 @@ void check(T result, char const *const func, const char *const file, int const l
     }
 }
 
+template< typename T >
+void checkLog(T result, char const *const func, const char *const file, int const line)
+{
+	if (result)
+	{
+#ifdef ANDROID_NDK
+		__android_log_print(ANDROID_LOG_INFO, "native-activity","CUDA error at %s:%d code=%d(%s) \"%s\" \n", file, line, static_cast<unsigned int>(result), _cudaGetErrorEnum(result), func);
+#else
+		printf("CUDA error at %s:%d code=%d(%s) \"%s\" \n", file, line, static_cast<unsigned int>(result), _cudaGetErrorEnum(result), func);
+#endif
+
+		//fprintf(stderr, "CUDA error at %s:%d code=%d(%s) \"%s\" \n", file, line, static_cast<unsigned int>(result), _cudaGetErrorEnum(result), func);
+		DEVICE_RESET
+			// Make sure we call CUDA Device Reset before exiting
+			exit(EXIT_FAILURE);
+	}
+
+}
+
 #ifdef __DRIVER_TYPES_H__
 // This will output the proper CUDA error strings in the event that a CUDA host call returns an error
 #define checkCudaErrors(val)           check ( (val), #val, __FILE__, __LINE__ )
-
+// This will output the proper CUDA error strings in the event that a CUDA host call returns an error
+#define checkCudaErrorsLog(val)           checkLog ( (val), #val, __FILE__, __LINE__ )
 // This will output the proper error string when calling cudaGetLastError
 #define getLastCudaError(msg)      __getLastCudaError (msg, __FILE__, __LINE__)
+// This will output the proper error string when calling cudaGetLastError
+#define getLastCudaErrorLog(msg)      __getLastCudaErrorLog (msg, __FILE__, __LINE__)
+
 
 inline void __getLastCudaError(const char *errorMessage, const char *file, const int line)
 {
@@ -794,6 +817,25 @@ inline void __getLastCudaError(const char *errorMessage, const char *file, const
         exit(EXIT_FAILURE);
     }
 }
+
+inline void __getLastCudaErrorLog(const char *errorMessage, const char *file, const int line)
+{
+	cudaError_t err = cudaGetLastError();
+
+	if (cudaSuccess != err)
+	{
+#ifdef ANDROID_NDK
+		__android_log_print(ANDROID_LOG_INFO, "native-activity","%s(%i) : getLastCudaError() CUDA error : %s : (%d) %s.\n", file, line, errorMessage, (int)err, cudaGetErrorString(err));
+#else
+		printf("%s(%i) : getLastCudaError() CUDA error : %s : (%d) %s.\n", file, line, errorMessage, (int)err, cudaGetErrorString(err));
+#endif
+			
+		DEVICE_RESET
+			exit(EXIT_FAILURE);
+	}	
+
+}
+
 #endif
 
 #ifndef MAX

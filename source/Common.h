@@ -62,8 +62,8 @@ enum Direction{FORWARD, BACKWARD, LEFT, RIGHT, NO_DIRECTION/*FORWARD_LEFT, FORWA
 
 const int OPENGL_VERSION_MAJOR  = 3;
 const int OPENGL_VERSION_MINOR = 1;
-const int SCREEN_WIDTH = 1200;
-const int SCREEN_HEIGHT = 800;
+const int SCREEN_WIDTH = 500;
+const int SCREEN_HEIGHT = 500;
 #endif
 #define EPSILON 1e-6
 #define APP_NAME std::string("VolumeRenderer")
@@ -104,7 +104,8 @@ the number of maximum ray steps is the based on diagonal length of the texture
 
 #define BLOCK_SIZE 16
 
-#define VOLUME_NAME std::string("CT-Knee.mhd")
+//#define VOLUME_NAME std::string("CT-Knee.mhd")
+#define VOLUME_NAME std::string("Bucky.mhd")
 //const std::string VOLUME_NAME = "backpack8.mhd";
 //const std::string VOLUME_NAME = "vertebra8.mhd";
 //const std::string VOLUME_NAME = "supine8.mhd";

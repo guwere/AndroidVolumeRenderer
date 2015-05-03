@@ -6,9 +6,9 @@
 #include "InitHeader.h"
 #include "GLFWRenderer.h"
 
-GLFWRenderer glfwRenderer;
 int main(int argc, char* argv[])
 {
+	GLFWRenderer glfwRenderer;
 	renderer = &glfwRenderer;
 	initAppParams();
 	glfwRenderer.setUpdateCallback(updateCallback);

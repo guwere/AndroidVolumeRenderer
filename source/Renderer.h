@@ -68,8 +68,9 @@ public:
 	void(*updateCallback)(void);
 	void drawObject(const glm::mat4 &transformMatrix, const std::vector<glm::vec3> &points, GLenum mode, const glm::vec4 &color = glm::vec4(0)) const;
 protected:
-	Renderer(float screenWidth, float screenHeight);
-	Renderer();
+	//Renderer(float screenWidth, float screenHeight);
+	//Renderer();
+	void init(float screenWidth, float screenHeight);
 	~Renderer();
 	void initPixelBufferCuda();
 	void(*m_updateCallback)(void);

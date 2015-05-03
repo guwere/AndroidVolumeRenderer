@@ -10,8 +10,8 @@ bool GLFWRenderer::firstMouse = true;
 
 
 GLFWRenderer::GLFWRenderer()
-	:Renderer(SCREEN_WIDTH, SCREEN_HEIGHT)
 {
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_VERSION_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_VERSION_MINOR);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
@@ -42,7 +42,7 @@ GLFWRenderer::GLFWRenderer()
 		LOGI("%s\n",glewGetErrorString(err));
 	}
 
-	initPixelBufferCuda();
+	Renderer::init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 }
 
