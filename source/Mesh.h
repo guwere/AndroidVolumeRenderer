@@ -42,7 +42,7 @@ struct Material
 	float refraction;
 };
 
-struct Shader;
+class Shader;
 
 /**@brief Encapsulates the buffers and texture handling for a single mesh.
 @todo proper cleanup of buffer object in destructor

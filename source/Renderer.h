@@ -22,6 +22,7 @@ public:
 	glm::vec4 m_clearColor;
 	GLbitfield m_clearMask;
 	int m_screenWidth, m_screenHeight;
+	float m_aspectRatio;
 	dim3 m_gridSize, m_blockSize;
 	Shader *m_debugShader;
 	static Camera m_camera;
@@ -90,10 +91,11 @@ protected:
 };
 
 extern "C" void initCuda();
-extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *transferFunction);
+extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *transferFunction, int transferFunctionSize);
 extern "C" void exitCuda();
-extern "C" void render_kernel(dim3 gridSize, dim3 blockSize, uint *d_output, uint imageW, uint imageH);
+extern "C" void render_kernel(dim3 gridSize, dim3 blockSize, uint *d_output, uint imageW, uint imageH, float *invViewMatrix, float aspectRatio, float maxRaySteps, float rayStepSize);
 extern "C" void copyInvViewMatrix(float *invViewMatrix, size_t sizeofMatrix);
+extern "C" void copyRay(float *rayOrigin, float *rayDirection);
 
 #endif
 

@@ -62,7 +62,7 @@ enum Direction{FORWARD, BACKWARD, LEFT, RIGHT, NO_DIRECTION/*FORWARD_LEFT, FORWA
 
 const int OPENGL_VERSION_MAJOR  = 3;
 const int OPENGL_VERSION_MINOR = 1;
-const int SCREEN_WIDTH = 1000;
+const int SCREEN_WIDTH = 500;
 const int SCREEN_HEIGHT = 500;
 #endif
 #define EPSILON 1e-6
@@ -102,7 +102,7 @@ the number of maximum ray steps is the based on diagonal length of the texture
 #define TRANSFER_FN_TABLE_SIZE 256
 #define LIGHT_POS glm::vec3(-2.0f, 2.0f, 2.0f)
 
-#define BLOCK_SIZE 16
+#define BLOCK_SIZE 32
 
 #define VOLUME_NAME std::string("CT-Knee.mhd")
 //#define VOLUME_NAME std::string("Bucky.mhd")

@@ -20,7 +20,7 @@ void Renderer::init(float screenWidth, float screenHeight)
 {
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
-
+	m_aspectRatio = screenWidth / screenHeight;
 	m_clearColor = CLEAR_COLOR;
 	m_clearMask = CLEAR_MASK;
 	m_constructIntersectRay = false;
@@ -238,7 +238,7 @@ void Renderer::loadCudaVolume(const Volume &volume, const TransferFunction &tran
 	extent.depth = volume.m_zRes;
 
 	GLfloat *transferFnPtr = (GLfloat*)&transferFunction.m_colorTable[0];
-	initCudaVolume(volumePtr, extent, transferFnPtr);
+	initCudaVolume(volumePtr, extent, transferFnPtr, TRANSFER_FN_TABLE_SIZE);
 }
 
 void Renderer::setUpdateCallback(void(*updateCallback)(void))
@@ -322,7 +322,6 @@ void Renderer::renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const
 
 	GLuint shaderId = shader->getId();
 	glUseProgram(shader->m_Id);
-	GLuint uniformLoc;
 	writeUniform(shaderId, "MVP", MVP);
 	writeUniform3DTex(shaderId, "volume", 0, volume.getTextureId());
 	writeUniform(shaderId, "camPos", camPosModel);
@@ -499,15 +498,14 @@ void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, 
 {
 
 
-	const glm::mat4 &modelMatrix = planeMesh.transform.getMatrix();
+	glm::mat4 modelMatrix = planeMesh.transform.getMatrix();
 	const glm::mat4 &viewMatrix = m_camera.GetViewMatrix();
-	//glm::mat4 modelViewMatrix = glm::translate(glm::mat4(), -viewTranslation);
 	glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-	glm::mat3x4 invViewMatrix = glm::mat3x4(glm::transpose(glm::inverse(modelViewMatrix)));
-	//const glm::mat4 projection = glm::ortho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
-	const glm::mat4 &projection = m_camera.GetProjectionMatrix();
-	glm::mat4 MVP = projection * modelViewMatrix;
-	copyInvViewMatrix(glm::value_ptr(invViewMatrix), sizeof(float4)*3);
+	glm::mat3x4 invViewMatrix = glm::mat3x4(glm::transpose(glm::inverse( modelViewMatrix)));
+
+
+	//copyInvViewMatrix(glm::value_ptr(invViewMatrix), sizeof(float4)*3);
+
 
 	// map PBO to get CUDA device pointer
 	uint *d_output;
@@ -521,7 +519,7 @@ void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, 
 	checkCudaErrorsLog(cudaMemset(d_output, 0, m_screenWidth*m_screenHeight*4));
 
 	// call CUDA kernel, writing results to PBO
-	render_kernel(m_gridSize, m_blockSize, d_output, m_screenWidth, m_screenHeight);
+	render_kernel(m_gridSize, m_blockSize, d_output, m_screenWidth, m_screenHeight, glm::value_ptr(invViewMatrix), m_aspectRatio, maxRaySteps, rayStepSize);
 
 	getLastCudaErrorLog("kernel failed");
 
@@ -551,7 +549,7 @@ void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, 
 	GLuint shaderId = shader->getId();
 	glUseProgram(shaderId);
 	writeUniform2DTex(shaderId, "tex", 0, m_cudaTex);
-	writeUniform(shaderId, "trasformMat", MVP);
+	writeUniform(shaderId, "transformMat", glm::mat4());
 	planeMesh.render();
 
 	glBindTexture(GL_TEXTURE_2D, 0);

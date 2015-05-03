@@ -8,7 +8,7 @@ out vec2 fsTexCoord;
 
 void main()
 {
-    gl_Position =   vec4(position, 1.0f); 
+    gl_Position =   transformMat * vec4(position, 1.0f); 
     fsTexCoord = (vec2(position.x,position.y) + vec2(1,1)) * 0.5;
 }
 

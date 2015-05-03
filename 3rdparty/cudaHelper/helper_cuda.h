@@ -771,7 +771,7 @@ void check(T result, char const *const func, const char *const file, int const l
                 file, line, static_cast<unsigned int>(result), _cudaGetErrorEnum(result), func);
         DEVICE_RESET
         // Make sure we call CUDA Device Reset before exiting
-        exit(EXIT_FAILURE);
+       // exit(EXIT_FAILURE);
     }
 }
 
@@ -789,7 +789,7 @@ void checkLog(T result, char const *const func, const char *const file, int cons
 		//fprintf(stderr, "CUDA error at %s:%d code=%d(%s) \"%s\" \n", file, line, static_cast<unsigned int>(result), _cudaGetErrorEnum(result), func);
 		DEVICE_RESET
 			// Make sure we call CUDA Device Reset before exiting
-			exit(EXIT_FAILURE);
+			//exit(EXIT_FAILURE);
 	}
 
 }
@@ -814,7 +814,7 @@ inline void __getLastCudaError(const char *errorMessage, const char *file, const
         fprintf(stderr, "%s(%i) : getLastCudaError() CUDA error : %s : (%d) %s.\n",
                 file, line, errorMessage, (int)err, cudaGetErrorString(err));
         DEVICE_RESET
-        exit(EXIT_FAILURE);
+        //exit(EXIT_FAILURE);
     }
 }
 
@@ -831,7 +831,7 @@ inline void __getLastCudaErrorLog(const char *errorMessage, const char *file, co
 #endif
 			
 		DEVICE_RESET
-			exit(EXIT_FAILURE);
+			//exit(EXIT_FAILURE);
 	}	
 
 }

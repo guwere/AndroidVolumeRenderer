@@ -242,18 +242,36 @@ c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\host_defines.h
 c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\vector_functions.h
 c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\device_launch_parameters.h
 c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\vector_types.h
-d:\c++\shieldvolumerenderer\source\Common.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\iterator
+D:\C++\ShieldVolumeRenderer\\3rdparty\glew\include\GL/glew.h
+C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/glu.h
+C:\Program Files (x86)\Windows Kits\8.0\Include\shared\winapifamily.h
+C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
+D:\C++\ShieldVolumeRenderer\\3rdparty\glfw\include\GLFW/glfw3.h
+C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda_runtime.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda_gl_interop.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\builtin_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\device_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\driver_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\surface_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\texture_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\vector_types.h
+c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\host_defines.h
+C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\device_launch_parameters.h
+D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_cuda.h
+C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h
+C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\swprintf.inl
+D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_string.h
+C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\fstream
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\istream
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\ostream
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\ios
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\xlocnum
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\climits
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\cstdio
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\swprintf.inl
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\streambuf
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\xiosbase
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\xlocale
@@ -319,139 +337,7 @@ C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\cerrno
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\errno.h
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\share.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\iostream
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\fstream
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\vector
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\xmemory
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\sstream
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\thread
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\functional
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\xfunctional
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\tuple
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\chrono
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\ratio
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdint.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\thr/xtimec.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\thr/xthrcommon.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\concrt.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Windows Kits\8.0\Include\shared\guiddef.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\thr/xthread
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\thr/xtime
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\thr/xthreads.h
-D:\C++\ShieldVolumeRenderer\\3rdparty\glm\glm/glm.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/_fixes.hpp
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\cassert
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\assert.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\crtdefs.h
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\fwd.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_int.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\setup.hpp
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\cassert
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\assert.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\crtdefs.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda.h
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_float.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_vec.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\precision.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\vec2.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_vec2.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_vec2.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\vec3.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_vec3.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_vec3.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\vec4.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_vec4.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_vec4.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\mat2x2.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat2x2.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_mat2x2.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\mat2x3.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat2x3.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_mat2x3.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\mat2x4.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat2x4.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_mat2x4.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\mat3x2.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat3x2.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_mat3x2.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\mat3x3.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat3x3.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_mat3x3.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\mat3x4.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat3x4.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_mat3x4.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\mat4x2.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat4x2.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_mat4x2.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\mat4x3.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat4x3.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_mat4x3.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\mat4x4.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/type_mat4x4.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_mat4x4.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\trigonometric.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/func_trigonometric.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\func_trigonometric.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\_vectorize.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_vec1.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_vec1.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\exponential.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/func_exponential.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\func_exponential.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\func_vector_relational.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\func_vector_relational.inl
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\cassert
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\assert.h
-C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\crtdefs.h
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\common.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/func_common.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\_fixes.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\func_common.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\packing.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/func_packing.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\func_packing.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_half.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\type_half.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\geometric.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/func_geometric.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\func_geometric.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\matrix.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/func_matrix.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\func_matrix.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\vector_relational.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\integer.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail/func_integer.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\detail\func_integer.inl
-D:\C++\ShieldVolumeRenderer\\3rdparty\glm\glm/gtc/matrix_transform.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\gtc\../gtc/constants.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\gtc\constants.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\gtc\matrix_transform.inl
-D:\C++\ShieldVolumeRenderer\\3rdparty\glm\glm/gtc/type_ptr.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\gtc\../gtc/quaternion.hpp
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\gtc\quaternion.inl
-d:\c++\shieldvolumerenderer\3rdparty\glm\glm\gtc\type_ptr.inl
-D:\C++\ShieldVolumeRenderer\\3rdparty\glew\include\GL/glew.h
-C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/glu.h
-C:\Program Files (x86)\Windows Kits\8.0\Include\shared\winapifamily.h
-C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
-D:\C++\ShieldVolumeRenderer\\3rdparty\glfw\include\GLFW/glfw3.h
-C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda_runtime.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda_gl_interop.h
-c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\builtin_types.h
-c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\device_types.h
-c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\driver_types.h
-c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\surface_types.h
-c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\texture_types.h
-c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\vector_types.h
-c:\program files\nvidia gpu computing toolkit\cuda\v6.0\include\host_defines.h
-C:\Program Files (x86)\Windows Kits\8.0\Include\um\GL/gl.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\device_launch_parameters.h
-D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_cuda.h
-D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_string.h
+C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string
+C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\iterator
 D:\C++\ShieldVolumeRenderer\\3rdparty\cudaHelper\helper_math.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v6.0\include\cuda_runtime.h

@@ -1,7 +1,10 @@
 #ifndef CUDA_VOLUME_RENDERER_CU
 #define CUDA_VOLUME_RENDERER_CU
 
-#include "Common.h"
+//#include "Common.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cuda_gl_interop.h>
@@ -27,7 +30,7 @@ typedef struct
     float4 m[3];
 } float3x4;
 
-__constant__ float3x4 c_invViewMatrix;  // inverse view matrix
+__constant__ float3x4 c_invViewMatrix;
 
 struct Ray
 {
@@ -91,11 +94,11 @@ __device__ uint rgbaFloatToInt(float4 rgba)
 }
 
 __global__ void
-d_render(uint *d_output, uint imageW, uint imageH)
+d_render(uint *d_output, uint imageW, uint imageH, float3x4 invViewMatrix, float aspectRatio, float maxRaySteps, float rayStepSize)
 {
-    const int maxSteps = 500;
-    const float tstep = 0.01f;
-    const float opacityThreshold = 0.95f;
+    //const int maxSteps = 500;
+    //const float tstep = 0.01f;
+    const float opacityThreshold = 1.0f;
     const float3 boxMin = make_float3(-1.0f, -1.0f, -1.0f);
     const float3 boxMax = make_float3(1.0f, 1.0f, 1.0f);
 
@@ -104,14 +107,14 @@ d_render(uint *d_output, uint imageW, uint imageH)
 
     if ((x >= imageW) || (y >= imageH)) return;
 
-    float u = (x / (float) imageW)*2.0f-1.0f;
+    float u = ((x / (float) imageW)*2.0f-1.0f) * aspectRatio;
     float v = (y / (float) imageH)*2.0f-1.0f;
 
     // calculate eye ray in model space
     Ray eyeRay;
-    eyeRay.o = make_float3(mul(c_invViewMatrix, make_float4(0.0f, 0.0f, 0.0f, 1.0f)));
+    eyeRay.o = make_float3(mul(invViewMatrix, make_float4(0.0f, 0.0f, 0.0f, 1.0f)));
     eyeRay.d = normalize(make_float3(u, v, -2.0f));
-    eyeRay.d = mul(c_invViewMatrix, eyeRay.d);
+    eyeRay.d = mul(invViewMatrix, eyeRay.d);
 
     // find intersection with box
     float tnear, tfar;
@@ -125,18 +128,23 @@ d_render(uint *d_output, uint imageW, uint imageH)
     float4 sum = make_float4(0.0f);
     float t = tnear;
     float3 pos = eyeRay.o + eyeRay.d*tnear;
-    float3 step = eyeRay.d*tstep;
+    float3 step = eyeRay.d*rayStepSize;
 
-    for (int i=0; i<maxSteps; i++)
+    for (int i=0; i<maxRaySteps; i++)
     {
         // read from 3D texture
         // remap position to [0, 1] coordinates
+		//float xx =pos.x*0.5f+0.5f;
+		//float yy =pos.y*0.5f+0.5f;
+		//float zz =pos.z*0.5f+0.5f;
+		//float sample = 0;
         float sample = tex3D(tex, pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
         //sample *= 64.0f;    // scale for 10-bit data
 
         // lookup in transfer function texture
         //float4 col = tex1D(transferTex, (sample-transferOffset)*transferScale);
         float4 col = tex1D(transferTex, sample);
+		//float4 col = make_float4(0);
        // col.w *= 0.05f;
 
         // "under" operator for back-to-front blending
@@ -150,13 +158,13 @@ d_render(uint *d_output, uint imageW, uint imageH)
         sum = sum + col*(1.0f - sum.w);
 
         // exit early if opaque
-        if (sum.w > opacityThreshold)
+        if (t > tfar || sum.w > opacityThreshold)
+		{
+			//sum += make_float4(1.0f) * (1.0f - sum.w);
             break;
+		}
 
-        t += tstep;
-
-        if (t > tfar) break;
-
+        t += rayStepSize;
         pos += step;
     }
 
@@ -182,7 +190,7 @@ extern "C" void exitCuda()
 }
 
 
-extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *transferFunction)
+extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *transferFunction, int transferFunctionSize)
 {
 	    // create 3D array
     cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<VolumeType>();
@@ -205,7 +213,6 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *tra
     // bind array to 3D texture
     checkCudaErrorsLog(cudaBindTextureToArray(tex, d_volumeArray, channelDesc));
 
-    //// create transfer function texture
     //float4 transferFunc[] =
     //{
     //    {  0.0, 0.0, 0.0, 0.0, },
@@ -218,6 +225,7 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *tra
     //    {  1.0, 0.0, 1.0, 1.0, },
     //    {  0.0, 0.0, 0.0, 0.0, },
     //};
+	//CT-Knee transfer function
     //float4 transferFunc[] =
     //{
     //    {  0.0, 0.0, 0.0, 0.0, },
@@ -242,8 +250,8 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *tra
 
     cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
     cudaArray *d_transferFuncArray;
-    checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, TRANSFER_FN_TABLE_SIZE, 1));
-    checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, TRANSFER_FN_TABLE_SIZE * 4 * sizeof(GLfloat), cudaMemcpyHostToDevice));
+    checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, transferFunctionSize, 1));
+    checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, transferFunctionSize * 4 * sizeof(GLfloat), cudaMemcpyHostToDevice));
     //checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
     //checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
 
@@ -257,9 +265,24 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *tra
 }
 
 
-extern "C" void render_kernel(dim3 gridSize, dim3 blockSize, uint *d_output, uint imageW, uint imageH)
+extern "C" void render_kernel(dim3 gridSize, dim3 blockSize, uint *d_output, uint imageW, uint imageH, float *invViewMatrix, float aspectRatio, float maxRaySteps, float rayStepSize)
 {
-    d_render<<<gridSize, blockSize>>>(d_output, imageW, imageH);
+	float3x4 cudaInvViewMatrix;
+	cudaInvViewMatrix.m[0].x = invViewMatrix[0];
+	cudaInvViewMatrix.m[0].y = invViewMatrix[1];
+	cudaInvViewMatrix.m[0].z = invViewMatrix[2];
+	cudaInvViewMatrix.m[0].w = invViewMatrix[3];
+
+	cudaInvViewMatrix.m[1].x = invViewMatrix[4];
+	cudaInvViewMatrix.m[1].y = invViewMatrix[5];
+	cudaInvViewMatrix.m[1].z = invViewMatrix[6];
+	cudaInvViewMatrix.m[1].w = invViewMatrix[7];
+
+	cudaInvViewMatrix.m[2].x = invViewMatrix[8];
+	cudaInvViewMatrix.m[2].y = invViewMatrix[9];
+	cudaInvViewMatrix.m[2].z = invViewMatrix[10];
+	cudaInvViewMatrix.m[2].w = invViewMatrix[11];
+    d_render<<<gridSize, blockSize>>>(d_output, imageW, imageH, cudaInvViewMatrix, aspectRatio, maxRaySteps, rayStepSize);
 }
 
 
@@ -267,7 +290,6 @@ extern "C" void copyInvViewMatrix(float *invViewMatrix, size_t sizeofMatrix)
 {
     checkCudaErrorsLog(cudaMemcpyToSymbol(c_invViewMatrix, invViewMatrix, sizeofMatrix));
 }
-
 
 
 
