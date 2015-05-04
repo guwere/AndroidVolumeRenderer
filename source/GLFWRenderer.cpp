@@ -65,7 +65,7 @@ void GLFWRenderer::mainLoop()
 		glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 		glClear(m_clearMask);
 
-		updateCallback(m_currRenderType);
+		updateCallback(m_currRenderType, m_currTransferFnType);
 		
 		glfwSwapBuffers(window);
 		sdkStopTimer(&m_timer.m_timer);
@@ -115,21 +115,32 @@ void GLFWRenderer::handleInput()
 	if(keys[GLFW_KEY_1])
 	{
 		m_currRenderType =RenderType::RAYTRACE_SHADER;
-		glClear(m_clearMask);
 	}
 	if(keys[GLFW_KEY_2])
 	{
 		m_currRenderType =RenderType::TEXTURE_BASED;
-		glClear(m_clearMask);
 	}
 	if(keys[GLFW_KEY_3])
 	{
 		m_currRenderType =RenderType::TEXTURE_BASED_MT;
-		glClear(m_clearMask);
 	}
 	if(keys[GLFW_KEY_4])
 	{
 		m_currRenderType =RenderType::RAYTRACE_CUDA;
-		glClear(m_clearMask);
 	}
+
+	if(keys[GLFW_KEY_7])
+	{
+		m_currTransferFnType =TransferFnType::LOW;
+	}
+	if(keys[GLFW_KEY_8])
+	{
+		m_currTransferFnType =TransferFnType::MEDIUM;
+	}
+	if(keys[GLFW_KEY_9])
+	{
+		m_currTransferFnType =TransferFnType::HIGH;
+	}
+
+
 }

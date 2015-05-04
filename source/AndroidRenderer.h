@@ -36,6 +36,7 @@ public:
 	struct saved_state m_state;
 
 	void *m_clockText;
+	bool m_screenReleased;
 	void (*m_applicationInitCallback)(void);
 
 public:

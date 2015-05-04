@@ -27,6 +27,9 @@ enum RenderType{
 	RAYTRACE_CUDA,
 #endif
 };
+enum TransferFnType{
+	LOW, MEDIUM, HIGH
+};
 
 class Renderer
 {
@@ -39,7 +42,9 @@ public:
 	dim3 m_gridSize, m_blockSize;
 #endif
 	std::vector<RenderType> m_availableRenderTypes;
+	std::vector<TransferFnType> m_availableTransferFnType;
 	unsigned int m_currRenderType;
+	unsigned int m_currTransferFnType;
 
 	Shader *m_debugShader;
 	static Camera m_camera;
@@ -68,7 +73,7 @@ public:
 	void loadCudaVolume(const Volume &volume, const TransferFunction &transferFunction);
 #endif
 	virtual void mainLoop() = 0;
-	virtual void setUpdateCallback(void(*updateCallback)(unsigned int));
+	virtual void setUpdateCallback(void(*updateCallback)(unsigned int,unsigned int));
 	virtual void handleInput() = 0;
 	void loadDebugShader();
 	void renderBasic(const Shader *shader, const Mesh &mesh, const glm::mat4 &MVP, bool renderWireframe) const;
@@ -76,7 +81,7 @@ public:
 	void renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, const TransferFunction &transferFn);
 	void renderTextureBasedVRMT(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, const TransferFunction &transferFn);
 #ifdef CUDA_ENABLED
-	void renderRaycastVRCUDA(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn);
+	void renderRaycastVRCUDA(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize);
 #endif
 	void calculateProxyPlanes(ThreadParameters &params);
 	void sortPolygonClockwise(const PTVEC3 &proxyPlane, glm::vec3 centerPt, PTVEC3 &sortedProxyPlane) const;
@@ -84,8 +89,9 @@ public:
 
 	void drawCrosshair(const glm::vec4 &color) const;
 	void incrementRenderType();
+	void incrementTransferFnType();
 	//void renderRaycastVRmobile1(const Shader *shader, const Mesh &cubeMesh, const Camera &camera, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn) const
-	void(*updateCallback)(unsigned int);
+	void(*updateCallback)(unsigned int,unsigned int);
 	void drawObject(const glm::mat4 &transformMatrix, const std::vector<glm::vec3> &points, GLenum mode, const glm::vec4 &color = glm::vec4(0)) const;
 protected:
 	//Renderer(float screenWidth, float screenHeight);

@@ -307,7 +307,7 @@ void engine_handle_cmd(struct android_app* app, int32_t cmd)
 		//glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
 		glClearColor(engine->m_clearColor.r, engine->m_clearColor.g, engine->m_clearColor.b, engine->m_clearColor.a);
 		glClear(engine->m_clearMask);
-		engine->updateCallback(engine->m_currRenderType);
+		engine->updateCallback(engine->m_currRenderType, engine->m_currTransferFnType);
 		eglSwapBuffers(engine->m_display, engine->m_surface);
 
 		break;
@@ -345,6 +345,7 @@ int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 		else if (action == AMOTION_EVENT_ACTION_UP)
 		{
 			engine->m_screenPressed = false;
+			engine->m_screenReleased = true;
 		}
 		return 1;
 	}
@@ -394,12 +395,17 @@ void AndroidRenderer::mainLoop()
 
 		}
 
-		if(m_screenPressed)
+		if(m_screenReleased)
 		{
+			m_screenReleased = false;
 			//GLfloat xoffset = m_state.x - m_screenWidth * 0.5;
 			//GLfloat yoffset = m_state.y - m_screenHeight * 0.5;
 			//m_camera.ProcessMouseMovement(xoffset * fps, -yoffset * fps);
-			incrementRenderType();
+			if(m_state.x < m_screenWidth * 0.5f && m_state.y < m_screenHeight * 0.5f)
+				incrementRenderType();
+			else if(m_state.x > m_screenWidth * 0.5f && m_state.y > m_screenHeight * 0.5f)
+				incrementTransferFnType();
+
 		}
 
 		if(m_animating)
@@ -407,7 +413,7 @@ void AndroidRenderer::mainLoop()
 			//glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
 			glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 			glClear(m_clearMask);
-			updateCallback(m_currRenderType);
+			updateCallback(m_currRenderType, m_currTransferFnType);
 			eglSwapBuffers(m_display, m_surface);
 
 		}

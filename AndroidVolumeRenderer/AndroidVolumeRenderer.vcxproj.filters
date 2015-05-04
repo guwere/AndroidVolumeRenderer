@@ -133,17 +133,5 @@
       <Filter>jni</Filter>
     </None>
     <None Include="assets\helloworld.txt" />
-    <None Include="assets\utahcond+bold_1024.dds">
-      <Filter>assets</Filter>
-    </None>
-    <None Include="assets\courier+lucida_256.dds">
-      <Filter>assets</Filter>
-    </None>
-    <None Include="C:\NVPACK2\Samples\TDK_Samples\sample_apps\native_basic\assets\courier+lucida_256.abc">
-      <Filter>assets</Filter>
-    </None>
-    <None Include="C:\NVPACK2\Samples\TDK_Samples\sample_apps\native_basic\assets\utahcond+bold_1024.abc">
-      <Filter>assets</Filter>
-    </None>
   </ItemGroup>
 </Project>

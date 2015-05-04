@@ -56,8 +56,8 @@ enum Direction{FORWARD, BACKWARD, LEFT, RIGHT, NO_DIRECTION/*FORWARD_LEFT, FORWA
 #ifdef WIN32
 const int OPENGL_VERSION_MAJOR  = 3;
 const int OPENGL_VERSION_MINOR = 1;
-const int SCREEN_WIDTH = 500;
-const int SCREEN_HEIGHT = 500;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1200;
 #else
 
 
@@ -102,17 +102,25 @@ the number of maximum ray steps is the based on diagonal length of the texture
 #define BLOCK_SIZE 32
 
 #define VOLUME_NAME std::string("CT-Knee.mhd")
-//#define VOLUME_NAME std::string("Bucky.mhd")
-//const std::string VOLUME_NAME = "backpack8.mhd";
-//const std::string VOLUME_NAME = "vertebra8.mhd";
-//const std::string VOLUME_NAME = "supine8.mhd";
+//#define VOLUME_NAME std::string("backpack8.mhd")
+//#define VOLUME_NAME std::string("hazelnut8.mhd")
+//#define VOLUME_NAME std::string("vertebra8.mhd")
+//#define VOLUME_NAME std::string("supine8.mhd")
 #define TRANSFER_FN_NAME std::string("CT-Knee.tfi")
-//const std::string TRANSFER_FN_NAME = "backpack8.tfi";
-//const std::string TRANSFER_FN_NAME = "vertebra8.tfi";
-//const std::string TRANSFER_FN_NAME = "supine8.tfi";
-//const std::string TRANSFER_FN_NAME = "supine8_3.tfi";
+//#define TRANSFER_FN_NAME std::string("backpack8.tfi")
+//#define TRANSFER_FN_NAME std::string("hazelnut8_3.tfi")
+//#define TRANSFER_FN_NAME std::string("vertebra8.tfi")
+//#define TRANSFER_FN_NAME std::string("supine8_3.tfi")
 
+//#define VOLUME_NAME1 std::string("supine8.mhd")
+//#define TRANSFER_FN_NAME1_LOW std::string("supine8_3.tfi")
+//#define TRANSFER_FN_NAME1_MEDIUM std::string("supine8_2.tfi")
+//#define TRANSFER_FN_NAME1_HIGH std::string("supine8.tfi")
 
+#define VOLUME_NAME1 std::string("CT-Knee.mhd")
+#define TRANSFER_FN_NAME1_LOW std::string("CT-Knee.tfi")
+#define TRANSFER_FN_NAME1_MEDIUM std::string("CT-Knee_2.tfi")
+#define TRANSFER_FN_NAME1_HIGH std::string("CT-Knee_3.tfi")
 
 #pragma endregion
 

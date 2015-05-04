@@ -16,7 +16,8 @@
 Mesh cubeMesh, planeMesh; 
 Shader *basicShader, *raycastVRShader, *textureBasedVRShader, *planeShader;
 Volume volume;
-TransferFunction transferFn;
+TransferFunction *transferFn;
+TransferFunction transferFn1, transferFn2,transferFn3;
 Renderer *renderer;
 
 float currTime, lastTime;
@@ -47,7 +48,7 @@ void initAppParams()
 	planeMesh.transform.scaleUniform(MESH_SCALE);
 
 
-	File vf("",VOLUME_NAME);
+	File vf("",VOLUME_NAME1);
 	volume.parseMHD(vf);
 	//volume.parsePVM(File("","Box.pvm"));
 	//File temp = File("","Box.pvm");
@@ -55,26 +56,43 @@ void initAppParams()
 	volume.printProperties();
 	volume.generate();
 
-	File tf("",TRANSFER_FN_NAME);
-	transferFn.parseVoreenXML(tf);
-	transferFn.generate();
-	renderer->loadDebugShader();
+	File tf1("",TRANSFER_FN_NAME1_LOW);
+	transferFn1.parseVoreenXML(tf1);
+	transferFn1.generate();
+
+	File tf2("",TRANSFER_FN_NAME1_MEDIUM);
+	transferFn2.parseVoreenXML(tf2);
+	transferFn2.generate();
+
+	File tf3("",TRANSFER_FN_NAME1_HIGH);
+	transferFn3.parseVoreenXML(tf3);
+	transferFn3.generate();
+
+
 #ifdef CUDA_ENABLED
-	renderer->loadCudaVolume(volume, transferFn);
+	renderer->loadCudaVolume(volume, transferFn1);
 #endif
+	renderer->loadDebugShader();
 
 	sdkCreateTimer(&timer.m_timer);
 	sdkStartTimer(&timer.m_timer);
 	lastTime = currTime = timer.m_timer->getTime();
+
 }
 
-void updateCallback(unsigned int currRenderType)
+void updateCallback(unsigned int currRenderType, unsigned int currTransferFn)
 {
+	switch(currTransferFn)
+	{
+	case TransferFnType::LOW: transferFn = &transferFn1; break;
+	case TransferFnType::MEDIUM: transferFn = &transferFn2; break;
+	case TransferFnType::HIGH: transferFn = &transferFn3; break;
+	}
+
 	float currTime = timer.m_timer->getTime();
 	float delta = currTime - lastTime;
 	lastTime = currTime;
 
-	volume.advance();
 	cubeMesh.transform.pivotOnLocalAxis(0,0.00001 * delta, 0);
 	planeMesh.transform.pivotOnLocalAxis(0,0.00001 * delta, 0);
 
@@ -83,17 +101,17 @@ void updateCallback(unsigned int currRenderType)
 	switch (currRenderType)
 	{
 	case RenderType::RAYTRACE_SHADER:
-		renderer->renderRaycastVR(raycastVRShader, cubeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
+		renderer->renderRaycastVR(raycastVRShader, cubeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, *transferFn);
 		break;
 	case RenderType::TEXTURE_BASED:
-		renderer->renderTextureBasedVR(textureBasedVRShader, cubeMesh, volume, transferFn);
+		renderer->renderTextureBasedVR(textureBasedVRShader, cubeMesh, volume, *transferFn);
 		break;
 	case RenderType::TEXTURE_BASED_MT:
-		renderer->renderTextureBasedVRMT(textureBasedVRShader, cubeMesh, volume, transferFn);
+		renderer->renderTextureBasedVRMT(textureBasedVRShader, cubeMesh, volume, *transferFn);
 		break;
 #ifdef CUDA_ENABLED
 	case RenderType::RAYTRACE_CUDA:
-		renderer->renderRaycastVRCUDA(planeShader, planeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, transferFn);
+		renderer->renderRaycastVRCUDA(planeShader, planeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE);
 		break;
 #endif
 	}

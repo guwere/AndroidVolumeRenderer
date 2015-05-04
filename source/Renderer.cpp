@@ -27,6 +27,11 @@ void Renderer::init(float screenWidth, float screenHeight)
 #ifdef CUDA_ENABLED
 	m_availableRenderTypes.push_back(RAYTRACE_CUDA);
 #endif
+	m_currTransferFnType =TransferFnType::LOW;
+	m_availableTransferFnType.push_back(LOW);
+	m_availableTransferFnType.push_back(MEDIUM);
+	m_availableTransferFnType.push_back(HIGH);
+
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
 	m_aspectRatio = screenWidth / screenHeight;
@@ -49,22 +54,6 @@ void Renderer::init(float screenWidth, float screenHeight)
 #endif
 }
 
-//Renderer::Renderer()
-//{
-//	initCuda();
-//
-//	m_clearColor = CLEAR_COLOR;
-//	m_clearMask = CLEAR_MASK;
-//	m_constructIntersectRay = false;
-//	m_crosshairPts.push_back(glm::vec3(-0.03f,0,0));
-//	m_crosshairPts.push_back(glm::vec3(0.03f,0,0));
-//	m_crosshairPts.push_back(glm::vec3(0,-0.03f,0));
-//	m_crosshairPts.push_back(glm::vec3(0,0.03f,0));
-//
-//
-//	//glm::vec3 INITIAL_CAMERA_POS = glm::vec3(0.0f, 1.0f, 10.0f);
-//	//m_camera.setPosition(INITIAL_CAMERA_POS);
-//}
 
 Renderer::~Renderer()
 {
@@ -75,32 +64,6 @@ Renderer::~Renderer()
 #ifdef CUDA_ENABLED
 void Renderer::initPixelBufferCuda()
 {
-	//if (m_cudaPBO)
-	//{
-	//	// unregister this buffer object from CUDA C
-	//	checkCudaErrorsLog(cudaGraphicsUnregisterResource(cuda_pbo_resource));
-
-	//	// delete old buffer
-	//	glDeleteBuffers(1, &m_cudaPBO);
-	//	glDeleteTextures(1, &m_cudaTex);
-	//}
-
-	//// create pixel buffer object for display
-	//glGenBuffers(1, &m_cudaPBO);
-	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_cudaPBO);
-	//glBufferData(GL_PIXEL_UNPACK_BUFFER, m_screenWidth*m_screenHeight*sizeof(GLubyte)*4, 0, GL_STREAM_DRAW);
-	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-
-	//// register this buffer object with CUDA
-	//checkCudaErrorsLog(cudaGraphicsGLRegisterBuffer(&cuda_pbo_resource, m_cudaPBO, cudaGraphicsMapFlagsWriteDiscard));
-
-	//// create texture for display
-	//glGenTextures(1, &m_cudaTex);
-	//glBindTexture(GL_TEXTURE_2D, m_cudaTex);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_screenWidth, m_screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//glBindTexture(GL_TEXTURE_2D, 0);
 
 	if (m_cudaPBO)
 	{
@@ -249,7 +212,7 @@ void Renderer::loadCudaVolume(const Volume &volume, const TransferFunction &tran
 }
 #endif // CUDA_ENABLED
 
-void Renderer::setUpdateCallback(void(*updateCallback)(unsigned int))
+void Renderer::setUpdateCallback(void(*updateCallback)(unsigned int, unsigned int))
 {
 	this->updateCallback = updateCallback;
 }
@@ -502,7 +465,7 @@ void Renderer::renderTextureBasedVRMT(const Shader *shader, const Mesh &cubeMesh
 
 }
 #ifdef CUDA_ENABLED
-void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn)
+void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize)
 {
 
 
@@ -642,6 +605,13 @@ void Renderer::incrementRenderType()
 	m_currRenderType++;
 	if(m_currRenderType > m_availableRenderTypes.size())
 		m_currRenderType = 0;
+}
+
+void Renderer::incrementTransferFnType()
+{
+	m_currTransferFnType++;
+	if(m_currTransferFnType > m_availableTransferFnType.size())
+		m_currTransferFnType = 0;
 }
 
 void Renderer::drawObject(const glm::mat4 &transformMatrix, const PTVEC3 &points, GLenum mode, const glm::vec4 &color) const
