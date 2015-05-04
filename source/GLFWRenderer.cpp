@@ -1,5 +1,4 @@
 #include "GLFWRenderer.h"
-#include "Timer.h"
 
 GLfloat GLFWRenderer::lastX = SCREEN_WIDTH * 0.5f;
 GLfloat GLFWRenderer::lastY = SCREEN_HEIGHT * 0.5f;
@@ -54,21 +53,36 @@ void GLFWRenderer::mainLoop()
 	glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 	glClear(m_clearMask);
 
-
+	
+	//sdkStartTimer(&(m_timer.m_timer));
 	while (!glfwWindowShouldClose(window))
 	{
 		// Check and call events
 		glfwPollEvents();
-		Timer::get().updateInterval();
-		handleInput();
+		sdkStartTimer(&m_timer.m_timer);
+		
 
 		glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 		glClear(m_clearMask);
 
-		updateCallback();
+		updateCallback(m_currRenderType);
 		
 		glfwSwapBuffers(window);
+		sdkStopTimer(&m_timer.m_timer);
+		handleInput();
+		std::ostringstream stringStream;
+//		LOGI("FPS: %f,\n ", m_timer.computeFPS());
+		
+		std::string currMode = (m_currRenderType == RAYTRACE_SHADER ? "RAYTRACE_SHADER":
+			m_currRenderType == TEXTURE_BASED ? "TEXTURE_BASED":
+			m_currRenderType == TEXTURE_BASED_MT ? "TEXTURE_BASED_MT":
+			m_currRenderType == RAYTRACE_CUDA ? "RAYTRACE_CUDA": ""
+			);
+		m_currFPS = m_timer.computeFPS();
+		stringStream << "FPS: " <<  m_currFPS << "--" << currMode;
+		std::string copyOfStr = stringStream.str();
 
+		glfwSetWindowTitle(window, copyOfStr.c_str());
 
 	}
 
@@ -81,7 +95,10 @@ void GLFWRenderer::mainLoop()
 
 void GLFWRenderer::handleInput()
 {
-	float deltaTime = Timer::get().getLastInterval();
+	float deltaTime = sdkGetAverageTimerValue(&m_timer.m_timer);
+	//deltaTime *= 0.002f;
+	//LOGI("FPS: %f,\n ", m_timer.computeFPS());
+
 	//camera
 	if (keys[GLFW_KEY_ESCAPE])
 		glfwSetWindowShouldClose(window, GL_TRUE);
@@ -95,4 +112,24 @@ void GLFWRenderer::handleInput()
 		m_camera.ProcessKeyboard(RIGHT, deltaTime);
 	if(keys[GLFW_KEY_R])
 		m_constructIntersectRay = true;
+	if(keys[GLFW_KEY_1])
+	{
+		m_currRenderType =RenderType::RAYTRACE_SHADER;
+		glClear(m_clearMask);
+	}
+	if(keys[GLFW_KEY_2])
+	{
+		m_currRenderType =RenderType::TEXTURE_BASED;
+		glClear(m_clearMask);
+	}
+	if(keys[GLFW_KEY_3])
+	{
+		m_currRenderType =RenderType::TEXTURE_BASED_MT;
+		glClear(m_clearMask);
+	}
+	if(keys[GLFW_KEY_4])
+	{
+		m_currRenderType =RenderType::RAYTRACE_CUDA;
+		glClear(m_clearMask);
+	}
 }

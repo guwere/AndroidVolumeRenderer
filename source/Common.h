@@ -69,7 +69,7 @@ const int SCREEN_HEIGHT = 500;
 #define DEBUG_VERTEX_SHADER_NAME "basicVS.glsl"
 #define DEBUG_FRAGMENT_SHADER_NAME "basicFS.glsl"
 #define INITIAL_CAMERA_POS glm::vec3(0.0f, 0.0f, 5.0f)
-#define MOUSE_MOV_SPEED 5.0f
+#define MOUSE_MOV_SPEED 0.006f
 #define MOUSE_SENSITIVITY 0.25f
 #define CAMERA_ZOOM 45.0f
 #define CAMERA_FOV  45.0f
@@ -90,7 +90,7 @@ const int SCREEN_HEIGHT = 500;
 assume that the volume texture is of dimensions [0,1] ( texture space)
 the number of maximum ray steps is the based on diagonal length of the texture
 */
-#define MAX_RAY_STEPS (500.0f * TEXTURE_CUBE_DIAGONAL_LEN)
+#define MAX_RAY_STEPS (200.0f * TEXTURE_CUBE_DIAGONAL_LEN)
 #define RAY_STEP_SIZE_TEX_SPACE (TEXTURE_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
 #define RAY_STEP_SIZE_MODEL_SPACE (MESH_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
 #define GRADIENT_STEP_SIZE (TEXTURE_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)

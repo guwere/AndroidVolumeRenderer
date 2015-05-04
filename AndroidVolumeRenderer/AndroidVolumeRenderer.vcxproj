@@ -63,7 +63,11 @@
   <ItemGroup>
     <None Include="..\source\Android.mk" />
     <None Include="..\source\Application.mk" />
+    <None Include="assets\courier+lucida_256.dds" />
     <None Include="assets\helloworld.txt" />
+    <None Include="assets\utahcond+bold_1024.dds" />
+    <None Include="C:\NVPACK2\Samples\TDK_Samples\sample_apps\native_basic\assets\courier+lucida_256.abc" />
+    <None Include="C:\NVPACK2\Samples\TDK_Samples\sample_apps\native_basic\assets\utahcond+bold_1024.abc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F565E1A6-3AA8-44B7-9BAF-02A4A9D858F5}</ProjectGuid>
@@ -92,7 +96,7 @@
     <ClCompile>
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <PreprocessorDefinitions>DISABLE_IMPORTGL;ANDROID_APP</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\glm2;$(SolutionDir)\3rdparty\octree;$(SolutionDir)\3rdparty\tinydir;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\glm2;$(SolutionDir)\3rdparty\octree;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GccExceptionHandling>true</GccExceptionHandling>
     </ClCompile>
     <Link>
@@ -114,7 +118,7 @@
     <ClCompile>
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <PreprocessorDefinitions>DISABLE_IMPORTGL</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\glm2;$(SolutionDir)\3rdparty\octree;$(SolutionDir)\3rdparty\tinydir;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\glm2;$(SolutionDir)\3rdparty\octree;$(SolutionDir)\3rdparty\tinydir;$(SolutionDir)\3rdparty\jniHelper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GccExceptionHandling>true</GccExceptionHandling>
     </ClCompile>
     <Link>

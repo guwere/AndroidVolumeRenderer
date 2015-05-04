@@ -4,6 +4,7 @@
 
 #include "Common.h"
 #include "Renderer.h"
+
 /**
  * Our saved state data.
  */
@@ -20,6 +21,7 @@ struct AndroidRenderer
 : Renderer{
 public:
 	AndroidRenderer();
+	~AndroidRenderer();
     struct android_app* m_App;
 
     ASensorManager* m_sensorManager;
@@ -32,6 +34,8 @@ public:
     EGLContext m_context;
 	bool m_screenPressed;
 	struct saved_state m_state;
+
+	void *m_clockText;
 	void (*m_applicationInitCallback)(void);
 
 public:

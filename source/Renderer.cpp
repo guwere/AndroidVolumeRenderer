@@ -4,7 +4,9 @@
 #include "HelperFunctions.h"
 #include "ShaderManager.h"
 
+#ifdef CUDA_ENABLED
 #include <cuda_gl_interop.h>
+#endif
 
 
 Camera Renderer::m_camera;
@@ -18,6 +20,13 @@ Camera Renderer::m_camera;
 
 void Renderer::init(float screenWidth, float screenHeight)
 {
+	m_currRenderType = RenderType::RAYTRACE_SHADER;
+	m_availableRenderTypes.push_back(RAYTRACE_SHADER);
+	m_availableRenderTypes.push_back(TEXTURE_BASED);
+	m_availableRenderTypes.push_back(TEXTURE_BASED_MT);
+#ifdef CUDA_ENABLED
+	m_availableRenderTypes.push_back(RAYTRACE_CUDA);
+#endif
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
 	m_aspectRatio = screenWidth / screenHeight;
@@ -30,15 +39,14 @@ void Renderer::init(float screenWidth, float screenHeight)
 	m_crosshairPts.push_back(glm::vec3(0.03f,0,0));
 	m_crosshairPts.push_back(glm::vec3(0,-0.03f,0));
 	m_crosshairPts.push_back(glm::vec3(0,0.03f,0));
-
+#ifdef CUDA_ENABLED
 	m_blockSize = dim3(BLOCK_SIZE, BLOCK_SIZE);
 	m_gridSize = dim3(HelperFunctions::iDivUp(m_screenWidth, m_blockSize.x), HelperFunctions::iDivUp(m_screenHeight, m_blockSize.y));
-
-
 	m_cudaPBO = 0;
 	cuda_pbo_resource = NULL;
 	initCuda();
 	initPixelBufferCuda();
+#endif
 }
 
 //Renderer::Renderer()
@@ -60,9 +68,11 @@ void Renderer::init(float screenWidth, float screenHeight)
 
 Renderer::~Renderer()
 {
+#ifdef CUDA_ENABLED
 	exitCuda();
+#endif
 }
-
+#ifdef CUDA_ENABLED
 void Renderer::initPixelBufferCuda()
 {
 	//if (m_cudaPBO)
@@ -119,7 +129,7 @@ void Renderer::initPixelBufferCuda()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-
+#endif
 void Renderer::getMinMaxPointsVertices(const PTVEC3 positions, const Mesh &cubeMesh, glm::vec3 &minPos, glm::vec3 &maxPos) const
 {
 	//assume first point as both min and max
@@ -225,6 +235,7 @@ void Renderer::loadDebugShader()
 	m_debugShader = ShaderManager::get().getShader(vs,fs);
 }
 
+#ifdef CUDA_ENABLED
 void Renderer::loadCudaVolume(const Volume &volume, const TransferFunction &transferFunction)
 {
 	void *volumePtr = volume.m_memblock3D;
@@ -236,8 +247,9 @@ void Renderer::loadCudaVolume(const Volume &volume, const TransferFunction &tran
 	GLfloat *transferFnPtr = (GLfloat*)&transferFunction.m_colorTable[0];
 	initCudaVolume(volumePtr, extent, transferFnPtr, TRANSFER_FN_TABLE_SIZE);
 }
+#endif // CUDA_ENABLED
 
-void Renderer::setUpdateCallback(void(*updateCallback)(void))
+void Renderer::setUpdateCallback(void(*updateCallback)(unsigned int))
 {
 	this->updateCallback = updateCallback;
 }
@@ -489,7 +501,7 @@ void Renderer::renderTextureBasedVRMT(const Shader *shader, const Mesh &cubeMesh
 	//delete sortedProxyPlanes;
 
 }
-
+#ifdef CUDA_ENABLED
 void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn)
 {
 
@@ -552,7 +564,7 @@ void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, 
 
 
 }
-
+#endif
 void Renderer::calculateProxyPlanes(ThreadParameters &params)
 {
 	for (int currSample = params.first; currSample < params.last; ++currSample)
@@ -622,6 +634,14 @@ void Renderer::drawCrosshair(const glm::vec4 &color) const
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	drawObject(glm::mat4(), m_crosshairPts, GL_LINES, color);
+}
+
+
+void Renderer::incrementRenderType()
+{
+	m_currRenderType++;
+	if(m_currRenderType > m_availableRenderTypes.size())
+		m_currRenderType = 0;
 }
 
 void Renderer::drawObject(const glm::mat4 &transformMatrix, const PTVEC3 &points, GLenum mode, const glm::vec4 &color) const

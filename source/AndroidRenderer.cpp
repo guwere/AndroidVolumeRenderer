@@ -8,8 +8,13 @@ AndroidRenderer::AndroidRenderer()
 }
 
 
+AndroidRenderer::~AndroidRenderer()
+{
+}
+
 void AndroidRenderer::init(android_app *state, void (*applicationInitCallback)(void))
 {
+	m_clockText = NULL;
 	m_App = state;
 	m_applicationInitCallback = applicationInitCallback;
 	m_App->userData = this;
@@ -119,7 +124,6 @@ int AndroidRenderer::initEGL()
 	//glEnable(GL_CULL_FACE);
 	// glShadeModel(GL_SMOOTH);
 	//glDisable(GL_DEPTH_TEST);
-
 	return 0;
 }
 
@@ -300,6 +304,12 @@ void engine_handle_cmd(struct android_app* app, int32_t cmd)
 		}
 		// Also stop animating.
 		engine->m_animating = 0;
+		//glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
+		glClearColor(engine->m_clearColor.r, engine->m_clearColor.g, engine->m_clearColor.b, engine->m_clearColor.a);
+		glClear(engine->m_clearMask);
+		engine->updateCallback(engine->m_currRenderType);
+		eglSwapBuffers(engine->m_display, engine->m_surface);
+
 		break;
 	case APP_CMD_START:
 
@@ -324,6 +334,7 @@ int32_t engine_handle_input(struct android_app* app, AInputEvent* event)
 	AndroidRenderer* engine = (AndroidRenderer*)app->userData;
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
 	{
+		engine->m_animating = 1;
 		int32_t action = AMOTION_EVENT_ACTION_MASK & AMotionEvent_getAction((const AInputEvent*)event);
 		if (action == AMOTION_EVENT_ACTION_DOWN)
 		{
@@ -348,16 +359,15 @@ void AndroidRenderer::mainLoop()
 		int ident;
 		int events;
 		struct android_poll_source* source;
+		float fps = 0;
 
-	//	ndk_helper::PerfMonitor timer;
 
-		Timer::get().updateInterval();
 		// If not animating, we will block forever waiting for events.
 		// If animating, we loop until all events are read, then continue
 		// to draw the next frame of animation.
 		while ((ident=ALooper_pollAll(m_animating ? 0 : -1, NULL, &events,(void**)&source)) >= 0) 
 		{
-
+			sdkStartTimer(&m_timer.m_timer);
 			// Process this event.
 			if (source != NULL)
 			{
@@ -386,13 +396,10 @@ void AndroidRenderer::mainLoop()
 
 		if(m_screenPressed)
 		{
-			float deltaTime = Timer::get().getLastInterval();
-			GLfloat xoffset = m_state.x - m_screenWidth * 0.5;
-			GLfloat yoffset = m_state.y - m_screenHeight * 0.5;
-			m_camera.ProcessMouseMovement(xoffset * deltaTime * 0.2f, -yoffset * deltaTime * 0.2f);
-			float fps;
-//			LOGI("Framerate: %dd\n", fps);
-//			LOGI("Time elapsed: %d\n", timer.GetCurrentTime());
+			//GLfloat xoffset = m_state.x - m_screenWidth * 0.5;
+			//GLfloat yoffset = m_state.y - m_screenHeight * 0.5;
+			//m_camera.ProcessMouseMovement(xoffset * fps, -yoffset * fps);
+			incrementRenderType();
 		}
 
 		if(m_animating)
@@ -400,11 +407,14 @@ void AndroidRenderer::mainLoop()
 			//glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
 			glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 			glClear(m_clearMask);
-			updateCallback();
+			updateCallback(m_currRenderType);
 			eglSwapBuffers(m_display, m_surface);
 
 		}
-
+		sdkStopTimer(&m_timer.m_timer);
+		fps = m_timer.computeFPS();
+		LOGI("FPS: %f\n",fps);
+		//sdkStartTimer(&m_timer.m_timer);
 
 	}
 

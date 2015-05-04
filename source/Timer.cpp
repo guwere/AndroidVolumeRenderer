@@ -1,70 +1,38 @@
 #include "Timer.h"
-#include "Common.h"
 
-Timer& Timer::get()
-{
-	static Timer singleton;
-	return singleton;
-}
 
 Timer::Timer()
 {
-	reset();
+	fpsCount = 0;        // FPS count for averaging
+	fpsLimit = 1;        // FPS limit for sampling
+	frameCount = 0;
+	sdkCreateTimer(&m_timer);
 }
 
-double Timer::getTime() const
+Timer::~Timer()
 {
-	return m_lastTime; 
+	sdkDeleteTimer(&m_timer);
 }
-
-double Timer::getLastInterval() const
-{
-	return m_lastInterval;
-}
-
-#define MICROSEC_TO_SEC 1.0f/1000000.0f
-#define SEC_TO_MICROSEC 1000000.0f
-
-void Timer::updateInterval()
-{
-	double currTime;
-#ifdef WIN32
-	currTime = glfwGetTime();
-#else
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	currTime = MICROSEC_TO_SEC*(double)tv.tv_sec + (double)tv.tv_usec;
+#ifndef MAX
+#define MAX(a,b) ((a > b) ? a : b)
 #endif
-	m_lastInterval = currTime - m_lastTime;
-	m_lastTime = currTime;
-	m_frameElapsed += m_lastInterval;
-	m_FrameUpdates++;
 
-	if(m_frameElapsed >= 1.0f) // one second
+float Timer::computeFPS()
+{
+	frameCount++;
+	fpsCount++;
+
+	if (fpsCount == fpsLimit)
 	{
-		m_frameElapsed = 0;
-		m_FrameRate = m_FrameUpdates;
-		m_FrameUpdates = 0;
-	}
-}
-float Timer::getFrameRate()
-{
-	return m_FrameRate;
-}
-void Timer::reset()
-{
-	m_lastInterval = 0;
-#ifdef WIN32
-	m_lastTime = glfwGetTime();
-#else
-	struct timeval tv;
-	tv.tv_sec = 0;
-	tv.tv_usec = 0;
-	settimeofday(&tv, NULL);
-	m_lastTime = 0;
-#endif
-	m_frameElapsed = 0;
-	m_FrameUpdates = 0;
-	m_FrameRate = 0.0f;
-}
+		char fps[256];
+		ifps = 1.f / (sdkGetAverageTimerValue(&m_timer) / 1000.f);
+		//sprintf(fps, "Volume Render: %3.1f fps", ifps);
 
+		//glutSetWindowTitle(fps);
+		fpsCount = 0;
+
+		fpsLimit = (int)MAX(1.f, ifps);
+		sdkResetTimer(&m_timer);
+	}
+	return ifps;
+}
