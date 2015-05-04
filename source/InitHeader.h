@@ -15,9 +15,15 @@
 
 Mesh cubeMesh, planeMesh; 
 Shader *basicShader, *raycastVRShader, *textureBasedVRShader, *planeShader;
-Volume volume;
-TransferFunction *transferFn;
-TransferFunction transferFn1, transferFn2,transferFn3;
+
+Volume *volumePtr;
+Volume volume1, volume2;
+unsigned int currVolume;
+std::vector<TransferFunction> *volumetfsPtr;
+std::vector<TransferFunction> volume1tfs;
+std::vector<TransferFunction> volume2tfs;
+unsigned int currTransferFn;
+
 Renderer *renderer;
 
 float currTime, lastTime;
@@ -26,8 +32,11 @@ Timer timer;
 //everything that must access the opengl state must come after the window has been initialized (which come as an event in the command queue in the case of android)
 void initAppParams()
 {
+	currVolume = 0;
+	volumePtr = &volume1;
+	volumetfsPtr = &volume1tfs;
 
-
+	currTransferFn = LOW;
 	//Volume volume;
 	//volume.parseMHD(File("","CT-Knee.mhd"));
 	File basicVS("","basicVS.glsl");
@@ -48,29 +57,41 @@ void initAppParams()
 	planeMesh.transform.scaleUniform(MESH_SCALE);
 
 
-	File vf("",VOLUME_NAME1);
-	volume.parseMHD(vf);
-	//volume.parsePVM(File("","Box.pvm"));
-	//File temp = File("","Box.pvm");
-	//temp.print();
-	volume.printProperties();
-	volume.generate();
+	File vf1("",VOLUME_NAME1);
+	volume1.parseMHD(vf1);
+	volume1.printProperties();
+	volume1.generate();
 
-	File tf1("",TRANSFER_FN_NAME1_LOW);
-	transferFn1.parseVoreenXML(tf1);
-	transferFn1.generate();
+	File vf2("",VOLUME_NAME2);
+	volume2.parseMHD(vf2);
+	volume2.printProperties();
+	volume2.generate();
 
-	File tf2("",TRANSFER_FN_NAME1_MEDIUM);
-	transferFn2.parseVoreenXML(tf2);
-	transferFn2.generate();
+	File tf11("",TRANSFER_FN_NAME1_LOW);
+	volume1tfs.resize(3);
+	volume1tfs[LOW].parseVoreenXML(tf11);
+	volume1tfs[LOW].generate();
+	File tf12("",TRANSFER_FN_NAME1_MEDIUM);
+	volume1tfs[MEDIUM].parseVoreenXML(tf12);
+	volume1tfs[MEDIUM].generate();
+	File tf13("",TRANSFER_FN_NAME1_HIGH);
+	volume1tfs[HIGH].parseVoreenXML(tf13);
+	volume1tfs[HIGH].generate();
 
-	File tf3("",TRANSFER_FN_NAME1_HIGH);
-	transferFn3.parseVoreenXML(tf3);
-	transferFn3.generate();
+	File tf21("",TRANSFER_FN_NAME2_LOW);
+	volume2tfs.resize(3);
+	volume2tfs[LOW].parseVoreenXML(tf21);
+	volume2tfs[LOW].generate();
+	File tf22("",TRANSFER_FN_NAME2_MEDIUM);
+	volume2tfs[MEDIUM].parseVoreenXML(tf22);
+	volume2tfs[MEDIUM].generate();
+	File tf23("",TRANSFER_FN_NAME2_HIGH);
+	volume2tfs[HIGH].parseVoreenXML(tf23);
+	volume2tfs[HIGH].generate();
 
 
 #ifdef CUDA_ENABLED
-	renderer->loadCudaVolume(volume, transferFn1);
+	renderer->loadCudaVolume(volume1, volume1tfs[LOW]);
 #endif
 	renderer->loadDebugShader();
 
@@ -80,13 +101,27 @@ void initAppParams()
 
 }
 
-void updateCallback(unsigned int currRenderType, unsigned int currTransferFn)
+void updateCallback(unsigned int currRenderType, unsigned int newTransferFn, unsigned int newVolume)
 {
-	switch(currTransferFn)
+	if(newVolume != currVolume)
 	{
-	case TransferFnType::LOW: transferFn = &transferFn1; break;
-	case TransferFnType::MEDIUM: transferFn = &transferFn2; break;
-	case TransferFnType::HIGH: transferFn = &transferFn3; break;
+		currVolume = newVolume;
+		switch(currVolume)
+		{
+		case 0: volumePtr = &volume1; volumetfsPtr = &volume1tfs; break;
+		case 1: volumePtr = &volume2; volumetfsPtr = &volume2tfs; break;
+		}
+#if CUDA_ENABLED
+		renderer->loadCudaVolume(*volumePtr, volumetfsPtr->at(currTransferFn));
+#endif
+	}
+
+	if(newTransferFn != currTransferFn)
+	{
+		currTransferFn = newTransferFn;
+#if CUDA_ENABLED
+		renderer->loadCudaVolume(*volumePtr, volumetfsPtr->at(currTransferFn));
+#endif
 	}
 
 	float currTime = timer.m_timer->getTime();
@@ -98,20 +133,21 @@ void updateCallback(unsigned int currRenderType, unsigned int currTransferFn)
 
 	int maxRaySteps = MAX_RAY_STEPS;
 	float step_size = RAY_STEP_SIZE_MODEL_SPACE;
+
 	switch (currRenderType)
 	{
 	case RenderType::RAYTRACE_SHADER:
-		renderer->renderRaycastVR(raycastVRShader, cubeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, *transferFn);
+		renderer->renderRaycastVR(raycastVRShader, cubeMesh, *volumePtr, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE, LIGHT_POS, (volumetfsPtr->at(currTransferFn)));
 		break;
 	case RenderType::TEXTURE_BASED:
-		renderer->renderTextureBasedVR(textureBasedVRShader, cubeMesh, volume, *transferFn);
+		renderer->renderTextureBasedVR(textureBasedVRShader, cubeMesh, *volumePtr, (volumetfsPtr->at(currTransferFn)));
 		break;
 	case RenderType::TEXTURE_BASED_MT:
-		renderer->renderTextureBasedVRMT(textureBasedVRShader, cubeMesh, volume, *transferFn);
+		renderer->renderTextureBasedVRMT(textureBasedVRShader, cubeMesh, *volumePtr, (volumetfsPtr->at(currTransferFn)));
 		break;
 #ifdef CUDA_ENABLED
 	case RenderType::RAYTRACE_CUDA:
-		renderer->renderRaycastVRCUDA(planeShader, planeMesh, volume, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE);
+		renderer->renderRaycastVRCUDA(planeShader, planeMesh, *volumePtr, MAX_RAY_STEPS, RAY_STEP_SIZE_MODEL_SPACE, GRADIENT_STEP_SIZE);
 		break;
 #endif
 	}

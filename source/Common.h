@@ -56,8 +56,8 @@ enum Direction{FORWARD, BACKWARD, LEFT, RIGHT, NO_DIRECTION/*FORWARD_LEFT, FORWA
 #ifdef WIN32
 const int OPENGL_VERSION_MAJOR  = 3;
 const int OPENGL_VERSION_MINOR = 1;
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1200;
+const int SCREEN_WIDTH = 500;
+const int SCREEN_HEIGHT = 500;
 #else
 
 
@@ -121,6 +121,11 @@ the number of maximum ray steps is the based on diagonal length of the texture
 #define TRANSFER_FN_NAME1_LOW std::string("CT-Knee.tfi")
 #define TRANSFER_FN_NAME1_MEDIUM std::string("CT-Knee_2.tfi")
 #define TRANSFER_FN_NAME1_HIGH std::string("CT-Knee_3.tfi")
+
+#define VOLUME_NAME2 std::string("Bucky.mhd")
+#define TRANSFER_FN_NAME2_LOW std::string("Bucky.tfi")
+#define TRANSFER_FN_NAME2_MEDIUM std::string("Bucky_2.tfi")
+#define TRANSFER_FN_NAME2_HIGH std::string("Bucky_3.tfi")
 
 #pragma endregion
 

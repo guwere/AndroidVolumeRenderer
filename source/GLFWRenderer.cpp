@@ -65,14 +65,14 @@ void GLFWRenderer::mainLoop()
 		glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 		glClear(m_clearMask);
 
-		updateCallback(m_currRenderType, m_currTransferFnType);
+		updateCallback(m_currRenderType, m_currTransferFnType, m_currVolume);
 		
 		glfwSwapBuffers(window);
 		sdkStopTimer(&m_timer.m_timer);
 		handleInput();
 		std::ostringstream stringStream;
 //		LOGI("FPS: %f,\n ", m_timer.computeFPS());
-		
+#ifdef CUDA_ENABLED		
 		std::string currMode = (m_currRenderType == RAYTRACE_SHADER ? "RAYTRACE_SHADER":
 			m_currRenderType == TEXTURE_BASED ? "TEXTURE_BASED":
 			m_currRenderType == TEXTURE_BASED_MT ? "TEXTURE_BASED_MT":
@@ -81,17 +81,14 @@ void GLFWRenderer::mainLoop()
 		m_currFPS = m_timer.computeFPS();
 		stringStream << "FPS: " <<  m_currFPS << "--" << currMode;
 		std::string copyOfStr = stringStream.str();
-
 		glfwSetWindowTitle(window, copyOfStr.c_str());
-
+#endif
 	}
 
 	glfwTerminate();
 	return;
 
 }
-
-
 
 void GLFWRenderer::handleInput()
 {
@@ -112,6 +109,7 @@ void GLFWRenderer::handleInput()
 		m_camera.ProcessKeyboard(RIGHT, deltaTime);
 	if(keys[GLFW_KEY_R])
 		m_constructIntersectRay = true;
+
 	if(keys[GLFW_KEY_1])
 	{
 		m_currRenderType =RenderType::RAYTRACE_SHADER;
@@ -124,11 +122,20 @@ void GLFWRenderer::handleInput()
 	{
 		m_currRenderType =RenderType::TEXTURE_BASED_MT;
 	}
+#ifdef CUDA_ENABLED
 	if(keys[GLFW_KEY_4])
 	{
 		m_currRenderType =RenderType::RAYTRACE_CUDA;
 	}
-
+#endif
+	if(keys[GLFW_KEY_5])
+	{
+		m_currVolume = 0;
+	}
+	if(keys[GLFW_KEY_6])
+	{
+		m_currVolume = 1;
+	}
 	if(keys[GLFW_KEY_7])
 	{
 		m_currTransferFnType =TransferFnType::LOW;

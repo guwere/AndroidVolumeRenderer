@@ -181,8 +181,6 @@ void AndroidRenderer::printInfoPath()
 		env->ReleaseStringUTFChars(jpath, dir);
 	}
 
-
-
 	{
 
 		jmethodID method = env->GetMethodID(activityClass, "getPackageResourcePath", "()Ljava/lang/String;");
@@ -307,7 +305,7 @@ void engine_handle_cmd(struct android_app* app, int32_t cmd)
 		//glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
 		glClearColor(engine->m_clearColor.r, engine->m_clearColor.g, engine->m_clearColor.b, engine->m_clearColor.a);
 		glClear(engine->m_clearMask);
-		engine->updateCallback(engine->m_currRenderType, engine->m_currTransferFnType);
+		engine->updateCallback(engine->m_currRenderType, engine->m_currTransferFnType, engine->m_currVolume);
 		eglSwapBuffers(engine->m_display, engine->m_surface);
 
 		break;
@@ -405,6 +403,8 @@ void AndroidRenderer::mainLoop()
 				incrementRenderType();
 			else if(m_state.x > m_screenWidth * 0.5f && m_state.y > m_screenHeight * 0.5f)
 				incrementTransferFnType();
+			else if(m_state.x < m_screenWidth * 0.5f && m_state.y > m_screenHeight * 0.5f)
+				incrementVolumeNumber();
 
 		}
 
@@ -413,7 +413,7 @@ void AndroidRenderer::mainLoop()
 			//glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
 			glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 			glClear(m_clearMask);
-			updateCallback(m_currRenderType, m_currTransferFnType);
+			updateCallback(m_currRenderType, m_currTransferFnType, m_currVolume);
 			eglSwapBuffers(m_display, m_surface);
 
 		}

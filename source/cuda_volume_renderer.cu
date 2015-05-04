@@ -196,11 +196,13 @@ extern "C" void exitCuda()
     checkCudaErrorsLog(cudaFreeArray(d_transferFuncArray));
 }
 
-
-extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, float *transferFunction, int transferFunctionSize)
+extern "C" void writeVolume(void *volume, cudaExtent volumeSize)
 {
-	    // create 3D array
-    cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<VolumeType>();
+	if(d_volumeArray)
+	{
+		    checkCudaErrorsLog(cudaFreeArray(d_volumeArray));
+	}
+	cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<VolumeType>();
     checkCudaErrorsLog(cudaMalloc3DArray(&d_volumeArray, &channelDesc, volumeSize));
 
     // copy data to 3D array
@@ -219,6 +221,36 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, float *trans
 
     // bind array to 3D texture
     checkCudaErrorsLog(cudaBindTextureToArray(tex, d_volumeArray, channelDesc));
+}
+
+extern "C" void writeTransferFunction(float *transferFunction, int transferFunctionSize)
+{
+	if(d_transferFuncArray)
+	{
+		checkCudaErrorsLog(cudaFreeArray(d_transferFuncArray));
+	}
+	cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
+    cudaArray *d_transferFuncArray;
+    checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, transferFunctionSize, 1));
+    checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, transferFunctionSize * 4 * sizeof(float), cudaMemcpyHostToDevice));
+    //checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
+    //checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
+
+
+    transferTex.filterMode = cudaFilterModeLinear;
+    transferTex.normalized = true;    // access with normalized texture coordinates
+    transferTex.addressMode[0] = cudaAddressModeClamp;   // wrap texture coordinates
+
+    // Bind the array to the texture
+    checkCudaErrorsLog(cudaBindTextureToArray(transferTex, d_transferFuncArray, channelDesc2));
+
+}
+
+extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, float *transferFunction, int transferFunctionSize)
+{
+	    // create 3D array
+	writeVolume(volume, volumeSize);
+	writeTransferFunction(transferFunction, transferFunctionSize);
 
     //float4 transferFunc[] =
     //{
@@ -254,21 +286,6 @@ extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, float *trans
     //    {  1.0f, 0.0, 95.0f/255.0f, 61.0f/100.0f, },
     //    {  1.0f, 1.0f, 1.0f, 0.0f/100.0f, },
     //};
-
-    cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
-    cudaArray *d_transferFuncArray;
-    checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, transferFunctionSize, 1));
-    checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunction, transferFunctionSize * 4 * sizeof(float), cudaMemcpyHostToDevice));
-    //checkCudaErrorsLog(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
-    //checkCudaErrorsLog(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
-
-
-    transferTex.filterMode = cudaFilterModeLinear;
-    transferTex.normalized = true;    // access with normalized texture coordinates
-    transferTex.addressMode[0] = cudaAddressModeClamp;   // wrap texture coordinates
-
-    // Bind the array to the texture
-    checkCudaErrorsLog(cudaBindTextureToArray(transferTex, d_transferFuncArray, channelDesc2));
 }
 
 

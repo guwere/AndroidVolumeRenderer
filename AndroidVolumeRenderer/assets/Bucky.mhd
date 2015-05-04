@@ -1,0 +1,7 @@
+NDims = 3
+DimSize = 32 32 32 
+ElementType = MET_UCHAR
+ElementSpacing = 1.0 1.0 1.0
+ElementByteOrderMSB = False
+ElementDataFile = Bucky.raw
+Timesteps = 1

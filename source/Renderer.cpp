@@ -32,6 +32,8 @@ void Renderer::init(float screenWidth, float screenHeight)
 	m_availableTransferFnType.push_back(MEDIUM);
 	m_availableTransferFnType.push_back(HIGH);
 
+	m_currVolume = 0;
+
 	m_screenWidth = screenWidth;
 	m_screenHeight = screenHeight;
 	m_aspectRatio = screenWidth / screenHeight;
@@ -212,7 +214,7 @@ void Renderer::loadCudaVolume(const Volume &volume, const TransferFunction &tran
 }
 #endif // CUDA_ENABLED
 
-void Renderer::setUpdateCallback(void(*updateCallback)(unsigned int, unsigned int))
+void Renderer::setUpdateCallback(void(*updateCallback)(unsigned int, unsigned int, unsigned int))
 {
 	this->updateCallback = updateCallback;
 }
@@ -610,8 +612,15 @@ void Renderer::incrementRenderType()
 void Renderer::incrementTransferFnType()
 {
 	m_currTransferFnType++;
-	if(m_currTransferFnType > m_availableTransferFnType.size())
+	if(m_currTransferFnType > m_availableTransferFnType.size()-1)
 		m_currTransferFnType = 0;
+}
+
+void Renderer::incrementVolumeNumber()
+{
+	m_currVolume++;
+	if(m_currVolume > 2)
+		m_currVolume = 0;
 }
 
 void Renderer::drawObject(const glm::mat4 &transformMatrix, const PTVEC3 &points, GLenum mode, const glm::vec4 &color) const

@@ -45,7 +45,7 @@ public:
 	std::vector<TransferFnType> m_availableTransferFnType;
 	unsigned int m_currRenderType;
 	unsigned int m_currTransferFnType;
-
+	unsigned int m_currVolume;
 	Shader *m_debugShader;
 	static Camera m_camera;
 	Timer m_timer;
@@ -73,7 +73,7 @@ public:
 	void loadCudaVolume(const Volume &volume, const TransferFunction &transferFunction);
 #endif
 	virtual void mainLoop() = 0;
-	virtual void setUpdateCallback(void(*updateCallback)(unsigned int,unsigned int));
+	virtual void setUpdateCallback(void(*updateCallback)(unsigned int,unsigned int, unsigned int));
 	virtual void handleInput() = 0;
 	void loadDebugShader();
 	void renderBasic(const Shader *shader, const Mesh &mesh, const glm::mat4 &MVP, bool renderWireframe) const;
@@ -90,8 +90,9 @@ public:
 	void drawCrosshair(const glm::vec4 &color) const;
 	void incrementRenderType();
 	void incrementTransferFnType();
+	void incrementVolumeNumber();
 	//void renderRaycastVRmobile1(const Shader *shader, const Mesh &cubeMesh, const Camera &camera, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize, const glm::vec3 &lightPosWorld, const TransferFunction &transferFn) const
-	void(*updateCallback)(unsigned int,unsigned int);
+	void(*updateCallback)(unsigned int,unsigned int, unsigned int);
 	void drawObject(const glm::mat4 &transformMatrix, const std::vector<glm::vec3> &points, GLenum mode, const glm::vec4 &color = glm::vec4(0)) const;
 protected:
 	//Renderer(float screenWidth, float screenHeight);
@@ -117,6 +118,8 @@ protected:
 };
 #ifdef CUDA_ENABLED
 extern "C" void initCuda();
+extern "C" void writeTransferFunction(float *transferFunction, int transferFunctionSize);
+extern "C" void writeVolume(void *volume, cudaExtent volumeSize);
 extern "C" void initCudaVolume(void *volume, cudaExtent volumeSize, GLfloat *transferFunction, int transferFunctionSize);
 extern "C" void exitCuda();
 extern "C" void render_kernel(dim3 gridSize, dim3 blockSize, uint *d_output, uint imageW, uint imageH, float *invViewMatrix, float aspectRatio, float maxRaySteps, float rayStepSize);
