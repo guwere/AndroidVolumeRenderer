@@ -56,15 +56,21 @@ enum Direction{FORWARD, BACKWARD, LEFT, RIGHT, NO_DIRECTION/*FORWARD_LEFT, FORWA
 #ifdef WIN32
 const int OPENGL_VERSION_MAJOR  = 3;
 const int OPENGL_VERSION_MINOR = 1;
-const int SCREEN_WIDTH = 500;
-const int SCREEN_HEIGHT = 500;
+
 #else
 
 
 #endif
+
+//const int SCREEN_WIDTH = 1920;
+//const int SCREEN_HEIGHT = 1200;
+const int SCREEN_WIDTH = 500;
+const int SCREEN_HEIGHT = 500;
+
 #define EPSILON 1e-6
 #define APP_NAME std::string("VolumeRenderer")
-#define CLEAR_COLOR glm::vec4(0.46f, 0.53f, 0.6f, 1.0f)
+//#define CLEAR_COLOR glm::vec4(0.46f, 0.53f, 0.6f, 1.0f)
+#define CLEAR_COLOR glm::vec4(0, 0, 0, 1.0f)
 #define CLEAR_MASK (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 #define DEBUG_VERTEX_SHADER_NAME "basicVS.glsl"
 #define DEBUG_FRAGMENT_SHADER_NAME "basicFS.glsl"
@@ -90,7 +96,7 @@ const int SCREEN_HEIGHT = 500;
 assume that the volume texture is of dimensions [0,1] ( texture space)
 the number of maximum ray steps is the based on diagonal length of the texture
 */
-#define MAX_RAY_STEPS (200.0f * TEXTURE_CUBE_DIAGONAL_LEN)
+#define MAX_RAY_STEPS (250.0f * TEXTURE_CUBE_DIAGONAL_LEN)
 #define RAY_STEP_SIZE_TEX_SPACE (TEXTURE_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
 #define RAY_STEP_SIZE_MODEL_SPACE (MESH_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
 #define GRADIENT_STEP_SIZE (TEXTURE_CUBE_DIAGONAL_LEN / MAX_RAY_STEPS)
@@ -126,6 +132,11 @@ the number of maximum ray steps is the based on diagonal length of the texture
 #define TRANSFER_FN_NAME2_LOW std::string("Bucky.tfi")
 #define TRANSFER_FN_NAME2_MEDIUM std::string("Bucky_2.tfi")
 #define TRANSFER_FN_NAME2_HIGH std::string("Bucky_3.tfi")
+
+//#define VOLUME_NAME2 std::string("supine8.mhd")
+//#define TRANSFER_FN_NAME2_LOW std::string("supine8.tfi")
+//#define TRANSFER_FN_NAME2_MEDIUM std::string("supine8_2.tfi")
+//#define TRANSFER_FN_NAME2_HIGH std::string("supine8_3.tfi")
 
 #pragma endregion
 

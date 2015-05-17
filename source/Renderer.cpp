@@ -20,7 +20,11 @@ Camera Renderer::m_camera;
 
 void Renderer::init(float screenWidth, float screenHeight)
 {
+#ifdef CUDA_ENABLED
 	m_currRenderType = RenderType::RAYTRACE_SHADER;
+#else
+	m_currRenderType = RenderType::RAYTRACE_SHADER;
+#endif // CUDA_ENABLED
 	m_availableRenderTypes.push_back(RAYTRACE_SHADER);
 	m_availableRenderTypes.push_back(TEXTURE_BASED);
 	m_availableRenderTypes.push_back(TEXTURE_BASED_MT);
@@ -296,7 +300,7 @@ void Renderer::renderRaycastVR(const Shader *shader, const Mesh &cubeMesh, const
 	GLuint shaderId = shader->getId();
 	glUseProgram(shader->m_Id);
 	writeUniform(shaderId, "MVP", MVP);
-	writeUniform3DTex(shaderId, "volume", 0, volume.getTextureId());
+	//writeUniform3DTex(shaderId, "volume", 0, volume.getTextureId());
 	writeUniform(shaderId, "camPos", camPosModel);
 	writeUniform(shaderId, "maxRaySteps", (int)maxRaySteps);
 	writeUniform(shaderId, "rayStepSize", rayStepSize);
@@ -315,6 +319,7 @@ void Renderer::renderTextureBasedVR(const Shader *shader, const Mesh &cubeMesh, 
 	const glm::mat4 &projMatrix = m_camera.GetProjectionMatrix();
 	glm::mat4 modelViewMatrix = viewMatrix * cubeMesh.transform.getMatrix();
 	glm::mat4 inverseMV = glm::inverse(modelViewMatrix);
+
 
 	PTVEC3 transformedPositions = cubeMesh.getTransformedPositions(modelViewMatrix);
 	std::vector<Edge> transformedEdges = cubeMesh.getTransformedEdges(modelViewMatrix);
@@ -421,26 +426,25 @@ void Renderer::renderTextureBasedVRMT(const Shader *shader, const Mesh &cubeMesh
 	const int maxRays = MAX_RAY_STEPS * (lengthTotalModel / MESH_CUBE_DIAGONAL_LEN); // dependent on the ratio of maximum allowed rays and the current direction
 
 	std::vector<PTVEC3> sortedProxyPlanes(maxRays);
-	const int MAX_THREADS = 1;
+	const int MAX_THREADS = 4;
 	int samplesThread = maxRays / MAX_THREADS;
 	std::vector<std::thread> threads(MAX_THREADS);
 
-	ThreadParameters params(0, maxPos, dirSample, cubeMesh, transformedEdges, 0, 0, sortedProxyPlanes);
+	ThreadParameters params(0, maxPos, dirSample, cubeMesh, transformedEdges, 0, 0);
 
 	//last thread gets the extra left overs
 	params.threadId = MAX_THREADS - 1;
 	params.first = samplesThread * (MAX_THREADS - 1) + 1;
 	params.last = int(maxRays);
 	//won't compile on android without std::ref
-	threads[MAX_THREADS-1] = std::thread(&Renderer::calculateProxyPlanes, this, std::ref(params));
+	threads[MAX_THREADS-1] = std::thread(&Renderer::calculateProxyPlanes, this, params, std::ref(sortedProxyPlanes));
 
 	for (int t = 0; t < MAX_THREADS-1; t++)
 	{
 		params.threadId = t;
 		params.first = samplesThread * t + 1;
 		params.last = samplesThread * (t + 1) + 1;
-		params.sortedProxyPlanes = sortedProxyPlanes;
-		threads[t] = std::thread(&Renderer::calculateProxyPlanes, this, std::ref(params));
+		threads[t] = std::thread(&Renderer::calculateProxyPlanes, this, params, std::ref(sortedProxyPlanes));
 		//threads[t] = std::thread(&Renderer::calculateProxyPlanes, this, maxPos, dirSample, cubeMesh, transformedEdges, sortedProxyPlanes);
 	}
 
@@ -530,7 +534,7 @@ void Renderer::renderRaycastVRCUDA(const Shader *shader, const Mesh &planeMesh, 
 
 }
 #endif
-void Renderer::calculateProxyPlanes(ThreadParameters &params)
+void Renderer::calculateProxyPlanes(ThreadParameters params, std::vector<PTVEC3> &sortedProxyPlanes)
 {
 	for (int currSample = params.first; currSample < params.last; ++currSample)
 	{
@@ -544,7 +548,7 @@ void Renderer::calculateProxyPlanes(ThreadParameters &params)
 		//Sort the polygon vertices clockwise or counterclockwise by projecting them onto the x-y plane
 		//and computing their angle around the center, with the first vertex or the x axis as the reference.
 		PTVEC3 sortedProxyPlane;
-		sortPolygonClockwise(proxyPlane, centerPt, params.sortedProxyPlanes[currSample]);
+		sortPolygonClockwise(proxyPlane, centerPt, sortedProxyPlanes[currSample]);
 
 	}
 }
@@ -655,8 +659,8 @@ void Renderer::drawObject(const glm::mat4 &transformMatrix, const PTVEC3 &points
 }
 
 
-Renderer::ThreadParameters::ThreadParameters(int threadId, glm::vec3 &maxPos, glm::vec3 &dirSample, const Mesh &cubeMesh, std::vector<Edge> &transformedEdges, int first, int last, std::vector<PTVEC3> &sortedProxyPlanes)
-	:threadId(threadId), maxPos(maxPos), dirSample(dirSample), cubeMesh(cubeMesh), transformedEdges(transformedEdges), first(first), last(last), sortedProxyPlanes(sortedProxyPlanes)
+Renderer::ThreadParameters::ThreadParameters(int threadId, glm::vec3 &maxPos, glm::vec3 &dirSample, const Mesh &cubeMesh, std::vector<Edge> &transformedEdges, int first, int last)
+	:threadId(threadId), maxPos(maxPos), dirSample(dirSample), cubeMesh(cubeMesh), transformedEdges(transformedEdges), first(first), last(last)
 {
 
 }

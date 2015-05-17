@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Camera" Collapsed="true">
+    <Position X="14.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABACMBAAAEAAAAEoEABAAAADACgAAAgAAADQAAAAAAI=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="File" Collapsed="true">
+    <Position X="18.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQIAAAAAAAAAAgAICAIAQCAAAAECAAAAIEkACAAACA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\File.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GLFWRenderer" Collapsed="true">
+    <Position X="18.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMAAAAAAAAAIAKAAACAAAAAAAIQAAAAJAAAACAACAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\GLFWRenderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HelperFunctions" Collapsed="true">
+    <Position X="20" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAEAAAAQAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\HelperFunctions.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Renderer" Collapsed="true">
+    <Position X="20" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>V4EiAEAUAIAQIIgCMASBFKAISoLARAIDgEAEAAAgAQQ=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Renderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShaderManager" Collapsed="true">
+    <Position X="14.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAQAAAAAQAAAAAAAFAAAAAAAAgAAcgA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\ShaderManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SQTTransform" Collapsed="true">
+    <Position X="16.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEJACCCCAQASAIAAAAAABCGABsAABAEABABAAAAAQ=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\SQTTransform.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Timer" Collapsed="true">
+    <Position X="20" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAECAAAAAAAAEAAAAAAAAAQAAAAAAEAEAEAAQ=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Timer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TransferFunction" Collapsed="true">
+    <Position X="14.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAgAAAAACAEAAAAAAAJAAAQkBAIAAAAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\TransferFunction.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Volume" Collapsed="true">
+    <Position X="16.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAIAAAAAAAgACAAAAEIAAAIAAAdQASCIASQAoAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Volume.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLDocument" Collapsed="true">
+    <Position X="16.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAggQYUQSAQAQDgABAgCAAEAAAQhAEkhAAgFRtEBEA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Vertex" Collapsed="true">
+    <Position X="16.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACABAAAAAAAAAIAAAAAAAAAAAAAgAEAAAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Mesh.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Edge" Collapsed="true">
+    <Position X="14.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEABAAAgAAAAAAAAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Mesh.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Material" Collapsed="true">
+    <Position X="18.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAABAAAAAAAAAAAAAAAAAAIAAACAAAAAAABAAABAAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Mesh.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Mesh" Collapsed="true">
+    <Position X="20" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABACABAkAYAAACAkQAEAAACAECAAAQQAAAAAQAQA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Mesh.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Shader" Collapsed="true">
+    <Position X="18.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QgAAAAABAAAAAAAAAAAAAQAAAAAAAQQAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Shader.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="tinyxml2::Entity" Collapsed="true">
+    <Position X="16.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAECAAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\tinyxml2.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="Direction" Collapsed="true">
+    <Position X="14.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAgAAAAAAAAAAAAAAAAQgAIAAAAAAAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Common.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="RenderType" Collapsed="true">
+    <Position X="18.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAQAAAAAAAAAAAAgAAAAAAACAAAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Renderer.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TransferFnType" Collapsed="true">
+    <Position X="20" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>D:\C++\ShieldVolumeRenderer\source\Renderer.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

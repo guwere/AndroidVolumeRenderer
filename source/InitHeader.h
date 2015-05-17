@@ -89,6 +89,8 @@ void initAppParams()
 	volume2tfs[HIGH].parseVoreenXML(tf23);
 	volume2tfs[HIGH].generate();
 
+	//cubeMesh.transform.pivotOnLocalAxis(90,0, 0);
+	//planeMesh.transform.pivotOnLocalAxis(90,0, 0);
 
 #ifdef CUDA_ENABLED
 	renderer->loadCudaVolume(volume1, volume1tfs[LOW]);
@@ -151,8 +153,8 @@ void updateCallback(unsigned int currRenderType, unsigned int newTransferFn, uns
 		break;
 #endif
 	}
-	renderer->renderBasic(basicShader, cubeMesh, renderer->m_camera.GetProjectionMatrix() * renderer->m_camera.GetViewMatrix() * cubeMesh.transform.getMatrix(), true);
-	renderer->drawCrosshair(glm::vec4(0,0,1,1));
+	//renderer->renderBasic(basicShader, cubeMesh, renderer->m_camera.GetProjectionMatrix() * renderer->m_camera.GetViewMatrix() * cubeMesh.transform.getMatrix(), true);
+	//renderer->drawCrosshair(glm::vec4(0,0,1,1));
 
 }
 

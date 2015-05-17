@@ -54,7 +54,7 @@ public:
 
 	struct ThreadParameters
 	{
-		ThreadParameters(int threadId, glm::vec3 &maxPos,  glm::vec3 &dirSample,  const Mesh &cubeMesh,  std::vector<Edge> &transformedEdges, int first, int last, std::vector<PTVEC3> &sortedProxyPlanes);
+		ThreadParameters(int threadId, glm::vec3 &maxPos,  glm::vec3 &dirSample,  const Mesh &cubeMesh,  std::vector<Edge> &transformedEdges, int first, int last);
 		int threadId;
 		glm::vec3 &maxPos;
 		glm::vec3 &dirSample;
@@ -62,7 +62,6 @@ public:
 		std::vector<Edge> &transformedEdges;
 		int first;
 		int last;
-		std::vector<PTVEC3> &sortedProxyPlanes;
 	};
 
 	PTVEC3 m_crosshairPts;
@@ -83,7 +82,7 @@ public:
 #ifdef CUDA_ENABLED
 	void renderRaycastVRCUDA(const Shader *shader, const Mesh &cubeMesh, const Volume &volume, float maxRaySteps, float rayStepSize, float gradientStepSize);
 #endif
-	void calculateProxyPlanes(ThreadParameters &params);
+	void calculateProxyPlanes(ThreadParameters params,std::vector<PTVEC3> &sortedProxyPlanes);
 	void sortPolygonClockwise(const PTVEC3 &proxyPlane, glm::vec3 centerPt, PTVEC3 &sortedProxyPlane) const;
 	void getClosestPtsOnEdges(const glm::vec3 &maxPos, const glm::vec3 &dirSample, int currSample, const Mesh &cubeMesh, const std::vector<Edge> &transformedEdges, PTVEC3 &proxyPlane, glm::vec3 &centerPt) const;
 

@@ -3,10 +3,8 @@
 
 Timer::Timer()
 {
-	fpsCount = 0;        // FPS count for averaging
-	fpsLimit = 1;        // FPS limit for sampling
-	frameCount = 0;
 	sdkCreateTimer(&m_timer);
+	reset();
 }
 
 Timer::~Timer()
@@ -19,20 +17,36 @@ Timer::~Timer()
 
 float Timer::computeFPS()
 {
-	frameCount++;
 	fpsCount++;
 
-	if (fpsCount == fpsLimit)
+	if (fpsCount >= fpsLimit)
 	{
 		char fps[256];
 		ifps = 1.f / (sdkGetAverageTimerValue(&m_timer) / 1000.f);
+
 		//sprintf(fps, "Volume Render: %3.1f fps", ifps);
 
 		//glutSetWindowTitle(fps);
+		fpsTotalCount += fpsCount;
+		m_average = m_average * ((fpsTotalCount-1)/fpsTotalCount) + ifps/fpsTotalCount;
 		fpsCount = 0;
 
 		fpsLimit = (int)MAX(1.f, ifps);
 		sdkResetTimer(&m_timer);
 	}
 	return ifps;
+}
+
+void Timer::reset()
+{
+	m_average = 0;
+	fpsCount = 0;
+	fpsTotalCount = 0;
+	fpsLimit = 1;
+	sdkResetTimer(&m_timer);
+}
+
+float Timer::getAverage()
+{
+	return m_average;
 }

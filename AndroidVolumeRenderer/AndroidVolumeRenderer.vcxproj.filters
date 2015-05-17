@@ -65,9 +65,6 @@
     <ClCompile Include="..\source\Camera.cpp">
       <Filter>jni</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\perfMonitor.cpp">
-      <Filter>jni</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\AndroidRenderer.cpp">
       <Filter>jni</Filter>
     </ClCompile>
@@ -115,9 +112,6 @@
     <ClInclude Include="..\source\TransferFunction.h">
       <Filter>jni</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\perfMonitor.h">
-      <Filter>jni</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\InitHeader.h">
       <Filter>jni</Filter>
     </ClInclude>
@@ -133,5 +127,6 @@
       <Filter>jni</Filter>
     </None>
     <None Include="assets\helloworld.txt" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

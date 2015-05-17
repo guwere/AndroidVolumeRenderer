@@ -71,37 +71,12 @@ void main()
 	float absorption = 0.0f;
 	float opacity;
 
-	// if (clipPlaneDistance != 0.0f)
-	// {
-	// 	int steps = 0;
-	// 	vec3 point = vec3(0.0f, 0.0f, 0.0f);
-	// 	float dist;
-
-	// 	if (camPos.z > 0.0f)
-	// 	{
-	// 		point.z = 1.0f;
-	// 		dist = clipPlaneDistance;
-	// 	}
-	// 	else
-	// 	{
-	// 		point.z = -1.0f;
-	// 		dist = 2.0f - clipPlaneDistance;
-	// 	}
-
-	// 	while ((abs(dot((point - position), clipPlaneNormal)) < dist) && (steps < maxRaySteps))
-	// 	{
-	// 		position += (direction * rayStepSize);
-	// 		steps++;
-	// 	}
-	// }
-
 	for(int i=0; i<maxRaySteps; i++)
 	{
 		color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		
 		texCoord = (position + 1.0f) * 0.5f; 
 		float index = texture(volume, texCoord).x;
-		//float index = texture(volume, position).x;
 		
 		color = vec4(texture(transferFunc, vec2(index, 0.0)));
 		opacity = color.w;

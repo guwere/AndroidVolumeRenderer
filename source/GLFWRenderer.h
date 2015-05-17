@@ -48,7 +48,7 @@ protected:
 		lastX = xpos;
 		lastY = ypos;
 
-		m_camera.ProcessMouseMovement(xoffset, yoffset);
+		//m_camera.ProcessMouseMovement(xoffset, yoffset);
 	}	
 
 

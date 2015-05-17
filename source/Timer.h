@@ -13,10 +13,13 @@ public:
 	Timer();
 	~Timer();
 	StopWatchInterface *m_timer;
-	int fpsCount;        // FPS count for averaging
+	int fpsCount;        
+	float fpsTotalCount; // FPS count for averaging
 	int fpsLimit;        // FPS limit for sampling
-	unsigned int frameCount;
 	float ifps;
+	float m_average;
 	float computeFPS();
+	void reset();
+	float getAverage();
 };
 #endif // !TIMER_H

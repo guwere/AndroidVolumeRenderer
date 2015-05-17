@@ -115,10 +115,10 @@ int AndroidRenderer::initEGL()
 	this->m_display = display;
 	this->m_context = context;
 	this->m_surface = surface;
-	this->m_screenWidth = w;
-	this->m_screenHeight = h;
+	this->m_screenWidth = SCREEN_WIDTH;
+	this->m_screenHeight = SCREEN_HEIGHT;
 
-	Renderer::init(w,h);
+	Renderer::init(m_screenWidth,m_screenHeight);
 	// Initialize GL state.
 	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 	//glEnable(GL_CULL_FACE);
@@ -411,6 +411,7 @@ void AndroidRenderer::mainLoop()
 		if(m_animating)
 		{
 			//glClearColor(0.46f, 0.53f, 0.6f, 1.0f);
+			glViewport(0,0, m_screenWidth, m_screenHeight);
 			glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 			glClear(m_clearMask);
 			updateCallback(m_currRenderType, m_currTransferFnType, m_currVolume);

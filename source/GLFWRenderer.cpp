@@ -53,7 +53,7 @@ void GLFWRenderer::mainLoop()
 	glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 	glClear(m_clearMask);
 
-	
+	m_timer.reset();
 	//sdkStartTimer(&(m_timer.m_timer));
 	while (!glfwWindowShouldClose(window))
 	{
@@ -61,7 +61,7 @@ void GLFWRenderer::mainLoop()
 		glfwPollEvents();
 		sdkStartTimer(&m_timer.m_timer);
 		
-
+		glViewport(0,0,m_screenWidth,m_screenHeight);
 		glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 		glClear(m_clearMask);
 
@@ -84,7 +84,7 @@ void GLFWRenderer::mainLoop()
 		glfwSetWindowTitle(window, copyOfStr.c_str());
 #endif
 	}
-
+	LOGI("final average fps: %f\n", m_timer.getAverage());
 	glfwTerminate();
 	return;
 
